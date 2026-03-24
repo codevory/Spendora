@@ -1,8 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
+import transactionReducer from "./features/transaction";
+import { useDispatch, useSelector, type TypedUseSelectorHook } from "react-redux";
 
-export const Store = configureStore({
-    reducer:{},
-})
+const Store = configureStore({
+    reducer:{
+        transaction:transactionReducer,
+    },
+});
 
-export type AppSelector = ReturnType<typeof Store.getState>;
-export type AppDispatch = typeof Store.dispatch;
+export default Store;
+
+export const useAppDispatch : () => typeof Store.dispatch = useDispatch;
+export const useAppSelector : TypedUseSelectorHook<ReturnType <typeof Store.getState>> = useSelector;
