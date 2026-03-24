@@ -1,15 +1,13 @@
-
-import toast, { Toaster } from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
 import './App.css'
+import AddExpense from './pages/AddExpense'
 
 function App() {
  
-const notify = () => toast.success("successfully created")
   return (
     <>
       <div>
-     <h2>app</h2>
-     <button onClick={notify}>Notify</button>
+    <AddExpense />
      <Toaster />
       </div>
     </>
