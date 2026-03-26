@@ -10,4 +10,114 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+};
+
+
+
+/* ===== Layout ===== */
+.bg-main {
+  @apply bg-slate-900 text-slate-200;
+}
+
+.container-main {
+  @apply p-4 md:p-6 lg:p-8;
+}
+
+/* ===== Cards ===== */
+.card {
+  @apply bg-slate-800 rounded-2xl p-5 shadow-lg border border-slate-700;
+}
+
+.card-hover {
+  @apply hover:shadow-xl hover:border-slate-600 transition duration-300;
+}
+
+/* ===== Dashboard Cards ===== */
+.dashboard-card {
+  @apply bg-linear-to-br from-indigo-500 to-purple-600 text-white 
+  rounded-2xl p-5 shadow-lg w-60 h-30  flex justify-center items-center;
+}
+
+.card-redish {
+ @apply bg-linear-to-br from-indigo-800 to-pink-400;
+}
+
+.card-yellowish {
+ @apply bg-linear-to-br from-yellow-800 to-emerald-400;
+}
+
+.card-bluish {
+  @apply bg-linear-to-br from-blue-500 to-pink-800;
+}
+
+/* ===== Inputs ===== */
+.input {
+  @apply w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-slate-200
+   placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+  @apply bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg transition shadow-md;
+}
+
+.btn-secondary {
+  @apply bg-slate-700 hover:bg-slate-600 text-slate-200 p-4 rounded-lg transition;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  @apply bg-slate-900 border-r border-slate-800 min-h-screen px-2 py-1 text-white;
+}
+
+.sidebar-item {
+  @apply flex items-center gap-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer;
+}
+
+.sidebar-item-active {
+  @apply bg-indigo-500 text-white;
+}
+
+/* ===== Text ===== */
+.text-primary {
+  @apply text-slate-200;
+}
+
+.text-muted {
+  @apply text-slate-400;
+}
+
+.text-accent {
+  @apply text-indigo-400;
+}
+
+/* ===== Labels / Tags ===== */
+.tag {
+  @apply px-2 py-1 rounded-md text-xs font-medium;
+}
+
+.tag-food {
+  @apply bg-green-500/20 text-green-400;
+}
+
+.tag-bills {
+  @apply bg-yellow-500/20 text-yellow-400;
+}
+
+.tag-entertainment {
+  @apply bg-purple-500/20 text-purple-400;
+}
+
+/* ===== Transactions ===== */
+.transaction-item {
+  @apply flex justify-between items-center p-3 rounded-lg hover:bg-slate-800 transition;
+}
+
+.deduct-amount {
+  @apply text-red-700;
+}
+
+/* ===== Glass Effect (optional premium look) ===== */
+.glass {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
 }
