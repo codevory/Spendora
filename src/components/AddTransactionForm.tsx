@@ -3,6 +3,7 @@ import toast from 'react-hot-toast'
 import { useAppDispatch } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
 import { addTransaction, setTransactionError, setTransactionStatus } from '../store/features/transaction'
+import '../App.css'
 
 const AddTransactionForm = () => {
     type categoryType = "Food" | "Travel" | "Bills" | "Shopping" | "Other";
@@ -69,51 +70,80 @@ const AddTransactionForm = () => {
     }
 
   return (
-    <div className='bg-gray-800 text-white font-semibold w-full px-2 py-3 rounded '>
-    <form onSubmit={(e) => handleSubmit(e)} 
-    className='flex flex-col items-center p-2 bg-blue-950 h-100 border-2 border-solid'>
+   <div className="card w-full max-w-md mx-auto">
+  <form 
+    onSubmit={handleSubmit}
+    className="flex flex-col gap-5"
+  >
 
-      <div className='w-full h-95 gap-5 flex flex-col '>
-           <div className=' p-2 flex justify-start sm:gap-5 outline-0 items-center mt-2'>
-              <span className=''>
-                <p className=' font-semibold w-px text-2xl'>$</p>
-              </span>
-              <span className=' relative w-full'>
-              <input  className='outline-0 border-2 m-0 px-2 w-full rounded-xl h-12 font-mono text-xl ' 
-              type='number' placeholder="enter amount" value={amount} 
-              onChange={(e:React.ChangeEvent<HTMLInputElement>) => setAmount(Number(e.target.value))} required />
-              <label className={`absolute   bottom-11.5 bg-gray-800 left-3 font-mono text-[14px]`} >Amount</label>
-              </span>
-
-           </div>
-
-           <div className='flex relative gap-2 p-1 sm:gap-5 outline-0 items-center'>
-              <label className={`absolute   bottom-11.5 bg-gray-800 left-3 font-mono text-[14px]`}>Select Date</label>
-              <input className='outline-0 border-2 px-2 rounded-xl h-13 w-full font-mono text-xl '  type="date" value={date} 
-              onChange={(e:React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)} required />
-           </div>
-
-           <div className='flex relative gap-2 p-1 sm:gap-5 outline-0 items-center'>
-               <label className={`absolute   bottom-11.5 bg-gray-800 left-3 font-mono text-[14px]`}>Payed to</label>
-               <input className='outline-0 border-2 px-2 rounded-xl h-13 w-full font-mono text-xl ' 
-               type="text" placeholder='eg. Netflix, Youtube premium' value={payee} 
-               onChange={(e:React.ChangeEvent<HTMLInputElement>) => setPayee(e.target.value)} required />
-           </div>
-
-           <div className='flex relative gap-2 p-1 sm:gap-5 outline-0 items-center'>
-              <label className={`absolute   bottom-11.5 bg-gray-800 left-3 font-mono text-[14px]`}>Category</label>
-              <select className='outline-0 border-2 px-2 rounded-xl h-13 w-full font-mono text-xl bg-blue-950' 
-                 value={category} onChange={(e) => setCategory(e.target.value as categoryType)} required>
-                 {categories.map((cat) => (
-                 <option key={cat} value={cat} >{cat}</option>))}
-              </select> 
-           </div>
+    {/* Amount */}
+    <div className="relative">
+      <label className="text-sm text-muted mb-1 block">Amount</label>
+      <div className="flex items-center input">
+        <span className="mr-2 text-muted">$</span>
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          className="bg-transparent w-full outline-none"
+          required
+        />
       </div>
-        
-       <button className='bg-pink-600 backdrop-blur-2xl w-60 h-12 rounded-xl p-1 cursor-pointer active:scale-95' 
-       type="submit">Add</button>
-    </form>
     </div>
+
+    {/* Date */}
+    <div>
+      <label className="text-sm text-muted mb-1 block">Date</label>
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className="input"
+        required
+      />
+    </div>
+
+    {/* Payee */}
+    <div>
+      <label className="text-sm text-muted mb-1 block">Paid to</label>
+      <input
+        type="text"
+        placeholder="Netflix, YouTube Premium"
+        value={payee}
+        onChange={(e) => setPayee(e.target.value)}
+        className="input"
+        required
+      />
+    </div>
+
+    {/* Category */}
+    <div>
+      <label className="text-sm text-muted mb-1 block">Category</label>
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value as categoryType)}
+        className="input"
+        required
+      >
+        {categories.map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* Button */}
+    <button
+      type="submit"
+      className="btn-primary w-full active:scale-95"
+    >
+      Add Expense
+    </button>
+
+  </form>
+</div>
   )
 }
 
