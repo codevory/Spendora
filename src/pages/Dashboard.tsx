@@ -5,12 +5,14 @@ import RecentTransactions from "../components/RecentTransactions"
 import SidebarMenu from "../components/SidebarMenu"
 import { useAppSelector } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
+import LineGraph from '../components/charts/LineGraph'
 
 
-const AddExpense = () => {
-  const [isOpen,setIsOpen] = useState<boolean>(true)
-const topCategory = useAppSelector((state) => getTopCategory(state.transaction.transactions))
-const monthlyData = useAppSelector((state) => getMonthlyData(state.transaction.transactions))
+const Dashboard = () => {
+const [isOpen,setIsOpen] = useState<boolean>(true)
+const selectedState = useAppSelector((state) => state.transaction.transactions)
+const topCategory = getTopCategory(selectedState)
+const monthlyData = getMonthlyData(selectedState)
 
 
   return (
@@ -48,7 +50,9 @@ const monthlyData = useAppSelector((state) => getMonthlyData(state.transaction.t
       <div className="flex gap-1 w-full">  
 
       <div className='bg-blue-300 w-[70%] flex justify-center items-center'>
-        <div className='bg-red-400 text-black font-bold text-2xl'>chart 1</div>
+        <div className='bg-red-400 text-black font-bold text-2xl'>
+          <LineGraph />
+        </div>
       </div>
 
         <div className='w-1/3'>
@@ -70,7 +74,7 @@ const monthlyData = useAppSelector((state) => getMonthlyData(state.transaction.t
   )
 }
 
-export default AddExpense
+export default Dashboard
 
 function getTopCategory(transactions:TransactionType[]){
   const map:Record<string,number> = {};
