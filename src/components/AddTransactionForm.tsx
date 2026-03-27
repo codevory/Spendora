@@ -80,7 +80,7 @@ const AddTransactionForm = () => {
     <div className="relative">
       <label className="text-sm text-muted mb-1 block">Amount</label>
       <div className="flex items-center input">
-        <span className="mr-2 text-muted">$</span>
+        <span className="mr-2 text-muted">₹</span>
         <input
           type="number"
           placeholder="Enter amount"
