@@ -1,13 +1,13 @@
 import { Toaster } from 'react-hot-toast'
 import './App.css'
-import AddExpense from './pages/AddExpense'
+import Dashboard from './pages/Dashboard'
 
 function App() {
  
   return (
     <>
       <div>
-    <AddExpense />
+   <Dashboard />
      <Toaster />
       </div>
     </>
