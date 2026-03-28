@@ -3,12 +3,12 @@ import { useAppSelector } from "../store/store"
 const RecentTransactions = () => {
 const data = useAppSelector((state) => state.transaction.transactions)
 
-
+const copy = [...data]
 return (
   <div className="card mt-6">
   <h2 className="text-lg font-semibold mb-4">Recent Transactions</h2>
 
-  {data.map((item) => (
+  {copy.sort((a,b) => b.createdAt - a.createdAt).map((item) => (
     <div className="transaction-item border-b border-slate-700 last:border-none">
       
       <div>
