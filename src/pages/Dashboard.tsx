@@ -6,6 +6,8 @@ import SidebarMenu from "../components/SidebarMenu"
 import { useAppSelector } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
 import LineGraph from '../components/charts/LineGraph'
+import BarGraph from '../components/charts/BarGraph'
+import PieGraph from '../components/charts/PieGraph'
 
 
 const Dashboard = () => {
@@ -13,7 +15,7 @@ const [isOpen,setIsOpen] = useState<boolean>(true)
 const selectedState = useAppSelector((state) => state.transaction.transactions)
 const topCategory = getTopCategory(selectedState)
 const monthlyData = getMonthlyData(selectedState)
-
+const [activeGraph,setActiveGraph] = useState<string>("bar")
 
   return (
     <div className=" bg-sky-900 gap-1 flex flex-col p-2 overflow-hidden">
@@ -46,24 +48,34 @@ const monthlyData = getMonthlyData(selectedState)
             <h2 className='text-3xl font-bold '>₹{topCategory.amount}</h2>
           </div>
       </div>
-   <div className='w-full flex gap-2'>
-      <div className="flex gap-1 w-full">  
 
-      <div className='bg-blue-300 w-[70%] flex justify-center items-center'>
-        <div className='bg-red-400 text-black font-bold text-2xl'>
-          <LineGraph />
+      <div className="flex ">  
+        
+        <div className='w-[70%] h-2/3 flex flex-col gap-3'>
+         <div className='flex items-center gap-3 text-black w-1/3 h-14 p-2'>
+           <button onClick={() => setActiveGraph("bar")} 
+           className={`${activeGraph === "bar" ? "active-graphTab" : ""}   graph-buttons`}>Bar</button> 
+           <button onClick={() => setActiveGraph("pie")} 
+           className={`${activeGraph === "pie" ? "active-graphTab" : ""}   graph-buttons`}>Pie</button> 
+           <button onClick={() => setActiveGraph("line")} 
+           className={`${activeGraph === "line" ? "active-graphTab" : ""}   graph-buttons`}>line</button>
+         </div>
+
+         <div className=' text-white '>
+            <div className='w-[70%]'>
+              {activeGraph === "pie" ? <div className='w-1/2 h-1/2 '><PieGraph /> </div>: activeGraph === "bar" ? <BarGraph /> : <LineGraph />}
+            </div>
+         </div>
+
         </div>
-      </div>
 
         <div className='w-1/3'>
           <AddTransactionForm />
         </div>
 
       </div>
-      {/* //right side */}
 
-    </div>
-        <div className='transactions-box overflow-y-scroll h-[26%]'>
+        <div className='transactions-box overflow-y-scroll h-full -[26%]'>
             <RecentTransactions />
         </div>
     
