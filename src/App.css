@@ -121,3 +121,10 @@ input[type=number] {
 .glass {
   @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
 }
+
+.graph-buttons {
+ @apply w-30 h-10 bg-black text-white p-2 rounded-xl cursor-pointer active:scale-95;
+}
+.active-graphTab {
+  @apply scale-113 w-35 bg-yellow-800 
+}
