@@ -6,7 +6,6 @@ import { Chart as ChartJS,
     Tooltip,
     Legend,
     Title} from "chart.js";
-    import type {ChartData} from "chart.js"
 import { useUserData } from "../../Hooks/useUserData";
 
  ChartJS.register(
@@ -21,7 +20,6 @@ import { useUserData } from "../../Hooks/useUserData";
  const options = {
     responsive:true
  };
- const data = getBarChartData()
 
 
 const BarGraph = () => {
@@ -32,19 +30,3 @@ const BarGraph = () => {
 }
 
 export default BarGraph
-
-function getBarChartData():ChartData<"bar">{
-    return {
-        labels:["rent","Groceries","Bills","Travel expense","Mantainance","Medical expense"],
-        datasets:[
-          {
-            label:"Expense",
-            data:[1200,400,250,430,712,340],
-            backgroundColor:"red",
-            borderColor:"pink",
-            borderWidth:2,
-            hoverBorderWidth:3
-        }
-        ] 
-    }
-}
