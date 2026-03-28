@@ -6,7 +6,7 @@ import { addTransaction, setTransactionError, setTransactionStatus } from '../st
 import '../App.css'
 
 const AddTransactionForm = () => {
-    type categoryType = "Food" | "Travel" | "Bills" | "Shopping" | "Other";
+    type categoryType = "Food" | "Transportation" | "Bills" | "Shopping" | "Education" | "Other";
     const [amount,setAmount] = useState<number | "">("")
     const [date,setDate] = useState<string>('')
     const [payee,setPayee] = useState<string>('')
@@ -15,14 +15,15 @@ const AddTransactionForm = () => {
     const dispatch = useAppDispatch()
     const Success = () => toast.success("Expense Added Successfully");
     const failed = (message:string) => toast.error(message);
-    const categories:categoryType[] = ["Food" , "Travel" , "Bills" , "Shopping" , "Other"]
+    const categories:categoryType[] = ["Food" , "Transportation" , "Bills" , "Shopping" , "Education" , "Other"]
 
     const transaction:TransactionType = {
       name:payee,
       date:date,
       amount:amount ? amount : Number(amount),
       category:category,
-      transactionId:""
+      transactionId:"",
+      createdAt:Number(new Date()),
     }
 
     function handleSubmit(e:React.SubmitEvent<HTMLFormElement>){
