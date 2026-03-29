@@ -19,18 +19,9 @@ const pieData:ChartData<"pie"> = {
     labels,
     datasets:[
         {
-            label:"this month expense",
+            label:"Expense distribution",
             data:amounts,
             backgroundColor: ["blue", "green", "orange", "purple", "yellow","red"],
-            borderWidth: 1,
-            borderColor: "black",
-            borderAlign: "inner",
-            hoverOffset: 14,
-        },
-         {
-            label:"prev month Expenses",
-            data:prevAmounts,
-            backgroundColor: ["pink", "red", "brown", "black", "slate","white"],
             borderWidth: 1,
             borderColor: "black",
             borderAlign: "inner",
@@ -43,20 +34,12 @@ const barData:ChartData<"bar"> = {
     labels,
     datasets:[
         {
-            label:"This month Expenses",
+            label:"Expense",
             data:amounts,
             backgroundColor: ["blue", "green", "orange", "purple", "yellow","red"],
             borderColor: "pink",
             borderWidth: 2,
             hoverBorderWidth: 3,
-        },
-         {
-            label:"Prev month Expenses",
-            data:prevAmounts,
-            backgroundColor: ["pink", "red", "brown", "black", "slate","white"],
-            borderColor: "slate",
-            borderWidth: 1,
-            hoverBorderWidth: 2,
         }
     ]
 }
