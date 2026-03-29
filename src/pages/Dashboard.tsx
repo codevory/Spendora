@@ -31,13 +31,13 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
       </div> 
 
    <div className='w-full flex flex-col gap-2 bg-main'>
-      <div className='flex gap-2 justify-between items-center p-3 rounded bg-blue-300 h-34'>
+      <div className='flex gap-2 justify-between items-center p-3 rounded  h-34'>
           <div className='dashboard-card card-redish flex-col '>
             <p className='text-sm opacity-80'>Total balance</p>
             <h2 className='text-3xl font-bold '>₹12,423</h2>
           </div>
 
-          <div className='dashboard-card card-yellowish flex-col '>
+          <div className='dashboard-card card-redish flex-col '>
             <p className='text-sm opacity-80'>📉 Monthly Spending</p>
             <h2 className='text-3xl font-bold '>₹{monthlyData}</h2>
           </div>
@@ -54,11 +54,11 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
         <div className='w-[70%] h-2/3 flex flex-col gap-3'>
          <div className='flex items-center gap-3 text-black w-1/3 h-14 p-2'>
            <button onClick={() => setActiveGraph("bar")} 
-           className={`${activeGraph === "bar" ? "active-graphTab" : ""}   graph-buttons`}>Bar</button> 
+           className={`${activeGraph === "bar" ? "active-graphTab" : ""}   graph-buttons`}>Overview</button> 
            <button onClick={() => setActiveGraph("pie")} 
-           className={`${activeGraph === "pie" ? "active-graphTab" : ""}   graph-buttons`}>Pie</button> 
+           className={`${activeGraph === "pie" ? "active-graphTab" : ""}   graph-buttons`}>Distribution</button> 
            <button onClick={() => setActiveGraph("line")} 
-           className={`${activeGraph === "line" ? "active-graphTab" : ""}   graph-buttons`}>line</button>
+           className={`${activeGraph === "line" ? "active-graphTab" : ""}   graph-buttons`}>Trend</button>
          </div>
 
          <div className=' text-white '>
