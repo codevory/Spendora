@@ -1,26 +1,36 @@
 import type { ChartData } from "chart.js"
 import { useAppSelector } from "../store/store"
+import type { TransactionType } from "../types/transactionType";
 
+interface MonthlyDataTypes {
+    trans:TransactionType[],
+    month:number
+}
 
 export const useUserData = () => {
 const trans = useAppSelector((state) => state.transaction.transactions);
+const now = new Date();
+const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
+const currMonthData = getMonthlyData({trans,month:normalizedCurrentDate.getMonth()})
+const prevMonthData = getMonthlyData({trans,month:normalizedCurrentDate.getMonth() - 1});
 
-const groupedAmounts = trans.reduce<Record<string, number>>((acc, curr) => {
-    acc[curr.category] = (acc[curr.category] ?? 0) + Number(curr.amount);
-    return acc;
-}, {});
+const currentLabels = Object.keys(currMonthData);
+const currentMonthAmounts = currentLabels.map((label) => currMonthData[label] ?? 0);
 
-const labels = Object.keys(groupedAmounts);
-const amounts = Object.values(groupedAmounts);
-const prevMonth = getMonthlyData();
-const prevAmounts = Object.values(prevMonth)
+const trendLabels = Array.from(new Set([
+    ...Object.keys(currMonthData),
+    ...Object.keys(prevMonthData),
+]));
+
+const currMonthAmounts = trendLabels.map((label) => currMonthData[label] ?? 0);
+const prevMonthAmounts = trendLabels.map((label) => prevMonthData[label] ?? 0);
 
 const pieData:ChartData<"pie"> = {
-    labels,
+    labels: currentLabels,
     datasets:[
         {
             label:"Expense distribution",
-            data:amounts,
+            data:currentMonthAmounts,
             backgroundColor: ["blue", "green", "orange", "purple", "yellow","red"],
             borderWidth: 1,
             borderColor: "black",
@@ -31,11 +41,11 @@ const pieData:ChartData<"pie"> = {
 }
     
 const barData:ChartData<"bar"> = {
-    labels,
+    labels: currentLabels,
     datasets:[
         {
             label:"Expense",
-            data:amounts,
+            data:currentMonthAmounts,
             backgroundColor: ["blue", "green", "orange", "purple", "yellow","red"],
             borderColor: "pink",
             borderWidth: 2,
@@ -45,21 +55,21 @@ const barData:ChartData<"bar"> = {
 }
 
 const lineData:ChartData<"line"> = {
-    labels,
+    labels: trendLabels,
     datasets:[
         {
-            label:"This Month Analysis",
-            data:amounts,
-            borderColor: "rgb(75,192,192)",
+            label:"Prev Month Analysis",
+            data:prevMonthAmounts,
+            borderColor: "red",
             borderWidth:2,
             backgroundColor:"red"
         },
         {
-            label:"Prev Month Analysis",
-            data:prevAmounts,
-            borderColor: "red",
-            borderWidth:3,
-            backgroundColor:"blue"
+            label:"This Month Analysis",
+            data:currMonthAmounts,
+            borderColor: "rgb(75,192,192)",
+            borderWidth:2,
+            backgroundColor:"rgb(75,192,192)"
         },
     ]
 }
@@ -67,19 +77,32 @@ const lineData:ChartData<"line"> = {
 return {pieData,barData,lineData}
 }
 
-function getMonthlyData(){
-    const date = new Date();
-    const prevMonth = date.getMonth() - 1;
-    const currYear = date.getFullYear();
+function getMonthlyData({trans,month}:MonthlyDataTypes){
+    const now = new Date();
+    const targetDate = new Date(now.getFullYear(), month, 1);
+    const targetMonth = targetDate.getMonth();
+    const targetYear = targetDate.getFullYear();
 
-const trans = useAppSelector((state) => state.transaction.transactions);
- return trans.filter((t) => {
-    const date = new Date(t.date);
-    return (
-        date.getMonth() -1 === prevMonth && currYear === date.getFullYear()
-    )
- }).reduce<Record<string,number>>((acc,curr) => {
-    acc[curr.category] = (acc[curr.category] ?? 0) + Number(curr.amount);
-    return acc;
- },{})
+    return trans
+        .filter((t) => {
+            const date = new Date(t.date);
+            return date.getMonth() === targetMonth && date.getFullYear() === targetYear;
+        })
+        .reduce<Record<string, number>>((acc, curr) => {
+            if(!acc[curr.category]){
+                acc[curr.category] = (acc[curr.category] ?? 0) + Number(curr.amount);
+            }
+            else{
+                acc[curr.category] += Number(curr.amount)
+            }
+            return acc;
+        }, {});
 }
+
+
+    // const formattedate = new Intl.DateTimeFormat("en-US",{
+    //     weekday:"short",
+    //     month:"long",
+    //     year:"numeric",
+    //     day:"2-digit"
+    // }).format(dt)
