@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useUserData } from "../../Hooks/useUserData";
+import { useUserData } from "../Hooks/useUserData";
 
 ChartJS.register(
   CategoryScale,
@@ -26,13 +26,13 @@ const options = {
   responsive:true,
 }
 
-const LineGraph = () => {
+const TrendGraph = () => {
   const {lineData} = useUserData()
   return (
-    <div>
-      <Line data={lineData} options={options} />
+    <div className="chart trend-graph">
+      <Line  data={lineData} options={options} />
     </div>
   );
 };
 
-export default LineGraph;
+export default TrendGraph;

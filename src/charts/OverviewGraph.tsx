@@ -6,7 +6,7 @@ import { Chart as ChartJS,
     Tooltip,
     Legend,
     Title} from "chart.js";
-import { useUserData } from "../../Hooks/useUserData";
+import { useUserData } from "../Hooks/useUserData";
 
  ChartJS.register(
     BarElement,
@@ -22,11 +22,13 @@ import { useUserData } from "../../Hooks/useUserData";
  };
 
 
-const BarGraph = () => {
+const OverviewGraph = () => {
     const { barData } = useUserData()
   return (
-   <Bar options={options} data={barData} />
+   <div className="chart overview-graph">
+      <Bar options={options} data={barData} />
+   </div>
   )
 }
 
-export default BarGraph
+export default OverviewGraph
