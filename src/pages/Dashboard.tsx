@@ -5,9 +5,9 @@ import RecentTransactions from "../components/RecentTransactions"
 import SidebarMenu from "../components/SidebarMenu"
 import { useAppSelector } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
-import LineGraph from '../components/charts/LineGraph'
-import BarGraph from '../components/charts/BarGraph'
-import PieGraph from '../components/charts/PieGraph'
+import DistributionGraph from '../charts/DistributionGraph'
+import OverviewGraph from '../charts/OverviewGraph'
+import TrendGraph from '../charts/TrendGraph'
 
 
 const Dashboard = () => {
@@ -19,7 +19,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
 
   return (
     <div className=" bg-sky-900 gap-1 flex flex-col p-2 overflow-hidden">
-      <div className="bg-red-400 w-full h-15 flex items-center px-2">
+      <div className="navbar w-full h-15 flex items-center px-2">
         <HiOutlineMenu onClick={() => setIsOpen((p) => !p)} startOffset={2} stroke="blue" className="h-10 w-10 cursor-pointer active:scale-95" />
       </div>
        
@@ -63,7 +63,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
 
          <div className=' text-white '>
             <div className='w-[70%]'>
-              {activeGraph === "pie" ? <div className='w-1/2 h-1/2 '><PieGraph /> </div>: activeGraph === "bar" ? <BarGraph /> : <LineGraph />}
+              {activeGraph === "pie" ? <div className='w-1/2 h-1/2 '><DistributionGraph /> </div>: activeGraph === "bar" ? <OverviewGraph /> : <TrendGraph />}
             </div>
          </div>
 
