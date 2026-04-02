@@ -98,11 +98,3 @@ function getMonthlyData({trans,month}:MonthlyDataTypes){
             return acc;
         }, {});
 }
-
-
-    // const formattedate = new Intl.DateTimeFormat("en-US",{
-    //     weekday:"short",
-    //     month:"long",
-    //     year:"numeric",
-    //     day:"2-digit"
-    // }).format(dt)

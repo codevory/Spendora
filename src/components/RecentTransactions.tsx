@@ -11,7 +11,7 @@ return (
   {copy.sort((a,b) => b.createdAt - a.createdAt).map((item) => {
 
     return (
-      <div className="transaction-item border-b border-slate-700 last:border-none">
+      <div key={item.transactionId} className="transaction-item border-b border-slate-700 last:border-none">
       <div>
         <p className="font-medium">{item.name}</p>
         <p className="text-sm text-muted">

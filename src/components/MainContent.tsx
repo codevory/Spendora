@@ -31,7 +31,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
 
        <div className="hero-content b">  
         
-        <div className='flex flex-col chart-container gap-3 '>
+        <div className='flex flex-col justify-between chart-container gap-3 '>
             <div className='buttons-tab'>
               <button onClick={() => setActiveGraph("bar")} 
               className={`${activeGraph === "bar" ? "active-graphTab" : ""}   graph-buttons`}>Overview</button> 
@@ -40,7 +40,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
               <button onClick={() => setActiveGraph("line")} 
               className={`${activeGraph === "line" ? "active-graphTab" : ""}   graph-buttons`}>Trend</button>
             </div>
-          <div className='analysis-container'>
+          <div className='analysis-container overflow-x-scroll'>
               {activeGraph === "pie" ? <DistributionGraph /> : 
               activeGraph === "bar" ? <OverviewGraph /> : <TrendGraph />}
           </div>

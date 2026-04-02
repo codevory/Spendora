@@ -7,7 +7,7 @@ import '../App.css'
 
 const AddTransactionForm = () => {
     type categoryType = "Food" | "Transportation" | "Bills" | "Shopping" | "Education" | "Other";
-    const [amount,setAmount] = useState<number | undefined | ' '>(' ')
+    const [amount,setAmount] = useState<number | "">("")
     const [date,setDate] = useState<string>('')
     const [payee,setPayee] = useState<string>('')
     const [category,setCategory] = useState<categoryType>("Bills")
@@ -20,7 +20,7 @@ const AddTransactionForm = () => {
     const transaction:TransactionType = {
       name:payee,
       date:date,
-      amount:amount !== undefined && amount !== ' ' ? amount : Number(amount),
+      amount:amount !== "" ? amount : Number(amount),
       category:category,
       transactionId:"",
       createdAt:Number(new Date()),
@@ -28,7 +28,7 @@ const AddTransactionForm = () => {
 
     function handleSubmit(e:React.SubmitEvent<HTMLFormElement>){
      e.preventDefault();
-     if(amount !== undefined && amount !== ' ' && amount <= 0){
+     if(amount !== "" && amount <= 0){
         failed("kindly add valid amount");
         return;
      }
@@ -65,7 +65,7 @@ const AddTransactionForm = () => {
      finally{
         Success()
      }
-     setAmount(' ')
+     setAmount("")
      setPayee('')
      setCategory('Food')
     }
