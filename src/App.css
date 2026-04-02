@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+.color-palete1{
+  --Primary-Gradient : #7C3AED → #4F46E5;
+  --Background: #0B0F19;
+  --Card: #111827;
+  --Accent: #22D3EE ;
+  --Text: #E5E7EB;
+}
+
+.color-palete2{
+--primary:#2563EB;
+--secondary:#0F172A;
+--accent: #22C55E;
+--background: #F8FAFC;
+--card: #FFFFFF;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -8,6 +24,13 @@ input::-webkit-inner-spin-button {
 }
 
 .transactions-box::-webkit-scrollbar{
+  display: none;
+}
+.transaction-container::-webkit-scrollbar{
+  display: none;
+}
+
+.analysis-container::-webkit-scrollbar{
   display: none;
 }
 
@@ -48,10 +71,6 @@ input[type=number] {
 
 .card-redish {
  @apply bg-linear-to-br from-indigo-800 to-pink-400;
-}
-
-.card-yellowish {
- @apply bg-linear-to-br from-yellow-800 to-emerald-400;
 }
 
 .card-bluish {
@@ -134,10 +153,10 @@ input[type=number] {
  @apply w-30 h-10 bg-black text-white p-2 rounded-xl cursor-pointer active:scale-95;
 }
 .active-graphTab {
-  @apply scale-105 w-35 bg-emerald-600
+  @apply scale-105 w-35 bg-emerald-700
 }
 .buttons-tab{
-  @apply h-14  text-white p-2 flex justify-between gap-2 w-[80%];
+  @apply h-14  text-white p-2 flex justify-center  gap-10 ;
 }
 /* ===== Hero content ===== */
 .hero-content {
@@ -146,8 +165,7 @@ input[type=number] {
   column-gap: 10px;
 }
 
-.chart-container {
-}
+
 .analysis-container {
   margin: 10px;
   padding: 5px;
@@ -161,8 +179,8 @@ input[type=number] {
 }
 
 .chart{
-  width:800px;
-  max-height: 350px;
+  max-width:800px;
+  max-height: 400px;
   z-index: 1000;
 }
 
@@ -182,30 +200,118 @@ input[type=number] {
   display: none;
 }
 
+.transaction-container{
+  min-height:100vh;
+}
+
+.transaction-card{
+  display: flex;
+  @apply bg-linear-to-br from-blue-500 to-red-300 h-fit rounded-xl p-3 w-fit m-2
+}
+.transaction-layout{
+  display: flex;
+  gap:40px;
+  justify-content: space-between;
+}
+
 /* media query */
-@media(width <= 800px){
+@media (width<=1158px){
+  .calender{
+    /* width: 100%;
+    height: 100px;
+    margin-top: 1px; */
+    display: none;
+  }
+
+  .hero-content {
+    grid-template-columns: 60% 40%;
+    width: 100%;
+  }
+ .chart-container{
+   width: 100%;  
+ }
+.chart{
+  box-sizing: content-box;
+}
+ .distribution-chart{
+
+ }
+ 
+ .analysis-container{
+width: 100%;
+height:auto;
+display: grid;
+align-items: center;
+ }
+/* .overview-graph,.distribution-graph,.trend-graph{
+  @apply min-w-md min-h-80
+} */
+
+ .graph-buttons{
+  max-width: 80%;
+  padding: 4px;
+ }
+ .buttons-tab{
+  @apply gap-4;
+ }
+
+ .graph-buttons {
+ @apply w-24 h-8 my-2 bg-black text-white p-3 rounded-xl cursor-pointer active:scale-95 flex justify-center items-center;
+}
+.active-graphTab {
+  @apply scale-105 w-25 bg-emerald-600
+}
+
+  .sidebar{
+    display: none;
+  }
+
+
+  .form-container{
+  margin-left:10px;
+  margin-top: 15px;
+  width: 90%;
+  height: fit-content;
+  margin-top: 65px;
+  }
+
+
+}
+
+
+
+
+
+@media(width <= 770px){
+.calender{
+  display: none;
+}
+
   .hero-content {
     grid-template-columns: repeat(1,minmax(0,1fr));
     justify-items: center;
   }
  .chart{
-  max-width: 90%;
+  @apply max-w-dvw h-75 flex justify-center 
  }
  
  .analysis-container{
-   margin: 4px;
-   padding: 2px;
-   display:flex;
-   justify-content: center;
+@apply flex justify-center items-center
  }
  .graph-buttons{
   max-width: 80%;
   padding: 4px;
  }
  .buttons-tab{
-  max-width: 90%;
-  justify-content: center;
+  @apply gap-4;
  }
+
+ .graph-buttons {
+ @apply w-24 h-8 my-2 bg-black text-white p-3 rounded-xl cursor-pointer active:scale-95 flex justify-center items-center;
+}
+.active-graphTab {
+  @apply scale-105 w-25 bg-emerald-600
+}
 
   .sidebar{
     display: none;
@@ -242,4 +348,10 @@ input[type=number] {
     background-color: red;
   }
 
+}
+
+.empty-state{
+  min-width: 150px;
+  min-height: 150px;
+  background-color: red;
 }
