@@ -1,6 +1,7 @@
 import  { Tooltip,Legend,Title,Chart as ChartJS,ArcElement } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
 import { useUserData } from '../Hooks/useUserData';
+import EmptyState from '../components/EmptyState';
 
 ChartJS.register(
     Tooltip,
@@ -16,10 +17,8 @@ const options = {
 const DistributionGraph = () => {
     const { pieData } = useUserData()
 
-    console.log(pieData)
     if(!pieData.labels?.length) {
-    console.log(pieData)
-      return <div className='bg-green-400 analysis-container m-4 rounded-full flex justify-center items-centerp-4'>hry ism empty</div>
+      return <EmptyState content=<div className='empty-state'>{"Nothing to display"}</div> />
     }
   return (
     <div className='chart distribution-chart'>

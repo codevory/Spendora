@@ -26,7 +26,7 @@ const OverviewGraph = () => {
     const { barData } = useUserData()
   return (
    <div className="chart overview-graph">
-      <Bar options={options} data={barData} />
+      <Bar height={200} options={options} data={barData} />
    </div>
   )
 }

@@ -21,7 +21,6 @@ ChartJS.register(
   Legend,
 );
 
-
 const options = {
   responsive:true,
 }
