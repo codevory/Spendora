@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { TransactionType } from "../../types/transactionType";
+import useLocalstorage from "../../Hooks/useLocalstorage";
 
 interface TransactionState {
     transactions:TransactionType[],
@@ -8,8 +9,14 @@ interface TransactionState {
     error:{message:string,code:number} | null,
 }
 
+
+const {data} = useLocalstorage()
+
+if(!data){
+  localStorage.setItem("userTransactions",JSON.stringify([]))
+}
 const initialState:TransactionState = {
-   transactions : [],
+   transactions : data || [] ,
    status:"idle",
    error:null
    }
@@ -20,7 +27,8 @@ name:'transaction',
 initialState,
 reducers : {
          addTransaction : (state,action:PayloadAction<TransactionType>) => {
-             state.transactions.push(action.payload)
+             state.transactions.push(action.payload);
+             localStorage.setItem("userTransactions",JSON.stringify(state.transactions))
             },
 
           setTransactionStatus:(state,action:PayloadAction<TransactionState["status"]>) => {
@@ -32,7 +40,8 @@ reducers : {
           },
 
           deleteTransaction: (state,action: PayloadAction<string>) => {
-            state.transactions = state.transactions.filter((trans) => trans.transactionId !== action.payload)
+            state.transactions = state.transactions.filter((trans) => trans.transactionId !== action.payload);
+            localStorage.setItem("userTransactions",JSON.stringify(state.transactions))
           },
 
           updateTransaction: (state,action: PayloadAction<TransactionType>) => {
@@ -40,6 +49,7 @@ reducers : {
           if(index !== -1){
             state.transactions[index] = action.payload
           }
+          localStorage.setItem("userTransactions",JSON.stringify(state.transactions))
           }
 }
 })
