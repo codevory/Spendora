@@ -12,7 +12,7 @@ interface TransactionState {
 
 const {data} = useLocalstorage()
 
-if(!data){
+if(data === undefined){
   localStorage.setItem("userTransactions",JSON.stringify([]))
 }
 const initialState:TransactionState = {
