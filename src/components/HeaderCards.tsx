@@ -1,10 +1,17 @@
 import type { TransactionType } from '../types/transactionType'
 import { useAppSelector } from '../store/store'
+import EmptyState from './EmptyState'
 
 const HeaderCards = () => {
     const selectedState = useAppSelector((state) => state.transaction.transactions)
-    const topCategory = getTopCategory(selectedState)
-    const monthlyData = getMonthlyData(selectedState)
+    const transactions = Array.isArray(selectedState) ? selectedState : []
+  
+    if(transactions.length === 0){
+      return <EmptyState content={"No data found"} />
+    }
+
+    const topCategory = getTopCategory(transactions)
+    const monthlyData = getMonthlyData(transactions)
 
   return (
      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -54,9 +61,14 @@ return {category,amount};
 }
 
 function getMonthlyData(transactions:TransactionType[]){
+
   const now = new Date;
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
+  
+    if(!transactions.length){
+     return 0;
+  }
 
   return transactions.filter((t) => {
     const date = new Date(t.date);

@@ -6,9 +6,9 @@ interface EmptyStatePropsType{
 
 const EmptyState = ({content}:EmptyStatePropsType) => {
   return (
-    <div>
+    <>
       {content}
-    </div>
+    </>
   )
 }
 
