@@ -1,9 +1,10 @@
 import type { TransactionType } from "../types/transactionType";
+import { safeParseArray } from "../utils/safeParseArray";
 
 const useLocalstorage = () => {
-  const localData:string | null = localStorage.getItem("userTransactions");
-    const validData = localData !== null ? localData : "";
-    const data:TransactionType[] = JSON.parse(validData) || [];
+  const localData = localStorage.getItem("userTransactions");
+  const data = safeParseArray<TransactionType>(localData);
+
   return {data}
 }
 
