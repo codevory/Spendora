@@ -9,7 +9,7 @@ interface LayoutProps {
 const Layout = ({children,onToggle}:LayoutProps) => {
     
   return (
-    <div className='flex flex-col '>
+    <div className='flex flex-col max-w-dvw min-h-dvh '>
         <div className='navbar h-19'>
             <Navbar onToggle={onToggle} />
         </div>

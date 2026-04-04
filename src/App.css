@@ -44,7 +44,7 @@ input[type=number] {
 /* ===== Layout ===== */
 
 .navbar{
-  @apply bg-slate-900 text-slate-200
+  @apply bg-slate-800 text-slate-200
 }
 .bg-main {
   @apply bg-slate-900 text-slate-200;
@@ -233,9 +233,6 @@ input[type=number] {
 .chart{
   box-sizing: content-box;
 }
- .distribution-chart{
-
- }
  
  .analysis-container{
 width: 100%;
@@ -277,10 +274,6 @@ align-items: center;
 
 
 }
-
-
-
-
 
 @media(width <= 770px){
 .calender{
