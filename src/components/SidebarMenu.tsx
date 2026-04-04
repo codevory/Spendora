@@ -9,7 +9,7 @@ const SidebarMenu = ({isOpen}:{isOpen:boolean}) => {
       <span className="sidebar-item">{ isOpen ? '📊 Analytics' : '📊'}</span>
       <span className="sidebar-item">{isOpen ? ' ⚠️ Budget' : '⚠️'}</span>
       <Link to='/transactions' className="sidebar-item">{isOpen ?  '🧾 Transactions' : '🧾'}</Link>
-      <span className="sidebar-item">{isOpen ? '🏷 Categories' : '🏷'}</span>
+      <Link to='/categories' className="sidebar-item">{isOpen ? '🏷 Categories' : '🏷'}</Link>
       <span className="sidebar-item">{isOpen ? '⚙️ Settings' : '⚙️'}</span>
     </div>
   )

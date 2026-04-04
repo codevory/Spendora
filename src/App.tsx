@@ -3,6 +3,7 @@ import './App.css'
 import DashBoardLayout from './pages/DashBoardLayout'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import TransactionLayout from './pages/TransactionLayout'
+import CategoriesPage from './pages/CategoriesPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
     <Route path='/transactions/tnx-details/:id' element={<TransactionLayout />} />
     <Route path='/' element={<DashBoardLayout />}/>
     <Route path='/transactions' element={<TransactionLayout />} />
+    <Route path='/categories' element={<CategoriesPage />} />
    </Routes>
    <Outlet />
      <Toaster />
