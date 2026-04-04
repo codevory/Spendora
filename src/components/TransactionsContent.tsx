@@ -1,4 +1,3 @@
-import { useAppSelector } from '../store/store'
 import { Link } from 'react-router-dom';
 import { useState,useMemo } from 'react'
 import type { TransactionType } from '../types/transactionType';
@@ -6,13 +5,12 @@ import EmptyState from './EmptyState';
 
 
 interface TransactionsContentPropsType {
-    query : TransactionType['category'] | undefined,
+    query? : TransactionType['category'],
+    data:TransactionType[]
 }
 
-const TransactionsContent = ({query}:TransactionsContentPropsType) => {
+const TransactionsContent = ({query,data}:TransactionsContentPropsType) => {
     const [localData,setLocalData] = useState<TransactionType[]>([])
-
-    const data = useAppSelector((state) => state.transaction.transactions);
 
     useMemo(() => {
         if(query === undefined){
@@ -43,7 +41,7 @@ const TransactionsContent = ({query}:TransactionsContentPropsType) => {
     }
 
   return (
-    <div className='transaction-container  h-dvh overflow-y-scroll rounded-xl'>
+    <div className='transaction-container max-h-dvh overflow-y-scroll rounded-xl'>
         <div className=' border-2 rounded'>
             <div className='flex justify-between items-center mx-4'>
                 <p className='font-bold m-2'>Id</p>

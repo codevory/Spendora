@@ -2,7 +2,7 @@ export interface TransactionType {
     name:string;
     amount:number;
     date:string;
-    category: "Food" | "Transportation" | "Bills" | "Shopping" | "Education" | "Other";
+    category: string;
     transactionId:string;
     createdAt : number;
 }

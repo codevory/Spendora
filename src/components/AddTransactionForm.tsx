@@ -4,20 +4,20 @@ import { useAppDispatch } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
 import { addTransaction, setTransactionError, setTransactionStatus } from '../store/features/transaction'
 import '../App.css'
+import { safeParseArray } from '../utils/safeParseArray'
 
 const AddTransactionForm = () => {
-    type categoryType = "Food" | "Transportation" | "Bills" | "Shopping" | "Education" | "Other";
     const [amount,setAmount] = useState<number | "">("")
     const [date,setDate] = useState<string>('')
     const [payee,setPayee] = useState<string>('')
-    const [category,setCategory] = useState<categoryType>("Bills")
+    const [category,setCategory] = useState<string>("")
 
     const dispatch = useAppDispatch()
     const Success = () => toast.success("Expense Added Successfully");
     const failed = (message:string) => toast.error(message);
-    const categories:categoryType[] = ["Food" , "Transportation" , "Bills" , "Shopping" , "Education" , "Other"]
-
-    const transaction:TransactionType = {
+    const categories =  safeParseArray<string>(localStorage.getItem("userCategories"))
+    
+     const transaction:TransactionType = {
       name:payee,
       date:date,
       amount:amount !== "" ? amount : Number(amount),
@@ -123,7 +123,7 @@ const AddTransactionForm = () => {
       <label className="text-sm text-muted mb-1 block">Category</label>
       <select
         value={category}
-        onChange={(e) => setCategory(e.target.value as categoryType)}
+        onChange={(e) => setCategory(e.target.value)}
         className="input"
         required
       >
