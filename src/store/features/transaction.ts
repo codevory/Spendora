@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { TransactionType } from "../../types/transactionType";
 import useLocalstorage from "../../Hooks/useLocalstorage";
+import { safeParseArray } from "../../utils/safeParseArray";
 
 interface TransactionState {
     transactions:TransactionType[],
@@ -50,7 +51,18 @@ reducers : {
             state.transactions[index] = action.payload
           }
           localStorage.setItem("userTransactions",JSON.stringify(state.transactions))
+          },
+          addNewCategory:(state,action:PayloadAction<string>) => {
+            const nextCategory = action.payload.trim();
+            if (!nextCategory) return;
+
+            const existingCategories = safeParseArray<string>(localStorage.getItem("userCategories"));
+            const mergedCategories = [...new Set([...existingCategories, ...state.transactions.map((txn) => txn.category), nextCategory])];
+
+            localStorage.setItem("userCategories", JSON.stringify(mergedCategories));
+            
           }
+
 }
 })
 
@@ -60,5 +72,6 @@ export const {
     setTransactionError,
     setTransactionStatus,
     deleteTransaction,
-    updateTransaction
+    updateTransaction,
+    addNewCategory
 } = transactionSlice.actions
