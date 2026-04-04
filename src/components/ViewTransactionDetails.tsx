@@ -3,12 +3,17 @@ import EmptyState from './EmptyState';
 import type { TransactionType } from '../types/transactionType';
 
 interface TransactionDetailsPropsType {
-    data:TransactionType[] | undefined;
+    data?:TransactionType[];
+    dateFrom:string;
+    setDateFrom:(value:string) => void;
+    dateTo:string;
+    setDateTo:(value:string) => void;
+    handleSearchTxns:() => void;
 }
 
-const ViewTransactionDetails = ({data}:TransactionDetailsPropsType) => {
+const ViewTransactionDetails = ({data,dateFrom,dateTo,setDateFrom,setDateTo,handleSearchTxns}:TransactionDetailsPropsType) => {
+
     const { id } = useParams()
-   // const data = useAppSelector((state) => state.transaction.transactions);
  
    if(data === undefined){
     return <EmptyState content={"No data found"} />
@@ -20,8 +25,20 @@ const ViewTransactionDetails = ({data}:TransactionDetailsPropsType) => {
         return <EmptyState content={<div className='absolute top-10 right-60 animate-bounce card glass'>Select transaction to view</div>} />
     }
 
+
   return (
    <>
+    <div className=''>
+       <div>
+              <h2 className='text-accent text-muted'>select</h2>
+            <div className='flex gap-2 items-center'>
+               <input className='input' type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+               <p className='text-accent'>to</p>
+               <input className='input' type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            </div>
+            <button className='w-20 h-10 rounded bg-slate-700 text-white text-center font-semibold' onClick={() => handleSearchTxns()}>Filter</button>
+        </div>
+    </div>
    {data.map((tnx,idx) => {
     if(tnx.transactionId === tnxFound?.transactionId){
         return <div key={tnx.transactionId} className='flex gap-2 flex-col justify-between p-2 transaction-card min-h-60 min-w-129'>
