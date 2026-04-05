@@ -5,7 +5,7 @@ const SidebarMenu = ({isOpen}:{isOpen:boolean}) => {
     return (
     <div className='flex flex-col gap-10 items-center h-full mt-1 font-semibold text-xl sidebar '>
       <Link to='/' className="sidebar-item">{isOpen ? '🏠 Dashboard' :  <TiHomeOutline /> }</Link>
-      <span className="sidebar-item">{isOpen ?  '💸 Expense' : "💸"}</span>
+      <Link to='/add-income' className="sidebar-item">{isOpen ?  '💸Add Income' : "💸"}</Link>
       <span className="sidebar-item">{ isOpen ? '📊 Analytics' : '📊'}</span>
       <span className="sidebar-item">{isOpen ? ' ⚠️ Budget' : '⚠️'}</span>
       <Link to='/transactions' className="sidebar-item">{isOpen ?  '🧾 Transactions' : '🧾'}</Link>

@@ -4,6 +4,7 @@ import DashBoardLayout from './pages/DashBoardLayout'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import TransactionLayout from './pages/TransactionLayout'
 import CategoriesPage from './pages/CategoriesPage'
+import AddIncome from './pages/AddIncome'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
     <Route path='/' element={<DashBoardLayout />}/>
     <Route path='/transactions' element={<TransactionLayout />} />
     <Route path='/categories' element={<CategoriesPage />} />
+    <Route path='/add-income' element={<AddIncome />} />
    </Routes>
    <Outlet />
      <Toaster />
