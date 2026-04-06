@@ -14,3 +14,8 @@ export interface IncomeType {
     transactionId:string;
     createdAt:number;
 }
+
+export interface CategoryPropsType {
+  name:string;
+  id:string;
+}
