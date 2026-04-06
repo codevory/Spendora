@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import './App.css'
 import DashBoardLayout from './pages/DashBoardLayout'
@@ -7,14 +8,16 @@ import CategoriesPage from './pages/CategoriesPage'
 import AddIncome from './pages/AddIncome'
 
 function App() {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
   return (
     <>
       <div>
    <Routes>
-    <Route path='/transactions/tnx-details/:id' element={<TransactionLayout />} />
-    <Route path='/' element={<DashBoardLayout />}/>
-    <Route path='/transactions' element={<TransactionLayout />} />
-    <Route path='/categories' element={<CategoriesPage />} />
+    <Route path='/transactions/tnx-details/:id' element={<TransactionLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
+    <Route path='/' element={<DashBoardLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />}/>
+    <Route path='/transactions' element={<TransactionLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
+    <Route path='/categories' element={<CategoriesPage isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
     <Route path='/add-income' element={<AddIncome />} />
    </Routes>
    <Outlet />
