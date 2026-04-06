@@ -1,21 +1,24 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAppDispatch } from '../store/store'
+import { useAppDispatch, useAppSelector } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
 import { addTransaction, setTransactionError, setTransactionStatus } from '../store/features/transaction'
 import '../App.css'
-import { safeParseArray } from '../utils/safeParseArray'
 
-const AddTransactionForm = () => {
-    const [amount,setAmount] = useState<number | "">("")
-    const [date,setDate] = useState<string>('')
-    const [payee,setPayee] = useState<string>('')
-    const [category,setCategory] = useState<string>("")
+interface AddTransactionFormPropsType {
+  setShowModal:(show:boolean) => void;
+}
+const AddTransactionForm = ({setShowModal}:AddTransactionFormPropsType) => {
+  const [amount,setAmount] = useState<number | "">("")
+  const [date,setDate] = useState<string>('')
+  const [payee,setPayee] = useState<string>('')
+  const [category,setCategory] = useState<string>("select")
+  const categories = useAppSelector((state) => state.transaction.categories)
+  
+  const dispatch = useAppDispatch()
+  const Success = () => toast.success("Expense Added Successfully");
+  const failed = (message:string) => toast.error(message);
 
-    const dispatch = useAppDispatch()
-    const Success = () => toast.success("Expense Added Successfully");
-    const failed = (message:string) => toast.error(message);
-    const categories =  safeParseArray<string>(localStorage.getItem("userCategories"))
     
      const transaction:TransactionType = {
       name:payee,
@@ -32,8 +35,12 @@ const AddTransactionForm = () => {
         failed("kindly add valid amount");
         return;
      }
-     const tId = crypto.randomUUID();
-    
+     if(category === undefined || category.trim() === "add new" || 
+     category.trim() === "select" || category.trim() === ""){
+      return failed("Kindly select category")
+     }
+
+     const tId = `txn-${Date.now().toFixed(4)}-${new Date().getMilliseconds().toFixed(2)}`;
      const transactionData:TransactionType = {
         ...transaction,
         transactionId:tId
@@ -41,11 +48,8 @@ const AddTransactionForm = () => {
 
      try {
         dispatch(setTransactionStatus("pending"))
-
          dispatch(setTransactionError(null))
-
         dispatch(addTransaction(transactionData))
-
         dispatch(setTransactionStatus("success"))
         console.log(transactionData)
      } catch (err) {
@@ -64,14 +68,14 @@ const AddTransactionForm = () => {
      }
      finally{
         Success()
+        setAmount("")
+        setPayee('')
+        setCategory('select')
      }
-     setAmount("")
-     setPayee('')
-     setCategory('Food')
     }
-
-  return (
-   <div className="form-card card mx-auto">
+    
+      return (<>
+        <div className="form-card card mx-auto">
   <form 
     onSubmit={handleSubmit}
     className="flex flex-col gap-5"
@@ -123,15 +127,22 @@ const AddTransactionForm = () => {
       <label className="text-sm text-muted mb-1 block">Category</label>
       <select
         value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        onChange={(e) =>{ 
+          setCategory(e.target.value)
+          if (e.target.value.trim() === 'add new') {
+            setShowModal(true)
+          }
+        }}
         className="input"
         required
       >
+        <option key={'select-key'} value={'select'}>select</option>
         {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
+          <option key={cat.id} value={cat.name}>
+            {cat.name}
           </option>
         ))}
+        <option key={'add-new-Key'} value="add new">Add new Category</option>
       </select>
     </div>
 
@@ -145,6 +156,7 @@ const AddTransactionForm = () => {
 
   </form>
 </div>
+      </>
   )
 }
 
