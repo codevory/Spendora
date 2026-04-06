@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Layout from '../components/Layout'
 import TransactionsContent from '../components/TransactionsContent'
-import SidebarMenu from '../components/SidebarMenu'
 import ViewTransactionDetails from '../components/ViewTransactionDetails'
 import TrendGraph from '../charts/TrendGraph'
 import { useAppSelector } from '../store/store'
@@ -14,8 +13,8 @@ interface TransactionLayoutProps {
 
 const TransactionLayout = ({onToggle,isOpen}:TransactionLayoutProps) => {
   const [query,setQuery] = useState<TransactionType['category'] | undefined>()
-      const [dateFrom,setDateFrom] = useState<string>("")
-    const [dateTo,setDateTo] = useState<string>("")
+  const [dateFrom,setDateFrom] = useState<string>("")
+  const [dateTo,setDateTo] = useState<string>("")
   const data = useAppSelector((state) => state.transaction.transactions)
   const [filteredData,setFilteredData] = useState<TransactionType[] | undefined>(undefined)
   const categories = [...new Set(data.map((txn) => txn.category))] as TransactionType['category'][]
