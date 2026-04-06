@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+# Spendora
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Spendora is a personal finance dashboard for tracking expenses, income, and spending categories in one place. It is built with React, TypeScript, Vite, Redux Toolkit, Tailwind CSS, and Chart.js.
 
-Currently, two official plugins are available:
+The app focuses on three things:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Recording transactions quickly.
+- Showing a clear snapshot of spending habits.
+- Keeping data in the browser so it remains available after refresh.
 
-## React Compiler
+## What You Can Do
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Add and review expense transactions.
+- Add income entries.
+- Create and manage spending categories.
+- Filter transactions by category and date range.
+- Compare monthly spending with charts and summary cards.
+- Open detailed views for individual transactions.
 
-## Expanding the ESLint configuration
+## Main Screens
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Dashboard: summary cards, recent transactions, quick add form, and spending charts.
+- Transactions: browse transaction history, filter by category, and search by date range.
+- Categories: create categories and view the categories already in use.
+- Add Income: record income entries in a dedicated form.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React 19
+- TypeScript
+- Vite
+- Redux Toolkit
+- React Router
+- Tailwind CSS 4
+- Chart.js and react-chartjs-2
+- react-hot-toast for notifications
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18 or newer
+- npm
+
+### Install Dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Start the Development Server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Vite will start a local server and print the address in the terminal.
+
+### Create a Production Build
+
+```bash
+npm run build
+```
+
+### Preview the Production Build
+
+```bash
+npm run preview
+```
+
+### Run Linting
+
+```bash
+npm run lint
+```
+
+## Project Structure
+
+- src/pages: route-level screens and page layouts.
+- src/components: reusable UI blocks and forms.
+- src/charts: chart components used on the dashboard and transaction views.
+- src/store: Redux store and feature slices.
+- src/Hooks: shared hooks, including local storage bootstrapping.
+- src/types: TypeScript types for transactions, income, and categories.
+- src/utils: helper utilities used across the app.
+
+## Data Persistence
+
+Spendora stores user data in browser local storage so the app can restore existing entries after a reload.
+
+The current storage keys are:
+
+- userTransactions
+- userIncomeData
+- userCategories
+
+If you want to reset the app state, clear the site data in your browser.
+
+## Routing Overview
+
+- /: dashboard
+- /transactions: transaction list and filters
+- /transactions/tnx-details/:id: transaction detail view
+- /categories: category management
+- /add-income: income entry form
+
+## Notes
+
+- Chart data is derived from the stored transaction list.
+- The UI is designed for finance tracking rather than general-purpose task management.
+- Some dashboard values are computed from the current transaction data and monthly totals.
+
+## License
+
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
