@@ -1,22 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { TransactionType } from "../../types/transactionType";
+import type { TransactionType,CategoryPropsType } from "../../types/transactionType";
 import useLocalstorage from "../../Hooks/useLocalstorage";
-import { safeParseArray } from "../../utils/safeParseArray";
 
 interface TransactionState {
+    categories:CategoryPropsType[],
     transactions:TransactionType[],
     status:"idle" | "pending" | "failed" | "success",
     error:{message:string,code:number} | null,
 }
 
 
-const {data} = useLocalstorage()
+
+const {data,userCategories} = useLocalstorage()
+
+if(userCategories === undefined){
+  localStorage.setItem("userCategories",JSON.stringify([]))
+}
 
 if(data === undefined){
   localStorage.setItem("userTransactions",JSON.stringify([]))
 }
 const initialState:TransactionState = {
+   categories:userCategories || [],
    transactions : data || [] ,
    status:"idle",
    error:null
@@ -52,15 +58,15 @@ reducers : {
           }
           localStorage.setItem("userTransactions",JSON.stringify(state.transactions))
           },
-          addNewCategory:(state,action:PayloadAction<string>) => {
-            const nextCategory = action.payload.trim();
-            if (!nextCategory) return;
-
-            const existingCategories = safeParseArray<string>(localStorage.getItem("userCategories"));
-            const mergedCategories = [...new Set([...existingCategories, ...state.transactions.map((txn) => txn.category), nextCategory])];
-
-            localStorage.setItem("userCategories", JSON.stringify(mergedCategories));
+          addNewCategory:(state,action:PayloadAction<CategoryPropsType>) => {
+            state.categories.push(action.payload)
+            localStorage.setItem("userCategories", JSON.stringify(state.categories));
             
+          },
+          deleteCategory: (state,action:PayloadAction<CategoryPropsType>) => {
+            const removeCategory = state.categories.filter((cat) => cat.id !== action.payload.id)
+            state.categories = removeCategory;
+            localStorage.setItem("userCategories",JSON.stringify(state.categories))
           }
 
 }
@@ -73,5 +79,6 @@ export const {
     setTransactionStatus,
     deleteTransaction,
     updateTransaction,
-    addNewCategory
+    addNewCategory,
+    deleteCategory
 } = transactionSlice.actions
