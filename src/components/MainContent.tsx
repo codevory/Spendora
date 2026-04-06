@@ -2,29 +2,24 @@ import HeaderCards from './HeaderCards'
 import { useState } from 'react'
 import AddTransactionForm from "../components/AddTransactionForm"
 import RecentTransactions from "../components/RecentTransactions"
-import SidebarMenu from "../components/SidebarMenu"
 import DistributionGraph from '../charts/DistributionGraph'
 import OverviewGraph from '../charts/OverviewGraph'
 import TrendGraph from '../charts/TrendGraph'
 import MobileMenu from './MobileMenu'
 
 interface MainContentPropsType {
-    isOpen:boolean
+  setShowModal:(show:boolean) => void;
 }
 
-const MainContent = ({isOpen}:MainContentPropsType) => {
+const MainContent = ({setShowModal}:MainContentPropsType) => {
 const [activeGraph,setActiveGraph] = useState<string>("bar")
 
   return (
-      <div className="w-full flex gap-5 justify-center bg-main overflow-hidden">
+      <div className=" bg-main ">
 
-      <div className={` ${isOpen ? 'w-[14%] transform-content' : 'w-[6%] transform-content -transate-x-20' } sidebar bg-green-900`}>
-      <SidebarMenu isOpen={isOpen} />
-      </div> 
-
-      <div className='flex flex-col justify-center w-full '>
+      <div className='flex flex-col justify-center '>
         <div className='flex flex-col gap-2'>
-            <div className=''>
+            <div className=' mt-3 mx-3'>
              <HeaderCards />
             </div>
 
@@ -48,7 +43,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
       </div>
 
         <div className='form-container'>
-          <AddTransactionForm />
+          <AddTransactionForm setShowModal={setShowModal} />
         </div>
 
         <div className='calender'>

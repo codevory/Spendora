@@ -42,7 +42,7 @@ const TransactionsContent = ({query,data}:TransactionsContentPropsType) => {
 
   return (
     <div className='transaction-container max-h-dvh overflow-y-scroll rounded-xl'>
-        <div className=' border-2 rounded'>
+        <div>
             <div className='flex justify-between items-center mx-4'>
                 <p className='font-bold m-2'>Id</p>
                 <p className='font-bold m-2'>Transaction id</p>
