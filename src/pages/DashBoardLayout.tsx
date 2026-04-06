@@ -1,14 +1,26 @@
-import { useState } from 'react'
 import Layout from '../components/Layout'
 import MainContent from '../components/MainContent'
+import CategoryModal from '../components/CategoryModal';
+import {createPortal} from 'react-dom'
+import { useState } from 'react';
 
-const DashBoardLayout = () => {
-    const [isOpen,setIsOpen] = useState<boolean>(true)
+interface DashboardPropsType {
+  onToggle:() => void;
+  isOpen:boolean;
+}
+const DashBoardLayout = ({onToggle,isOpen}:DashboardPropsType) => {
+  const [showModal, setShowModal] = useState<boolean>(false)
+
   return (
-    <div>
-      <Layout onToggle={() => setIsOpen((p) => !p)}>
+    <div className='relative'>
+      <Layout onToggle={onToggle} isOpen={isOpen}>
+        <>
+        {showModal && createPortal(
+      <CategoryModal onClose={() => setShowModal(false)} />,document.body
+    )}
+        </>
         <div className=''>
-         <MainContent isOpen={isOpen} />
+         <MainContent setShowModal={setShowModal} />
         </div>
       </Layout>
     </div>
