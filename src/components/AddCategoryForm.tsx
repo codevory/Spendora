@@ -16,19 +16,19 @@ const AddNewCategoryForm = () => {
         e.preventDefault();
         if(category.trim().length < 3)return failed("kindly type category name");
         
+        const normalized = category.trim().toLowerCase();
+        const exists = categories.some((c) => {
+          const name = c?.name?.trim().toLowerCase()
+          return name === normalized
+        })
+        if(exists){
+          return failed("😩Category already exists")
+        }
         const newCategory:CategoryPropsType = {
           name:category,
           id: Date.now().toFixed(6) 
         }
         try {
-          const normalized = category.trim().toLowerCase();
-          const exists = categories.some((c) => {
-            const name = c?.name?.trim().toLowerCase()
-            return name === normalized
-          })
-          if(exists){
-            return failed("😩Category already exists")
-          }
             dispatch(addNewCategory(newCategory))
           } catch (error) {
             failed("Failed to add");
