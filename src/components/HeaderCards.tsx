@@ -1,24 +1,38 @@
-import type { TransactionType } from '../types/transactionType'
+import type { IncomeType, TransactionType } from '../types/transactionType'
 import { useAppSelector } from '../store/store'
 import EmptyState from './EmptyState'
 
-const HeaderCards = () => {
+interface HeaderCardsPropsType {
+  setModalState:(val:"income") => void;
+}
+
+const HeaderCards = ({setModalState}:HeaderCardsPropsType) => {
     const selectedState = useAppSelector((state) => state.transaction.transactions)
+    const userIncome = useAppSelector((state) => state.incomeTransaction.incomeTransactions)
     const transactions = Array.isArray(selectedState) ? selectedState : []
-  
+    const now = new Date;
+    const date = new Date(now.getFullYear(),now.getMonth(),1);
+    const currentMonth = date.getMonth();
+    const currentYear = date.getFullYear();
     if(transactions.length === 0){
       return <EmptyState content={"No data found"} />
     }
 
     const topCategory = getTopCategory(transactions)
-    const monthlyData = getMonthlyData(transactions)
+    const monthlyData = getMonthlyData(transactions,currentMonth,currentYear)
+    const monthlyIncome = getMonthlyIncome(userIncome)
+    const monthlyIncomeChange = getMonthlyIncomeChangePercent(userIncome,currentMonth,currentYear)
 
   return (
-     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
   <div className="p-3 md:p-6 bg-slate-800 rounded-2xl border glass border-slate-700 shadow-lg">
-    <p className="text-slate-400 text-sm font-medium">Total Balance</p>
-    <h2 className="text-xl md:text-3xl font-bold text-white mt-1">₹12,423</h2>
-    <div className="mt-2 md:mt-4 text-xs text-green-400 font-medium">+2.5% from last month</div>
+     <p className="text-slate-400 text-sm font-medium">Total Balance</p>
+     <div className='flex gap-2 items-center'>
+       <h2 className="text-xl md:text-3xl font-bold text-white mt-1">₹{monthlyIncome}</h2>
+       <button onClick={() => setModalState("income")} className=' px-4 py-1 bg-blue-900 rounded-xl active:scale-95 cursor-pointer'>Add</button>
+     </div>
+    <div className={`mt-2 md:mt-4 text-xs font-medium ${monthlyIncomeChange <= 0 ? 'text-red-400' : 'text-green-400'}`}>
+      {monthlyIncomeChange > 0 ? '+' : ''}{monthlyIncomeChange.toFixed(2)}% from last month</div>
   </div>
   
   <div className="p-3 md:p-6 bg-slate-800 rounded-2xl border glass border-slate-700 shadow-lg">
@@ -60,12 +74,7 @@ function getTopCategory(transactions:TransactionType[]){
 return {category,amount};
 }
 
-function getMonthlyData(transactions:TransactionType[]){
-
-  const now = new Date;
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-  
+function getMonthlyData(transactions:TransactionType[],currentMonth:number,currentYear:number){
     if(!transactions.length){
      return 0;
   }
@@ -76,4 +85,41 @@ function getMonthlyData(transactions:TransactionType[]){
       date.getMonth() === currentMonth && date.getFullYear() === currentYear
     )
   }).reduce((total,t) => total + t.amount,0);
+}
+
+function getMonthlyIncome(transactions:IncomeType[]){
+ if(!transactions.length) return 0;
+ return transactions.reduce((acc,amt) => acc + amt.amount,0) || 0
+}
+
+
+function getMonthlyIncomeChangePercent(
+  transactions: IncomeType[],
+  currentMonth: number, // 0-11
+  currentYear: number
+): number {
+  if (!transactions.length) return 0;
+
+  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+  const currentTotal = transactions
+    .filter((txn) => {
+      const d = new Date(txn.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
+    .reduce((acc, t) => acc + t.amount, 0);
+
+  const prevTotal = transactions
+    .filter((txn) => {
+      const d = new Date(txn.date);
+      return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
+    })
+    .reduce((acc, t) => acc + t.amount, 0);
+
+  if (prevTotal === 0) {
+    return currentTotal > 0 ? 100 : 0;
+  }
+
+  return ((currentTotal - prevTotal) / prevTotal) * 100;
 }
