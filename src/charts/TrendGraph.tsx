@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  type ChartData,
 } from "chart.js";
 import { useUserData } from "../Hooks/useUserData";
 
@@ -24,12 +25,14 @@ ChartJS.register(
 const options = {
   responsive:true,
 }
-
-const TrendGraph = () => {
+interface TrendGraphPropsType {
+  data:ChartData<"line">;
+}
+const TrendGraph = ({data}:TrendGraphPropsType) => {
   const {lineData} = useUserData()
   return (
     <div className="chart trend-graph">
-      <Line  data={lineData} options={options} />
+      <Line  data={data} options={options} />
     </div>
   );
 };

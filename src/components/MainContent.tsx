@@ -6,6 +6,7 @@ import DistributionGraph from '../charts/DistributionGraph'
 import OverviewGraph from '../charts/OverviewGraph'
 import TrendGraph from '../charts/TrendGraph'
 import MobileMenu from './MobileMenu'
+import { useUserData } from '../Hooks/useUserData'
 
 interface MainContentPropsType {
   setModalState:(val:"income" | "category") => void;
@@ -14,6 +15,7 @@ interface MainContentPropsType {
 const MainContent = ({setModalState}:MainContentPropsType) => {
 const [activeGraph,setActiveGraph] = useState<string>("bar")
 
+const {lineData} = useUserData()
   return (
       <div className=" bg-main ">
 
@@ -37,7 +39,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
             </div>
           <div className='analysis-container overflow-x-scroll'>
               {activeGraph === "pie" ? <DistributionGraph /> : 
-              activeGraph === "bar" ? <OverviewGraph /> : <TrendGraph />}
+              activeGraph === "bar" ? <OverviewGraph /> : <TrendGraph data={lineData} />}
           </div>
 
       </div>

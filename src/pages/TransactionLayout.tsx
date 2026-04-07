@@ -5,6 +5,7 @@ import ViewTransactionDetails from '../components/ViewTransactionDetails'
 import TrendGraph from '../charts/TrendGraph'
 import { useAppSelector } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
+import { useUserData } from '../Hooks/useUserData'
 
 interface TransactionLayoutProps {
   onToggle:() => void;
@@ -37,6 +38,7 @@ const TransactionLayout = ({onToggle,isOpen}:TransactionLayoutProps) => {
     setFilteredData(nextFilteredData);
   }
 
+  const {lineData} = useUserData()
 
   return (
   <>
@@ -56,7 +58,7 @@ const TransactionLayout = ({onToggle,isOpen}:TransactionLayoutProps) => {
            <div className='flex flex-col gap-5 items-center'>
            <ViewTransactionDetails data={filteredData ?? data} dateFrom={dateFrom} dateTo={dateTo} setDateFrom={setDateFrom} setDateTo={setDateTo} handleSearchTxns={handleSearchTxns} />
            <div className='min-w-140 min-h-110'>
-            <TrendGraph />
+            <TrendGraph data={lineData} />
            </div> 
            </div>
            </div>
