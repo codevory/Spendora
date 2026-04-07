@@ -6,9 +6,9 @@ import { addTransaction, setTransactionError, setTransactionStatus } from '../st
 import '../App.css'
 
 interface AddTransactionFormPropsType {
-  setShowModal:(show:boolean) => void;
+ setModalState:(val:"category") => void;
 }
-const AddTransactionForm = ({setShowModal}:AddTransactionFormPropsType) => {
+const AddTransactionForm = ({setModalState}:AddTransactionFormPropsType) => {
   const [amount,setAmount] = useState<number | "">("")
   const [date,setDate] = useState<string>('')
   const [payee,setPayee] = useState<string>('')
@@ -130,7 +130,7 @@ const AddTransactionForm = ({setShowModal}:AddTransactionFormPropsType) => {
         onChange={(e) =>{ 
           setCategory(e.target.value)
           if (e.target.value.trim() === 'add new') {
-            setShowModal(true)
+            setModalState("category")
           }
         }}
         className="input"

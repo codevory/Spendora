@@ -1,26 +1,29 @@
 import Layout from '../components/Layout'
 import MainContent from '../components/MainContent'
-import CategoryModal from '../components/CategoryModal';
+import ModalBox from '../components/ModalBox';
 import {createPortal} from 'react-dom'
 import { useState } from 'react';
+import AddIncomeForm from '../components/AddIncomeForm';
+import AddNewCategoryForm from '../components/AddCategoryForm';
 
 interface DashboardPropsType {
   onToggle:() => void;
   isOpen:boolean;
 }
 const DashBoardLayout = ({onToggle,isOpen}:DashboardPropsType) => {
-  const [showModal, setShowModal] = useState<boolean>(false)
-
+  const [modalState, setModalState] = useState<"income" | "category" | "closed">("closed")
   return (
     <div className='relative'>
       <Layout onToggle={onToggle} isOpen={isOpen}>
         <>
-        {showModal && createPortal(
-      <CategoryModal onClose={() => setShowModal(false)} />,document.body
+        {modalState !== "closed" && createPortal(
+      <ModalBox isForm={modalState} form={modalState === "income" ? <AddIncomeForm setModalState={setModalState} /> : 
+      <AddNewCategoryForm setModalState={setModalState} />} 
+      onClose={() => setModalState("closed")} />,document.body
     )}
         </>
         <div className=''>
-         <MainContent setShowModal={setShowModal} />
+         <MainContent setModalState={setModalState} />
         </div>
       </Layout>
     </div>

@@ -8,10 +8,10 @@ import TrendGraph from '../charts/TrendGraph'
 import MobileMenu from './MobileMenu'
 
 interface MainContentPropsType {
-  setShowModal:(show:boolean) => void;
+  setModalState:(val:"income" | "category") => void;
 }
 
-const MainContent = ({setShowModal}:MainContentPropsType) => {
+const MainContent = ({setModalState}:MainContentPropsType) => {
 const [activeGraph,setActiveGraph] = useState<string>("bar")
 
   return (
@@ -20,7 +20,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
       <div className='flex flex-col justify-center '>
         <div className='flex flex-col gap-2'>
             <div className=' mt-3 mx-3'>
-             <HeaderCards />
+             <HeaderCards setModalState={setModalState} />
             </div>
 
 
@@ -43,7 +43,7 @@ const [activeGraph,setActiveGraph] = useState<string>("bar")
       </div>
 
         <div className='form-container'>
-          <AddTransactionForm setShowModal={setShowModal} />
+          <AddTransactionForm setModalState={setModalState} />
         </div>
 
         <div className='calender'>

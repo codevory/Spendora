@@ -4,7 +4,11 @@ import { useAppDispatch, useAppSelector } from "../store/store"
 import { useState } from 'react'
 import type { CategoryPropsType } from "../types/transactionType";
 
-const AddNewCategoryForm = () => {
+type CategoryFormProps = {
+  setModalState:(val:"closed") => void;
+}
+
+const AddNewCategoryForm = ({setModalState}:CategoryFormProps) => {
      const [category,setCategory] = useState<string>("")
      const categories = useAppSelector((state) => state.transaction.categories)
 
@@ -40,6 +44,7 @@ const AddNewCategoryForm = () => {
             success()
             setCategory('')
         }
+        setModalState("closed")
     }
   return (
     <div className="flex flex-col gap-2 " >
