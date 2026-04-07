@@ -5,6 +5,7 @@ export interface TransactionType {
     category: string;
     transactionId:string;
     createdAt : number;
+    type:"expense"
 }
 
 export interface IncomeType {
@@ -13,6 +14,7 @@ export interface IncomeType {
     date:string;
     transactionId:string;
     createdAt:number;
+    type:"income"
 }
 
 export interface CategoryPropsType {
