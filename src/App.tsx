@@ -5,7 +5,7 @@ import DashBoardLayout from './pages/DashBoardLayout'
 import { Outlet, Route, Routes } from 'react-router-dom'
 import TransactionLayout from './pages/TransactionLayout'
 import CategoriesPage from './pages/CategoriesPage'
-import AddIncome from './pages/AddIncome'
+import AnalyticsPage from './pages/AnalyticsPage'
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -18,7 +18,7 @@ function App() {
     <Route path='/' element={<DashBoardLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />}/>
     <Route path='/transactions' element={<TransactionLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
     <Route path='/categories' element={<CategoriesPage isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
-    <Route path='/add-income' element={<AddIncome />} />
+    <Route path='/analytics' element={<AnalyticsPage isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)}/>} />
    </Routes>
    <Outlet />
      <Toaster />
