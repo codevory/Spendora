@@ -85,7 +85,7 @@ input[type=number] {
 
 /* ===== Buttons ===== */
 .btn-primary {
-  @apply bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg transition shadow-md;
+  @apply bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg transition shadow-md cursor-pointer active:scale-95;
 }
 
 .btn-secondary {
@@ -157,6 +157,26 @@ input[type=number] {
 }
 .buttons-tab{
   @apply h-14  text-white p-2 flex justify-center  gap-10 ;
+}
+
+/* forms */
+.login-card{
+ @apply w-md h-120 overflow-hidden p-3 flex flex-col gap-1 justify-between items-center;
+}
+.input-field{
+  @apply flex gap-2 items-center
+}
+.input-box{
+  @apply outline-none bg-transparent w-full h-full ml-4 py-2
+}
+.login-btn{
+  @apply text-center font-medium cursor-pointer active:scale-95;
+}
+.google-login{
+  @apply bg-linear-to-br from-blue-600 to-red-500  from-25% to-55% ;
+}
+.facebook-login{
+  @apply bg-linear-to-tl from-blue-600 to-75% ;
 }
 /* ===== Hero content ===== */
 .hero-content {
