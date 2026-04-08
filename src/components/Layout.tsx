@@ -6,13 +6,14 @@ interface LayoutProps {
     children:ReactNode;
     isOpen:boolean;
     onToggle:() => void;
+    isLoggedin:boolean
 }
-const Layout = ({children,onToggle,isOpen}:LayoutProps) => {
+const Layout = ({children,onToggle,isOpen,isLoggedin}:LayoutProps) => {
     
   return (
     <div className='flex flex-col '>
-        <div className='navbar h-19'>
-            <Navbar onToggle={onToggle} />
+        <div className='navbar'>
+            <Navbar onToggle={onToggle} isLoggedin={isLoggedin} />
         </div>
         <div className='flex '>
 
