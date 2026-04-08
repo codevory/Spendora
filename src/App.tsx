@@ -6,10 +6,13 @@ import { Outlet, Route, Routes } from 'react-router-dom'
 import TransactionLayout from './pages/TransactionLayout'
 import CategoriesPage from './pages/CategoriesPage'
 import AnalyticsPage from './pages/AnalyticsPage'
+import { analytics } from './backend/firebaseConfig'
+import Signup from './pages/Signup'
+import Signin from './pages/Signin'
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-
+  analytics
   return (
     <>
       <div>
@@ -19,6 +22,8 @@ function App() {
     <Route path='/transactions' element={<TransactionLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
     <Route path='/categories' element={<CategoriesPage isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
     <Route path='/analytics' element={<AnalyticsPage isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)}/>} />
+    <Route path='/signup' element={<Signup isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
+    <Route path='/signin' element={<Signin isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)}/> } />
    </Routes>
    <Outlet />
      <Toaster />
