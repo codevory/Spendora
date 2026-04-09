@@ -1,20 +1,22 @@
-import { useState,useEffect } from 'react'
+import { IoMoon, IoSunny } from 'react-icons/io5'
 import useThemeContext from '../Hooks/useThemeContext'
 
 const ThemeSwitcher = () => {
-    const [isDark,setIsDark] = useState<boolean>(false)
-    const useTheme = useThemeContext()
-    useEffect(() => {
-        const newTheme = useTheme.context.defaultValue;
-        newTheme === "dark" ? setIsDark(true) : setIsDark(false)
-    },[])
-    function handleClick(){
-      setIsDark((p) => !p)
-    }
+    const { isDark, toggleTheme } = useThemeContext()
+
   return (
-    <div className={`glass w-17 h-8 flex items-center transition-colors ${isDark ? "justify-end" : "justify-start"}`} >
-      <button onClick={() => handleClick()} className={`active:scale-95 cursor-pointer transition-transform w-7 h-7 rounded-full ${isDark ? 'bg-black' : 'bg-yellow-600'}`}></button>
-    </div>
+    <button
+      type='button'
+      role='switch'
+      aria-checked={!isDark}
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      onClick={toggleTheme}
+      className={`glass flex h-8 w-17 items-center rounded-full px-1 transition-colors active:scale-95 ${isDark ? 'justify-end bg-slate-900/60' : 'justify-start bg-yellow-100/60'}`}
+    >
+      <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs transition-all ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-yellow-500 text-slate-900'}`}>
+        {isDark ? <IoMoon size={13} /> : <IoSunny size={13} />}
+      </span>
+    </button>
   )
 }
 

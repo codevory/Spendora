@@ -1,21 +1,5 @@
 @import "tailwindcss";
 
-.color-palete1{
-  --Primary-Gradient : #7C3AED → #4F46E5;
-  --Background: #0B0F19;
-  --Card: #111827;
-  --Accent: #22D3EE ;
-  --Text: #E5E7EB;
-}
-
-.color-palete2{
---primary:#2563EB;
---secondary:#0F172A;
---accent: #22C55E;
---background: #F8FAFC;
---card: #FFFFFF;
-}
-
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -37,7 +21,7 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
-};
+}
 
 
 
@@ -59,10 +43,6 @@ input[type=number] {
   @apply bg-slate-800 rounded-2xl p-5 shadow-lg border border-slate-700;
 }
 
-.card-hover {
-  @apply hover:shadow-xl hover:border-slate-600 transition duration-300;
-}
-
 /* ===== Dashboard Cards ===== */
 .dashboard-card {
   @apply bg-linear-to-br from-indigo-500 to-purple-600 text-white 
@@ -71,10 +51,6 @@ input[type=number] {
 
 .card-redish {
  @apply bg-linear-to-br from-indigo-800 to-pink-400;
-}
-
-.card-bluish {
-  @apply bg-linear-to-br from-blue-500 to-pink-800;
 }
 
 /* ===== Inputs ===== */
@@ -88,10 +64,6 @@ input[type=number] {
   @apply bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg transition shadow-md cursor-pointer active:scale-95;
 }
 
-.btn-secondary {
-  @apply bg-slate-700 hover:bg-slate-600 text-slate-200 p-4 rounded-lg transition;
-}
-
 /* ===== Sidebar ===== */
 .sidebar {
   @apply bg-slate-900 border-r border-slate-800 min-h-screen px-2 py-1 text-white;
@@ -102,12 +74,7 @@ input[type=number] {
 }
 
 .sidebar-item-active {
-  @apply bg-indigo-500 text-white;
-}
-
-/* ===== Text ===== */
-.text-primary {
-  @apply text-slate-200;
+  @apply bg-indigo-500/30 border border-indigo-400/50 text-white;
 }
 
 .text-muted {
@@ -123,14 +90,6 @@ input[type=number] {
   @apply px-2 py-1 rounded-md text-xs font-medium;
 }
 
-.tag-food {
-  @apply bg-green-500/20 text-green-400;
-}
-
-.tag-bills {
-  @apply bg-yellow-500/20 text-yellow-400;
-}
-
 .tag-entertainment {
   @apply bg-purple-500/20 text-purple-400;
 }
@@ -138,10 +97,6 @@ input[type=number] {
 /* ===== Transactions ===== */
 .transaction-item {
   @apply flex justify-between items-center p-3 rounded-lg hover:bg-slate-800 transition;
-}
-
-.deduct-amount {
-  @apply text-red-700;
 }
 
 /* ===== Glass Effect (optional premium look) ===== */
@@ -178,13 +133,6 @@ input[type=number] {
 .facebook-login{
   @apply bg-linear-to-tl from-blue-600 to-75% ;
 }
-/* ===== Hero content ===== */
-.hero-content {
-   display: grid;
-  grid-template-columns: 50% 30% 20%;
-  column-gap: 10px;
-}
-
 
 .analysis-container {
   margin: 10px;
@@ -204,18 +152,6 @@ input[type=number] {
   z-index: 1000;
 }
 
-.calender{
-  background: #000;
-  margin-inline:5px;
-  width: 240px;
-  height: 100%;
-  margin-top: 5px;
-}
-
-.header-cards{
-  display: grid;
-  grid-template-columns:2fr repeat(2, 1fr);
-}
 .mobile-menu{
   display: none;
 }
@@ -224,32 +160,58 @@ input[type=number] {
   min-height:100vh;
 }
 
-.transaction-card{
-  display: flex;
-  @apply bg-linear-to-br from-blue-500 to-red-300 h-fit rounded-xl p-3 w-fit m-2
+
+/* ===== Theme Overrides ===== */
+.theme-light .navbar {
+  @apply bg-white text-slate-800 border-b border-slate-200;
 }
-.transaction-layout{
-  display: flex;
-  gap:40px;
-  justify-content: space-between;
+
+.theme-light .bg-main {
+  @apply bg-slate-100 text-slate-900;
+}
+
+.theme-light .card {
+  @apply bg-white border-slate-200 text-slate-900;
+}
+
+.theme-light .glass {
+  @apply bg-white/85 border-slate-200;
+}
+
+.theme-light .sidebar {
+  @apply bg-white border-r border-slate-200 text-slate-800;
+}
+
+.theme-light .sidebar-item {
+  @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+}
+
+.theme-light .sidebar-item-active {
+  @apply bg-indigo-100 border-indigo-300 text-indigo-900;
+}
+
+.theme-light .input {
+  @apply bg-white border-slate-300 text-slate-900 placeholder-slate-500 focus:ring-indigo-400;
+}
+
+.theme-light .text-muted {
+  @apply text-slate-500;
+}
+
+.theme-light .text-accent {
+  @apply text-indigo-600;
+}
+
+.theme-light .graph-buttons {
+  @apply bg-slate-200 text-slate-800;
+}
+
+.theme-light .active-graphTab {
+  @apply bg-emerald-500 text-white;
 }
 
 /* media query */
 @media (width<=1158px){
-  .calender{
-    /* width: 100%;
-    height: 100px;
-    margin-top: 1px; */
-    display: none;
-  }
-
-  .hero-content {
-    grid-template-columns: 60% 40%;
-    width: 100%;
-  }
- .chart-container{
-   width: 100%;  
- }
 .chart{
   box-sizing: content-box;
 }
@@ -296,14 +258,6 @@ align-items: center;
 }
 
 @media(width <= 770px){
-.calender{
-  display: none;
-}
-
-  .hero-content {
-    grid-template-columns: repeat(1,minmax(0,1fr));
-    justify-items: center;
-  }
  .chart{
   @apply max-w-dvw h-75 flex justify-center 
  }
@@ -343,25 +297,47 @@ align-items: center;
   .mobile-menu{
     position:fixed;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    bottom: 6px;
-    width:100%;
-    height: 80px;
-    background-color: #000;
-    color:white;
+    bottom: 8px;
+    left: 1%;
+    width:98%;
+    height: 72px;
+    background: linear-gradient(90deg,#0f172a,#111827);
+    color:#e2e8f0;
+    border: 1px solid rgba(148,163,184,0.25);
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(2, 6, 23, 0.45);
     z-index: 1000;
+    padding-inline:8px;
   }
   
   .mobile-menu-items{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: 800;
-    font-size: medium;
+    @apply min-w-14 h-13 rounded-xl flex flex-col justify-center items-center gap-1 text-slate-300 transition active:scale-95;
     cursor: pointer;
-    background-color: red;
+  }
+
+  .mobile-menu-items-active{
+    @apply bg-indigo-500/25 text-indigo-100 border border-indigo-400/40;
+  }
+
+  .theme-light .mobile-menu {
+    background: linear-gradient(90deg, #f8fafc, #f1f5f9);
+    color: #334155;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 12px 24px rgba(148, 163, 184, 0.28);
+  }
+
+  .theme-light .mobile-menu-items {
+    @apply text-slate-600;
+  }
+
+  .theme-light .mobile-menu-items-active {
+    @apply bg-indigo-100 text-indigo-800 border-indigo-300;
   }
 
 }
+
 
 .empty-state{
   min-width: 150px;
