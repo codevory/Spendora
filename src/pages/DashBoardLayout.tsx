@@ -9,12 +9,13 @@ import AddNewCategoryForm from '../components/AddCategoryForm';
 interface DashboardPropsType {
   onToggle:() => void;
   isOpen:boolean;
+  isLoggedin :boolean
 }
-const DashBoardLayout = ({onToggle,isOpen}:DashboardPropsType) => {
+const DashBoardLayout = ({onToggle,isOpen,isLoggedin}:DashboardPropsType) => {
   const [modalState, setModalState] = useState<"income" | "category" | "closed">("closed")
   return (
     <div className='relative'>
-      <Layout onToggle={onToggle} isOpen={isOpen}>
+      <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={isLoggedin}>
         <>
         {modalState !== "closed" && createPortal(
       <ModalBox isForm={modalState} form={modalState === "income" ? <AddIncomeForm setModalState={setModalState} /> : 

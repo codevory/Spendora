@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Navbar from './Navbar';
 import SidebarMenu from './SidebarMenu';
+import MobileMenu from './MobileMenu';
 
 interface LayoutProps {
     children:ReactNode;
@@ -24,6 +25,9 @@ const Layout = ({children,onToggle,isOpen,isLoggedin}:LayoutProps) => {
           {children}
         </div>
 
+        </div>
+        <div className='block md:hidden'>
+        <MobileMenu />
         </div>
     </div>
   )
