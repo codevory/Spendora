@@ -12,10 +12,11 @@ interface SignupomponentPropsType {
     email:string;
     setEmail:(val:string) => void;
     handleFormSubmit:(e:React.SubmitEvent<HTMLFormElement>) => void;
-    isLoading:boolean
+    isLoading:boolean;
+    handleSignupGoogle:() => void;
 }
 
-const SignupComponent = ({isLoading,username,setUsername,password,setPassword,email,setEmail,handleFormSubmit}:SignupomponentPropsType) => {
+const SignupComponent = ({isLoading,handleSignupGoogle,username,setUsername,password,setPassword,email,setEmail,handleFormSubmit}:SignupomponentPropsType) => {
   return (
    <div className='card login-card min-h-135'>
            <form onSubmit={(e) => handleFormSubmit(e)} className='flex flex-col gap-5 w-sm h-[70%] relative'>
@@ -50,7 +51,7 @@ const SignupComponent = ({isLoading,username,setUsername,password,setPassword,em
            <span className=' h-8 my-2 w-full text-center font-bold text-white '>OR</span>
            <div className='w-full h-[30%] flex flex-col'>
                <div className=' flex-col input-field'>
-                  <span className='input google-login login-btn'>Signup with Google</span>
+                  <button onClick={() => handleSignupGoogle} className='input google-login login-btn'>Signup with Google</button>
                   <span className='input facebook-login login-btn'>Signup with Facebook</span>
                </div>
    

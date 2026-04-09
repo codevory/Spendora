@@ -7,8 +7,9 @@ interface LoginComponentPropsType {
     password:string;
     setPassword:(val:string) => void;
     handleFormSubmit:(e:React.SubmitEvent<HTMLFormElement>) => void;
+    handleGoogleSign:() => void;
 }
-const LoginComponent = ({email,setEmail,password,setPassword,handleFormSubmit}:LoginComponentPropsType) => {
+const LoginComponent = ({email,setEmail,password,setPassword,handleFormSubmit,handleGoogleSign}:LoginComponentPropsType) => {
 
   return (
     <div className='card login-card'>
@@ -36,7 +37,7 @@ const LoginComponent = ({email,setEmail,password,setPassword,handleFormSubmit}:L
         <span className=' h-8 my-2 w-full text-center font-bold text-white '>OR</span>
         <div className='w-full h-[38%] flex flex-col'>
             <div className=' flex-col input-field'>
-               <span className='input google-login login-btn'>Login with Google</span>
+               <button onClick={() => handleGoogleSign()} className='input google-login login-btn'>signin with Google</button>
                <span className='input facebook-login login-btn'>Login with Facebook</span>
             </div>
 

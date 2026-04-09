@@ -1,6 +1,10 @@
 import { HiOutlineMenu } from "react-icons/hi"
 import ThemeSwitcher from "./ThemeSwitcher"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import ProfileComponent from "./ProfileComponent"
+import { auth } from "../backend/firebaseConfig"
+import { onAuthStateChanged, signOut } from "firebase/auth"
+import { useEffect, useMemo, useState } from "react"
 
 interface NavbarPropsType {
     onToggle:() => void
@@ -8,19 +12,75 @@ interface NavbarPropsType {
 }
 
 const Navbar = ({onToggle,isLoggedin}:NavbarPropsType) => {
+  const navigate = useNavigate()
+  const [displayName, setDisplayName] = useState<string>('Guest')
+  const [photoURL, setPhotoURL] = useState<string>('/girl1.png')
+  const [hasSession, setHasSession] = useState<boolean>(Boolean(auth.currentUser))
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setHasSession(Boolean(user))
+      setDisplayName(user?.displayName || user?.email?.split('@')[0] || 'Guest')
+      setPhotoURL(user?.photoURL || '/girl1.png')
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  const isAuthenticated = useMemo(() => hasSession || isLoggedin, [hasSession, isLoggedin])
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth)
+    } finally {
+      navigate('/signin')
+    }
+  }
 
   return (
-     <div className="navbar h-16 flex items-center justify-between px-4">
-            <HiOutlineMenu onClick={onToggle} startOffset={2} stroke="white" className="h-10 w-10 ml-4 cursor-pointer active:scale-95" />
-          <div className="flex gap-10 justify-between items-center ">
-            {
-              isLoggedin ? <span className="w-25 h-10 btn-primary rounded-lg flex justify-center items-center bg-black">Logout</span> :
-               <Link to='/signin' className="w-25 h-10 btn-primary rounded-lg flex justify-center items-center bg-black">login</Link>
+     <div className="navbar h-16 border-b border-slate-700/70 px-4 md:px-6">
+      <div className="flex h-full items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onToggle}
+            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
+            aria-label="Toggle sidebar"
+          >
+            <HiOutlineMenu size={22} />
+          </button>
 
-            }
-           <ThemeSwitcher />
+          <div className="hidden md:block">
+            <p className="text-xs tracking-[0.2em] text-slate-500">SPENDORA</p>
+            <p className="text-sm font-semibold text-slate-200">Personal finance dashboard</p>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="hidden md:block">
+            <ThemeSwitcher />
           </div>
+
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-4 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link to='/signin' className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95">
+              Login
+            </Link>
+          )}
+
+          <div className="rounded-xl border border-slate-700 bg-slate-900/70 px-2 py-1">
+            <ProfileComponent user={displayName} imgSrc={photoURL} isLoggedin={isAuthenticated} />
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

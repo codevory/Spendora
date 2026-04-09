@@ -2,11 +2,13 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import Layout from '../components/Layout'
 import SignupComponent from '../components/SignupComponent';
-import { auth } from '../backend/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth/web-extension';
+import { auth, db} from '../backend/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { isLoggedin } from './Signin';
 import Loader from '../components/Loader';
+import { handleGoogleSignin } from '../utils/authService'
+import {addDoc,collection } from 'firebase/firestore'
 
 
 interface SignupPropsType {
@@ -40,6 +42,7 @@ const Signup = ({isOpen,onToggle}:SignupPropsType) => {
                 email:userCredentials.user.email 
             }
             setUserdata(data)
+            addData({username:username,email:email})
             console.log(data)
             success("🎉signup successfull")
             const timer = setTimeout(() => {
@@ -57,8 +60,10 @@ const Signup = ({isOpen,onToggle}:SignupPropsType) => {
           setUsername('')
           setIsLoading(false)
         })
+        console.log(userData)
     }
 
+  handleGoogleSignin
   return (
      <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoggedin}>
     {isLoading && <Loader />}
@@ -72,7 +77,14 @@ const Signup = ({isOpen,onToggle}:SignupPropsType) => {
             setEmail={setEmail}
             handleFormSubmit={handleSignup}
             isLoading={isLoading}
-            
+            handleSignupGoogle={async () => {
+              try {
+                setIsLoading(true)
+                await handleGoogleSignin()
+              } finally{
+                setIsLoading(false)
+              }
+            }}
             />
     </div>
     </Layout>
@@ -80,3 +92,20 @@ const Signup = ({isOpen,onToggle}:SignupPropsType) => {
 }
 
 export default Signup
+
+interface dataProps {
+    username:string;
+    email:string;
+}
+async function addData({username,email}:dataProps){
+try {
+  const docRef = await addDoc(collection(db,'users'),{
+  name:username,
+  email : email
+  })
+console.log("doc written : ",docRef.id)
+
+} catch (error) {
+    console.error(error)
+}
+}
