@@ -1,46 +1,69 @@
-import DistributionGraph from '../charts/DistributionGraph';
-import TrendGraph from '../charts/TrendGraph';
 import Layout from '../components/Layout'
+import Loader from '../components/Loader';
 import MonthlyInsights from '../components/MonthlyInsights';
 import RecentTransactions from '../components/RecentTransactions';
 import { useUserData } from '../Hooks/useUserData';
+import { lazy,Suspense } from 'react'
 
 interface AnalyticsPropsType {
-    onToggle:() => void;
-    isOpen:boolean;
+  onToggle:() => void;
+  isOpen:boolean;
 }
 const AnalyticsPage = ({onToggle,isOpen}:AnalyticsPropsType) => {
+  const DistributionGraph = lazy(() => import('../charts/DistributionGraph'));
+  const TrendGraph = lazy(() => import('../charts/TrendGraph'));
 
   const {analysisData} = useUserData()
   return (
+   <Suspense fallback={<Loader />}>
     <div className='bg-main'>
-        <Layout onToggle={onToggle} isOpen={isOpen}>
-       <div className='flex flex-col gap-1'>
-        <div className='flex gap-2'>
+        <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={false}>
+       <div className='container-main space-y-6'>
+        <section className='rounded-2xl border border-slate-700 bg-linear-to-r from-slate-800 to-slate-900 p-4 md:p-6 shadow-lg'>
+          <p className='text-xs tracking-wider text-slate-400'>SPENDORA ANALYTICS</p>
+          <h1 className='mt-2 text-2xl md:text-3xl font-bold text-slate-100'>Financial Pulse</h1>
+          <p className='mt-2 text-sm md:text-base text-slate-300'>
+            Monitor income vs expense trends, category breakdown, and monthly performance insights in one place.
+          </p>
+        </section>
 
-          <div className='h-100 overflow-y-scroll w-1/2'>
+        <section className='grid grid-cols-1 gap-4 xl:grid-cols-5'>
+          <div className='card xl:col-span-3'>
+            <div className='mb-3'>
+              <h2 className='text-lg font-semibold text-slate-100'>Income vs Expense Trend</h2>
+              <p className='text-xs text-slate-400'>Current month movement compared over time</p>
+            </div>
+            <div className='overflow-x-auto'>
+              <TrendGraph data={analysisData} />
+            </div>
+          </div>
+
+          <div className='max-h-130 overflow-y-auto xl:col-span-2'>
             <RecentTransactions />
           </div>
-      
-          <div className='w-2/3'>
-            <TrendGraph data={analysisData} />
+        </section>
+
+        <section className='grid grid-cols-1 gap-4 xl:grid-cols-5'>
+          <div className='card xl:col-span-2'>
+            <div className='mb-3'>
+              <h2 className='text-lg font-semibold text-slate-100'>Category Distribution</h2>
+              <p className='text-xs text-slate-400'>How your spending is split this month</p>
+            </div>
+            <div className='flex items-center justify-center overflow-x-auto'>
+              <DistributionGraph />
+            </div>
           </div>
 
-        </div>
-    
-         <div className='flex w-full bg-yellow-950'>
-          <div className='h-full w-auto'>
-            <DistributionGraph />
+          <div className='xl:col-span-3'>
+            <MonthlyInsights />
           </div>
-          <div className='w-2/3 bg-green-500 '>
-          <MonthlyInsights />
-          </div>
-         </div>
+        </section>
        </div>
 
         </Layout>
       
     </div>
+   </Suspense>
   )
 }
 

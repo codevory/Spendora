@@ -27,6 +27,7 @@ const AddTransactionForm = ({setModalState}:AddTransactionFormPropsType) => {
       category:category,
       transactionId:"",
       createdAt:Number(new Date()),
+      type:"expense"
     }
 
     function handleSubmit(e:React.SubmitEvent<HTMLFormElement>){

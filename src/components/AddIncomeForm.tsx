@@ -26,7 +26,8 @@ const AddIncomeForm = ({setModalState}:IncomeFormPropsType) => {
         source : incomeSource,
         date : incomeDate,
         transactionId : crypto.randomUUID(),
-        createdAt : Date.now()
+        createdAt : Date.now(),
+        type:"income"
      }
 
      try {
