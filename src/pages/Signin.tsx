@@ -1,62 +1,28 @@
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import LoginComponent from '../components/LoginComponent'
-import Layout from '../components/Layout'
-import { auth, db } from '../backend/firebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import React,{ useState,Suspense } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { handleGoogleSignin } from '../utils/authService';
-import { useNavigate } from 'react-router-dom';
 import Loader from '../components/Loader';
-import {collection } from 'firebase/firestore'
-import { getDocs} from 'firebase/firestore'
-
+import { handleSigninWithPassword } from '../utils/helperFunctions/handleSignin'
 
 interface SigninPropsType {
-    isOpen:boolean;
-    onToggle:() => void;
+  isOpen:boolean;
+  onToggle:() => void;
 }
+
+
 export let isLoggedin = false;
 const Signin = ({isOpen,onToggle}:SigninPropsType) => {
+const LoginComponent = React.lazy(() => import('../components/LoginComponent'))
+const Layout = React.lazy(() => import('../components/Layout'))
         const [password,setPassword] = useState<string>('')
         const [email,setEmail] = useState<string>('')
         const [isLoged, setIsLoged] = useState<boolean>(false)
         const [isLoading,setIsLoading] = useState(false)
-
         const navigate = useNavigate()
-        const success = (message:string) => toast.success(message);
-        const fail = (message:string) => toast.error(message);
-
-     async  function handleSignin(e:React.SubmitEvent<HTMLFormElement>){
-          setIsLoading(true)
-            e.preventDefault()
-             await  signInWithEmailAndPassword(auth,email,password)
-               .then((usr) => {
-                success("🎉signin successfull")
-                querySnapshot()
-                console.log(usr)
-                querySnapshot
-                setIsLoged(true)
-                const timer = setTimeout(() => {
-                    navigate('/signup')
-                }, 1500);
-                return () => clearTimeout(timer)
-            })
-               .catch((error) => {
-                if(error instanceof Error){
-                    console.error(error)
-                    fail(error.message)
-                }
-               }).finally(() => {
-                   setEmail('')
-                   setPassword('')
-                   setIsLoading(false)
-               })
-
-        }
-
 
         isLoggedin = isLoged
   return (
+    <Suspense fallback={<Loader />}>
      <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoged}>
     {isLoading && <Loader />}
     <div className='max-w-dvw h-dvh flex justify-center items-center p-2 bg-main'>
@@ -65,26 +31,13 @@ const Signin = ({isOpen,onToggle}:SigninPropsType) => {
             password={password} 
             setEmail={setEmail} 
             setPassword={setPassword} 
-            handleFormSubmit={handleSignin}
-            handleGoogleSign={async () => {
-              setIsLoading(true);
-              try {
-                await handleGoogleSignin();
-                setIsLoged(true);
-              } finally {
-                setIsLoading(false);
-              }
-            }}
+            handleFormSubmit={(e) => handleSigninWithPassword({navigate:navigate,email:email,e:e,setEmail:setEmail,setIsLoading:setIsLoading,setIsLoged:setIsLoged,setPassword:setPassword,password:password})}
+            handleGoogleSign={() => handleGoogleSignin({setIsLoading:setIsLoading,isLoged:isLoged})}
             /> 
     </div>
     </Layout>
+    </Suspense>
   )
 }
 
 export default Signin
- export async function querySnapshot(){
- const res = await getDocs(collection(db,'users'));
- res.forEach((doc) => {
-    console.log(doc.data());
- })
- } 
