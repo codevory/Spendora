@@ -1,5 +1,5 @@
 import { useAppSelector } from "../store/store";
-import { insightData } from "../utils/helperFunctions/helpers";
+import { insightData } from "../utils/helperFunctions/insightData";
 
 
 const MonthlyInsights = () => {

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { IncomeType, TransactionType } from '../types/transactionType'
 import { useAppSelector } from '../store/store'
-import { getTopCategory } from '../utils/helperFunctions/helpers'
+import { getTopCategory } from '../utils/helperFunctions/insightData'
 
 interface HeaderCardsPropsType {
   setModalState:(val:"income") => void;
