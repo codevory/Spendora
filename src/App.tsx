@@ -1,21 +1,22 @@
-import { useState } from 'react'
+import React,{ useState,Suspense } from 'react'
 import { Toaster } from 'react-hot-toast'
 import './App.css'
-import DashBoardLayout from './pages/DashBoardLayout'
 import { Outlet, Route, Routes } from 'react-router-dom'
-import TransactionLayout from './pages/TransactionLayout'
-import CategoriesPage from './pages/CategoriesPage'
-import AnalyticsPage from './pages/AnalyticsPage'
-import { analytics } from './backend/firebaseConfig'
-import Signup from './pages/Signup'
-import Signin from './pages/Signin'
-import UserAccountPage from './pages/UserAccountPage'
+import Loader from './components/Loader'
+
+const DashBoardLayout = React.lazy(() => import('./pages/DashBoardLayout'))
+const TransactionLayout = React.lazy(() => import('./pages/TransactionLayout'))
+const CategoriesPage = React.lazy(() => import('./pages/CategoriesPage'))
+const AnalyticsPage = React.lazy(() => import('./pages/AnalyticsPage'))
+const Signup = React.lazy(() => import('./pages/Signup'))
+const Signin = React.lazy(() => import('./pages/Signin'))
+const UserAccountPage = React.lazy(() => import('./pages/UserAccountPage'))
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  analytics
   return (
     <>
+    <Suspense fallback={<Loader />}>
       <div>
    <Routes>
     <Route path='/transactions/tnx-details/:id' element={<TransactionLayout isOpen={isOpen} onToggle={() => setIsOpen((p) => !p)} />} />
@@ -30,6 +31,7 @@ function App() {
    <Outlet />
      <Toaster />
       </div>
+    </Suspense>
     </>
   )
 }

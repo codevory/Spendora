@@ -13,4 +13,15 @@ export default defineConfig({
   template: 'treemap', // 🔥 best view
 })
   ],
+  build:{
+    rollupOptions:{
+      output:{
+        manualChunks:{
+          charts:["react-chartjs-2","chart.js"],
+          firebase:["firebase/app","firebase/auth","firebase/firestore","firebase/analytics"],
+          vendor:["react","react-dom"],
+        }
+      }
+    }
+  }
 })

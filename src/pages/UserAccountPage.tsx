@@ -58,7 +58,7 @@ useEffect(() => {
         name: docData?.name || user.displayName || 'Spendora User',
         email: docData?.email || user.email,
         age: typeof docData?.age === 'number' ? docData.age : undefined,
-        image: docData?.image || user.photoURL || '/girl1.png',
+        image: docData?.image || user.photoURL || '/default-man.jpg',
       }
 
       if (isMounted) {

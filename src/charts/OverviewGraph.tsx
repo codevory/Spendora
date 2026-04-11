@@ -6,6 +6,7 @@ import { Chart as ChartJS,
     Tooltip,
     Legend,
    Title,
+   Filler,
    type ChartOptions} from "chart.js";
 import { useUserData } from "../Hooks/useUserData";
 
@@ -16,6 +17,7 @@ import { useUserData } from "../Hooks/useUserData";
     Tooltip,
     Legend,
     Title,
+    Filler
  )
 
  const options = {

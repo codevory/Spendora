@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
   type ChartData,
   type ChartOptions,
 } from "chart.js";
@@ -20,6 +21,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
+  Filler
 );
 
 const options = {

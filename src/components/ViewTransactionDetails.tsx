@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import EmptyState from './EmptyState';
+import { useMemo } from 'react'
 import type { TransactionType } from '../types/transactionType';
 
 interface TransactionDetailsPropsType {
@@ -11,7 +12,13 @@ interface TransactionDetailsPropsType {
     handleSearchTxns:() => void;
 }
 
-const ViewTransactionDetails = ({data,dateFrom,dateTo,setDateFrom,setDateTo,handleSearchTxns}:TransactionDetailsPropsType) => {
+const ViewTransactionDetails = ({
+    data,
+    dateFrom,
+    dateTo,
+    setDateFrom,
+    setDateTo,
+    handleSearchTxns}:TransactionDetailsPropsType) => {
 
     const { id } = useParams()
  
@@ -19,7 +26,9 @@ const ViewTransactionDetails = ({data,dateFrom,dateTo,setDateFrom,setDateTo,hand
     return <EmptyState content={"No data found"} />
    }
 
-        const tnxFound = data.find(tnx => tnx.transactionId === id)
+    const tnxFound = useMemo(() => {
+    return data.find(tnx => tnx.transactionId === id)
+    },[id])
   
     if(!tnxFound){
                 return (
@@ -50,7 +59,6 @@ const ViewTransactionDetails = ({data,dateFrom,dateTo,setDateFrom,setDateTo,hand
                     />
                 )
     }
-
 
   return (
      <div className='space-y-4'>

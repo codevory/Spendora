@@ -1,18 +1,18 @@
-import Layout from '../components/Layout'
+import Layout from '../components/Layout';
 import Loader from '../components/Loader';
-import MonthlyInsights from '../components/MonthlyInsights';
-import RecentTransactions from '../components/RecentTransactions';
 import { useUserData } from '../Hooks/useUserData';
-import { lazy,Suspense } from 'react'
+import React,{ Suspense } from 'react'
 
 interface AnalyticsPropsType {
   onToggle:() => void;
   isOpen:boolean;
 }
 const AnalyticsPage = ({onToggle,isOpen}:AnalyticsPropsType) => {
-  const DistributionGraph = lazy(() => import('../charts/DistributionGraph'));
-  const TrendGraph = lazy(() => import('../charts/TrendGraph'));
-
+  const MonthlyInsights =  React.lazy(() => import('../components/MonthlyInsights'));
+  const RecentTransactions = React.lazy(() => import('../components/RecentTransactions'));
+  const DistributionGraph = React.lazy(() => import('../charts/DistributionGraph'));
+  const TrendGraph = React.lazy(() => import('../charts/TrendGraph'));
+  
   const {analysisData} = useUserData()
   return (
    <Suspense fallback={<Loader />}>

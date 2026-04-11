@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react'
-import Layout from '../components/Layout'
+import React,{ useMemo, useState,Suspense } from 'react'
 import TransactionsContent from '../components/TransactionsContent'
 import ViewTransactionDetails from '../components/ViewTransactionDetails'
-import TrendGraph from '../charts/TrendGraph'
 import { useAppSelector } from '../store/store'
 import type { TransactionType } from '../types/transactionType'
 import { useUserData } from '../Hooks/useUserData'
+import Layout from '../components/Layout'
+import Loader from '../components/Loader'
 
 interface TransactionLayoutProps {
   onToggle:() => void;
@@ -13,6 +13,7 @@ interface TransactionLayoutProps {
 }
 
 const TransactionLayout = ({onToggle,isOpen}:TransactionLayoutProps) => {
+  const TrendGraph = React.lazy(() => import('../charts/TrendGraph'))
   const [query,setQuery] = useState<TransactionType['category'] | undefined>()
   const [dateFrom,setDateFrom] = useState<string>("")
   const [dateTo,setDateTo] = useState<string>("")
@@ -45,6 +46,7 @@ const TransactionLayout = ({onToggle,isOpen}:TransactionLayoutProps) => {
   const selectedCount = filteredData.length
 
   return (
+    <Suspense fallback={<Loader />}>
   <>
       <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={false}>
            <div className='container-main space-y-6'>
@@ -143,6 +145,7 @@ const TransactionLayout = ({onToggle,isOpen}:TransactionLayoutProps) => {
            </div>
       </Layout>
   </>
+    </Suspense>
   )
 }
 
