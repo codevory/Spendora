@@ -1,5 +1,5 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth, provider } from "../backend/firebaseConfig";
+import { getFirebaseServices } from "../backend/firebaseLazy";
 import toast from "react-hot-toast";
 
 interface handleGoogleSigninProps {
@@ -16,6 +16,7 @@ export async function handleGoogleSignin({
 }: handleGoogleSigninProps) {
   try {
     setIsLoading(true);
+    const { auth, provider } = await getFirebaseServices();
     const result = await signInWithPopup(auth, provider);
     const credentials = GoogleAuthProvider.credentialFromResult(result);
     console.log(credentials);

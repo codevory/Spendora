@@ -22,7 +22,7 @@ const UserProfile = ({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3 items-center">
           <img
-            src={image || "/girl1.png"}
+            src={image || "default-man.webp"}
             alt={name}
             width={78}
             height={78}

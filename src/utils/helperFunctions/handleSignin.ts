@@ -1,7 +1,7 @@
-import { auth, db } from "../../backend/firebaseConfig";
+import { getFirebaseServices } from "../../backend/firebaseLazy";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore/lite";
 
 interface hanldeSigninWithPasswordProps {
   setIsLoading: (val: boolean) => void;
@@ -29,6 +29,7 @@ export async function handleSigninWithPassword({
 }: hanldeSigninWithPasswordProps) {
   setIsLoading(true);
   e.preventDefault();
+  const { auth } = await getFirebaseServices();
   await signInWithEmailAndPassword(auth, email, password)
     .then((usr) => {
       success("🎉signin successfull");
@@ -53,6 +54,7 @@ export async function handleSigninWithPassword({
 }
 
 export async function querySnapshot() {
+  const { db } = await getFirebaseServices();
   const res = await getDocs(collection(db, "users"));
   res.forEach((doc) => {
     console.log(doc.data());

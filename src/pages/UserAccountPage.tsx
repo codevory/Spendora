@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import type { Auth } from "firebase/auth";
 import UserProfile from "../components/UserProfile";
 import Layout from "../components/Layout";
 import { useAppSelector } from "../store/store";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
-import { auth, db } from "../backend/firebaseConfig";
+import { collection, getDocs, limit, query, where } from "firebase/firestore/lite";
+import { getFirebaseServices } from "../backend/firebaseLazy";
 import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +29,7 @@ const UserAccountPage = ({
   const [data, setData] = useState<userData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [auth, setAuth] = useState<Auth | null>(null);
   const transactions = useAppSelector(
     (state) => state.transaction.transactions,
   );
@@ -42,6 +44,10 @@ const UserAccountPage = ({
       try {
         setIsLoading(true);
         setError(null);
+
+        const { auth, db } = await getFirebaseServices();
+        setAuth(auth);
+
 
         const user = auth.currentUser;
         if (!user?.email) {
@@ -67,7 +73,7 @@ const UserAccountPage = ({
           name: docData?.name || user.displayName || "Spendora User",
           email: docData?.email || user.email,
           age: typeof docData?.age === "number" ? docData.age : undefined,
-          image: docData?.image || user.photoURL || "/default-man.jpg",
+          image: docData?.image || "/default-man.webp",
         };
 
         if (isMounted) {
@@ -107,6 +113,7 @@ const UserAccountPage = ({
   }, [incomes, transactions]);
 
   const handleLogout = async () => {
+    if (!auth) return;
     const { signOut } = await import("firebase/auth");
     await signOut(auth);
     navigate("/signin");
@@ -143,7 +150,7 @@ const UserAccountPage = ({
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
             <UserProfile
               name={data?.name || "Spendora User"}
-              email={data?.email || auth.currentUser?.email || "No email"}
+              email={data?.email || auth?.currentUser?.email || "No email"}
               image={data?.image || "/girl1.png"}
               age={data?.age}
               onLogout={handleLogout}

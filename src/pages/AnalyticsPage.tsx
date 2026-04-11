@@ -1,27 +1,17 @@
+import DistributionGraph from "../charts/DistributionGraph";
+import TrendGraph from "../charts/TrendGraph";
 import Layout from "../components/Layout";
-import Loader from "../components/Loader";
+import MonthlyInsights from "../components/MonthlyInsights";
+import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
-import React, { Suspense } from "react";
 
 interface AnalyticsPropsType {
   onToggle: () => void;
   isOpen: boolean;
 }
 const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
-  const MonthlyInsights = React.lazy(
-    () => import("../components/MonthlyInsights"),
-  );
-  const RecentTransactions = React.lazy(
-    () => import("../components/RecentTransactions"),
-  );
-  const DistributionGraph = React.lazy(
-    () => import("../charts/DistributionGraph"),
-  );
-  const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
-
   const { analysisData } = useUserData();
   return (
-    <Suspense fallback={<Loader />}>
       <div className="bg-main">
         <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={false}>
           <div className="container-main space-y-6">
@@ -80,7 +70,6 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
           </div>
         </Layout>
       </div>
-    </Suspense>
   );
 };
 

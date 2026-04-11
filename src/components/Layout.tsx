@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import Navbar from "./Navbar";
 import SidebarMenu from "./SidebarMenu";
-import MobileMenu from "./MobileMenu";
+
+const MobileMenu = lazy(() => import("./MobileMenu"));
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,6 +11,21 @@ interface LayoutProps {
   isLoggedin: boolean;
 }
 const Layout = ({ children, onToggle, isOpen, isLoggedin }: LayoutProps) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const updateIsMobile = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    updateIsMobile();
+    mediaQuery.addEventListener("change", updateIsMobile);
+
+    return () => mediaQuery.removeEventListener("change", updateIsMobile);
+  }, []);
+
   return (
     <div className="flex flex-col ">
       <div className="navbar">
@@ -23,9 +39,11 @@ const Layout = ({ children, onToggle, isOpen, isLoggedin }: LayoutProps) => {
         </div>
         <div className="max-w-dvw w-full">{children}</div>
       </div>
-      <div className="block md:hidden">
-        <MobileMenu />
-      </div>
+      {isMobile ? (
+        <Suspense fallback={null}>
+          <MobileMenu />
+        </Suspense>
+      ) : null}
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React from "react";
-
 import { BiLock, BiUser } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import Loader from "./Loader";

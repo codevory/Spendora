@@ -14,7 +14,7 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
       return data;
     }
 
-    return data.filter((txn) => txn.category === query);
+    return data.sort((as,b) => b.createdAt - as.createdAt).filter((txn) => txn.category === query)
   }, [query, data]);
 
   const noData = (
@@ -37,7 +37,6 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
   if (!visibleData.length) {
     return <EmptyState content={noData} />;
   }
-  const sortedData = visibleData.sort((a, b) => b.createdAt - a.createdAt);
   return (
     <div className="transaction-container max-h-dvh overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900/70 p-3 shadow-lg">
       <div className="mb-3 flex items-center justify-between px-1">
@@ -59,7 +58,7 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
       </div>
 
       <div className="space-y-2 pt-3">
-        {sortedData.map((txn, idx) => (
+        {visibleData.map((txn, idx) => (
           <Link
             key={txn.transactionId}
             to={`/transactions/tnx-details/${txn.transactionId}`}

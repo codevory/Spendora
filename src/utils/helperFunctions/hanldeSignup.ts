@@ -1,5 +1,5 @@
-import { addDoc, collection } from "firebase/firestore";
-import { auth, db } from "../../backend/firebaseConfig";
+import { addDoc, collection } from "firebase/firestore/lite";
+import { getFirebaseServices } from "../../backend/firebaseLazy";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
 
@@ -36,6 +36,7 @@ export async function handleSignupWithEmailPassword({
 }: handleSignupProps) {
   setIsLoading(true);
   e.preventDefault();
+  const { auth } = await getFirebaseServices();
   await createUserWithEmailAndPassword(auth, email, password)
     .then((userCredentials) => {
       const data = {
@@ -72,6 +73,7 @@ interface dataProps {
 }
 async function addData({ username, email }: dataProps) {
   try {
+    const { db } = await getFirebaseServices();
     const docRef = await addDoc(collection(db, "users"), {
       name: username,
       email: email,

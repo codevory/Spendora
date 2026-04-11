@@ -1,8 +1,10 @@
-import React, { useState, Suspense } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleGoogleSignin } from "../utils/authService";
 import Loader from "../components/Loader";
 import { handleSigninWithPassword } from "../utils/helperFunctions/handleSignin";
+import LoginComponent from "../components/LoginComponent";
+import Layout from "../components/Layout";
 
 interface SigninPropsType {
   isOpen: boolean;
@@ -11,10 +13,6 @@ interface SigninPropsType {
 
 export let isLoggedin = false;
 const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
-  const LoginComponent = React.lazy(
-    () => import("../components/LoginComponent"),
-  );
-  const Layout = React.lazy(() => import("../components/Layout"));
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [isLoged, setIsLoged] = useState<boolean>(false);
@@ -23,7 +21,6 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
 
   isLoggedin = isLoged;
   return (
-    <Suspense fallback={<Loader />}>
       <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoged}>
         {isLoading && <Loader />}
         <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
@@ -53,7 +50,6 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
           />
         </div>
       </Layout>
-    </Suspense>
   );
 };
 

@@ -2,7 +2,8 @@ import { HiOutlineMenu } from "react-icons/hi";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileComponent from "./ProfileComponent";
-import { auth } from "../backend/firebaseConfig";
+import { getFirebaseServices } from "../backend/firebaseLazy";
+import type { Auth } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useMemo, useState } from "react";
 
@@ -14,21 +15,27 @@ interface NavbarPropsType {
 const Navbar = ({ onToggle, isLoggedin }: NavbarPropsType) => {
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState<string>("Guest");
-  const [photoURL, setPhotoURL] = useState<string>("/girl1.png");
-  const [hasSession, setHasSession] = useState<boolean>(
-    Boolean(auth.currentUser),
-  );
+  const [photoURL, setPhotoURL] = useState<string>("/default-man.webp");
+  const [hasSession, setHasSession] = useState<boolean>(false);
+  const [auth, setAuth] = useState<Auth | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setHasSession(Boolean(user));
-      setDisplayName(
-        user?.displayName || user?.email?.split("@")[0] || "Guest",
-      );
-      setPhotoURL(user?.photoURL || "/girl1.png");
+    let unsubscribe: (() => void) | null = null;
+
+    getFirebaseServices().then(({ auth: firebaseAuth }) => {
+      setAuth(firebaseAuth);
+      unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+        setHasSession(Boolean(user));
+        setDisplayName(
+          user?.displayName || user?.email?.split("@")[0] || "Guest",
+        );
+        setPhotoURL(user?.photoURL || "/default-man.webp");
+      });
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const isAuthenticated = useMemo(
@@ -37,6 +44,7 @@ const Navbar = ({ onToggle, isLoggedin }: NavbarPropsType) => {
   );
 
   const handleLogout = async () => {
+    if (!auth) return;
     try {
       await signOut(auth);
     } finally {

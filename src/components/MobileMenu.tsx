@@ -1,9 +1,9 @@
+import { NavLink } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { GrTransaction } from "react-icons/gr";
 import { IoHome } from "react-icons/io5";
 import { SiGoogleanalytics } from "react-icons/si";
 import { LuTags } from "react-icons/lu";
-import { NavLink } from "react-router-dom";
 
 const mobileNavItems = [
   { to: "/", label: "Home", icon: IoHome },
@@ -14,6 +14,8 @@ const mobileNavItems = [
 ] as const;
 
 const MobileMenu = () => {
+
+
   return (
     <div className="mobile-menu">
       {mobileNavItems.map((item) => {

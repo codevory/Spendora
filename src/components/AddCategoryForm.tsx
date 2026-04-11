@@ -65,7 +65,7 @@ const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
         </div>
 
         <button
-          className="button w-20 h-11 font-semibold hover:bg-slate-500 active:scale-95 glass"
+          className="btn-primary w-20 h-11 font-semibold hover:bg-slate-500 active:scale-95"
           type="submit"
         >
           Add

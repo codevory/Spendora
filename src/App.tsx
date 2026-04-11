@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import "./App.css";
 import { Outlet, Route, Routes } from "react-router-dom";
 import Loader from "./components/Loader";
+import EmptyState from "./components/EmptyState";
 
 const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
 const TransactionLayout = React.lazy(() => import("./pages/TransactionLayout"));
@@ -88,6 +89,7 @@ function App() {
                 />
               }
             />
+            <Route path="*" element={<EmptyState content="No page found" /> } />
           </Routes>
           <Outlet />
           <Toaster />

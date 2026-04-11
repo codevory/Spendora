@@ -164,11 +164,14 @@ function getMonthlyExpense({ trans, month }: MonthlyDataTypes) {
       return date.getMonth() >= start && date.getFullYear() <= end;
     })
     .reduce<Record<string, number>>((acc, curr) => {
-      if (!acc[getMonthName(curr.date)]) {
-        acc[getMonthName(curr.date)] =
-          (acc[getMonthName(curr.date)] ?? 0) + Number(curr.amount);
+      const month = new Date(curr.date).toLocaleDateString("en-US", {
+    month: "short",
+  })
+      if (!acc[month]) {
+        acc[month] =
+          (acc[month] ?? 0) + Number(curr.amount);
       } else {
-        acc[getMonthName(curr.date)] += Number(curr.amount);
+        acc[month] += Number(curr.amount);
       }
       return acc;
     }, {});
@@ -187,18 +190,16 @@ function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
       return date.getMonth() >= start && date.getFullYear() <= end;
     })
     .reduce<Record<string, number>>((acc, curr) => {
-      if (!acc[getMonthName(curr.date)]) {
-        acc[getMonthName(curr.date)] =
-          (acc[getMonthName(curr.date)] ?? 0) + Number(curr.amount);
+    const month = new Date(curr.date).toLocaleDateString("en-US", {
+    month: "short",
+  })
+      if (!acc[month]) {
+        acc[month] =
+          (acc[month] ?? 0) + Number(curr.amount);
       } else {
-        acc[getMonthName(curr.date)] += Number(curr.amount);
+        acc[month] += Number(curr.amount);
       }
       return acc;
     }, {});
 }
 
-function getMonthName(dateString: string) {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    month: "short",
-  });
-}

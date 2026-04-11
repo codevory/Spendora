@@ -1,18 +1,16 @@
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState } from "react";
 import AddTransactionForm from "../components/AddTransactionForm";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
 import { useAppSelector } from "../store/store";
 import HeaderCards from "./HeaderCards";
-import Loader from "./Loader";
+import TrendGraph from "../charts/TrendGraph";
+import DistributionGraph from "../charts/DistributionGraph";
+import OverviewGraph from "../charts/OverviewGraph";
 
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
 }
-
-const DistributionGraph = lazy(() => import("../charts/DistributionGraph"));
-const OverviewGraph = lazy(() => import("../charts/OverviewGraph"));
-const TrendGraph = lazy(() => import("../charts/TrendGraph"));
 
 const MainContent = ({ setModalState }: MainContentPropsType) => {
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
@@ -67,7 +65,6 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
         : "Track month-over-month movement to detect spending spikes early.";
 
   return (
-    <Suspense fallback={<Loader />}>
       <div className="bg-main">
         <div className="container-main space-y-6">
           <HeaderCards setModalState={setModalState} />
@@ -174,7 +171,6 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
           </section>
         </div>
       </div>
-    </Suspense>
   );
 };
 

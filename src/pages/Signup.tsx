@@ -1,9 +1,11 @@
-import React, { useState, Suspense } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isLoggedin } from "./Signin";
 import Loader from "../components/Loader";
 import { handleGoogleSignin } from "../utils/authService";
 import { handleSignupWithEmailPassword } from "../utils/helperFunctions/hanldeSignup";
+import SignupComponent from "../components/SignupComponent";
+import Layout from "../components/Layout";
 
 interface SignupPropsType {
   isOpen: boolean;
@@ -16,10 +18,6 @@ interface userDataType {
 }
 
 const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
-  const Layout = React.lazy(() => import("../components/Layout"));
-  const SignupComponent = React.lazy(
-    () => import("../components/SignupComponent"),
-  );
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -28,11 +26,9 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
     email: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-
   const navigate = useNavigate();
 
   return (
-    <Suspense fallback={<Loader />}>
       <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoggedin}>
         {isLoading && <Loader />}
         <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
@@ -67,7 +63,6 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
           />
         </div>
       </Layout>
-    </Suspense>
   );
 };
 
