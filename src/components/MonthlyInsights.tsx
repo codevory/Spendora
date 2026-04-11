@@ -1,21 +1,30 @@
 import { useAppSelector } from "../store/store";
 import { insightData } from "../utils/helperFunctions/insightData";
 
-
 const MonthlyInsights = () => {
-const incomeTransactions = useAppSelector((state) => state.incomeTransaction.incomeTransactions)
-const expenseTransactions = useAppSelector((state) => state.transaction.transactions)
+  const incomeTransactions = useAppSelector(
+    (state) => state.incomeTransaction.incomeTransactions,
+  );
+  const expenseTransactions = useAppSelector(
+    (state) => state.transaction.transactions,
+  );
 
-const insights = insightData({incomeTransactions:incomeTransactions,transactions:expenseTransactions})
+  const insights = insightData({
+    incomeTransactions: incomeTransactions,
+    transactions: expenseTransactions,
+  });
 
   const hasData = insights.totalExpense > 0 || insights.totalIncome > 0;
 
   if (!hasData) {
     return (
       <div className="card h-full">
-        <h2 className="text-xl font-semibold text-slate-100">Monthly Insights</h2>
+        <h2 className="text-xl font-semibold text-slate-100">
+          Monthly Insights
+        </h2>
         <p className="mt-3 text-sm text-slate-400">
-          Add transactions and income entries to unlock smart month-to-date insights.
+          Add transactions and income entries to unlock smart month-to-date
+          insights.
         </p>
       </div>
     );
@@ -25,7 +34,9 @@ const insights = insightData({incomeTransactions:incomeTransactions,transactions
     <div className="card h-full space-y-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h2 className="text-xl font-semibold text-slate-100">Monthly Insights</h2>
+          <h2 className="text-xl font-semibold text-slate-100">
+            Monthly Insights
+          </h2>
           <p className="text-xs text-slate-400">{insights.monthTitle}</p>
         </div>
         <span
@@ -101,7 +112,9 @@ const insights = insightData({incomeTransactions:incomeTransactions,transactions
               </p>
             </>
           ) : (
-            <p className="mt-1 text-sm text-slate-400">No category data available.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              No category data available.
+            </p>
           )}
         </div>
 
@@ -113,15 +126,21 @@ const insights = insightData({incomeTransactions:incomeTransactions,transactions
                 {insights.biggestExpense.name}
               </p>
               <p className="text-xs text-slate-400">
-                {formatCurrency(inshightsSafe(insights.biggestExpense.amount))} on{" "}
-                {new Date(insights.biggestExpense.date).toLocaleDateString("en-US", {
-                  day: "2-digit",
-                  month: "short",
-                })}
+                {formatCurrency(inshightsSafe(insights.biggestExpense.amount))}{" "}
+                on{" "}
+                {new Date(insights.biggestExpense.date).toLocaleDateString(
+                  "en-US",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                  },
+                )}
               </p>
             </>
           ) : (
-            <p className="mt-1 text-sm text-slate-400">No expense transactions yet.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              No expense transactions yet.
+            </p>
           )}
         </div>
       </div>

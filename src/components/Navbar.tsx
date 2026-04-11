@@ -1,44 +1,51 @@
-import { HiOutlineMenu } from "react-icons/hi"
-import ThemeSwitcher from "./ThemeSwitcher"
-import { Link, useNavigate } from "react-router-dom"
-import ProfileComponent from "./ProfileComponent"
-import { auth } from "../backend/firebaseConfig"
-import { onAuthStateChanged, signOut } from "firebase/auth"
-import { useEffect, useMemo, useState } from "react"
+import { HiOutlineMenu } from "react-icons/hi";
+import ThemeSwitcher from "./ThemeSwitcher";
+import { Link, useNavigate } from "react-router-dom";
+import ProfileComponent from "./ProfileComponent";
+import { auth } from "../backend/firebaseConfig";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useEffect, useMemo, useState } from "react";
 
 interface NavbarPropsType {
-    onToggle:() => void
-    isLoggedin:boolean
+  onToggle: () => void;
+  isLoggedin: boolean;
 }
 
-const Navbar = ({onToggle,isLoggedin}:NavbarPropsType) => {
-  const navigate = useNavigate()
-  const [displayName, setDisplayName] = useState<string>('Guest')
-  const [photoURL, setPhotoURL] = useState<string>('/girl1.png')
-  const [hasSession, setHasSession] = useState<boolean>(Boolean(auth.currentUser))
+const Navbar = ({ onToggle, isLoggedin }: NavbarPropsType) => {
+  const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState<string>("Guest");
+  const [photoURL, setPhotoURL] = useState<string>("/girl1.png");
+  const [hasSession, setHasSession] = useState<boolean>(
+    Boolean(auth.currentUser),
+  );
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setHasSession(Boolean(user))
-      setDisplayName(user?.displayName || user?.email?.split('@')[0] || 'Guest')
-      setPhotoURL(user?.photoURL || '/girl1.png')
-    })
+      setHasSession(Boolean(user));
+      setDisplayName(
+        user?.displayName || user?.email?.split("@")[0] || "Guest",
+      );
+      setPhotoURL(user?.photoURL || "/girl1.png");
+    });
 
-    return () => unsubscribe()
-  }, [])
+    return () => unsubscribe();
+  }, []);
 
-  const isAuthenticated = useMemo(() => hasSession || isLoggedin, [hasSession, isLoggedin])
+  const isAuthenticated = useMemo(
+    () => hasSession || isLoggedin,
+    [hasSession, isLoggedin],
+  );
 
   const handleLogout = async () => {
     try {
-      await signOut(auth)
+      await signOut(auth);
     } finally {
-      navigate('/signin')
+      navigate("/signin");
     }
-  }
+  };
 
   return (
-     <div className="navbar h-16 border-b border-slate-700/70 px-4 md:px-6">
+    <div className="navbar h-16 border-b border-slate-700/70 px-4 md:px-6">
       <div className="flex h-full items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <button
@@ -52,7 +59,9 @@ const Navbar = ({onToggle,isLoggedin}:NavbarPropsType) => {
 
           <div className="hidden md:block">
             <p className="text-xs tracking-[0.2em] text-slate-500">SPENDORA</p>
-            <p className="text-sm font-semibold text-slate-200">Personal finance dashboard</p>
+            <p className="text-sm font-semibold text-slate-200">
+              Personal finance dashboard
+            </p>
           </div>
         </div>
 
@@ -70,18 +79,25 @@ const Navbar = ({onToggle,isLoggedin}:NavbarPropsType) => {
               Logout
             </button>
           ) : (
-            <Link to='/signin' className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95">
+            <Link
+              to="/signin"
+              className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
+            >
               Login
             </Link>
           )}
 
           <div className="rounded-xl border border-slate-700 bg-slate-900/70 px-2 py-1">
-            <ProfileComponent user={displayName} imgSrc={photoURL} isLoggedin={isAuthenticated} />
+            <ProfileComponent
+              user={displayName}
+              imgSrc={photoURL}
+              isLoggedin={isAuthenticated}
+            />
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

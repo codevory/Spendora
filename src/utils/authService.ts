@@ -1,23 +1,26 @@
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth, provider } from '../backend/firebaseConfig';
-import toast from 'react-hot-toast';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, provider } from "../backend/firebaseConfig";
+import toast from "react-hot-toast";
 
 interface handleGoogleSigninProps {
-  setIsLoading:(val:boolean) => void;
-  isLoged:boolean;
+  setIsLoading: (val: boolean) => void;
+  isLoged: boolean;
 }
 
 const success = (message: string) => toast.success(message);
 const fail = (message: string) => toast.error(message);
 
-export async function handleGoogleSignin({setIsLoading,isLoged}:handleGoogleSigninProps) {
+export async function handleGoogleSignin({
+  setIsLoading,
+  isLoged,
+}: handleGoogleSigninProps) {
   try {
-    setIsLoading(true)
+    setIsLoading(true);
     const result = await signInWithPopup(auth, provider);
     const credentials = GoogleAuthProvider.credentialFromResult(result);
     console.log(credentials);
     success("🎉 signin successfull");
-    setIsLoading(false)
+    setIsLoading(false);
     isLoged = true;
     return result;
   } catch (err: any) {
@@ -32,5 +35,5 @@ export async function handleGoogleSignin({setIsLoading,isLoged}:handleGoogleSign
     isLoged = false;
     throw err;
   }
-  console.log(isLoged)
+  console.log(isLoged);
 }

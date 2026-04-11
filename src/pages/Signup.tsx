@@ -1,66 +1,74 @@
-import React,{ useState,Suspense } from 'react'
-import { useNavigate } from 'react-router-dom';
-import { isLoggedin } from './Signin';
-import Loader from '../components/Loader';
-import { handleGoogleSignin } from '../utils/authService'
-import { handleSignupWithEmailPassword } from '../utils/helperFunctions/hanldeSignup'
+import React, { useState, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
+import { isLoggedin } from "./Signin";
+import Loader from "../components/Loader";
+import { handleGoogleSignin } from "../utils/authService";
+import { handleSignupWithEmailPassword } from "../utils/helperFunctions/hanldeSignup";
 
 interface SignupPropsType {
-  isOpen:boolean;
-    onToggle:() => void;
-  }
+  isOpen: boolean;
+  onToggle: () => void;
+}
 
-  interface userDataType{
-    name:string | null,
-    email:string | null
-  }
-  
-  const Signup = ({isOpen,onToggle}:SignupPropsType) => {
-          const Layout = React.lazy(() => import('../components/Layout'))
-          const SignupComponent = React.lazy(() => import( '../components/SignupComponent'))
-          const [username,setUsername] = useState<string>('')
-          const [password,setPassword] = useState<string>('')
-          const [email,setEmail] = useState<string>('')
-          const [userData,setUserdata] = useState<userDataType>({name:'',email:''})
-          const [isLoading,setIsLoading] = useState(false)
+interface userDataType {
+  name: string | null;
+  email: string | null;
+}
 
-  const navigate = useNavigate()
+const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
+  const Layout = React.lazy(() => import("../components/Layout"));
+  const SignupComponent = React.lazy(
+    () => import("../components/SignupComponent"),
+  );
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [userData, setUserdata] = useState<userDataType>({
+    name: "",
+    email: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-
+  const navigate = useNavigate();
 
   return (
     <Suspense fallback={<Loader />}>
-     <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoggedin}>
-    {isLoading && <Loader />}
-    <div className='max-w-dvw h-dvh flex justify-center items-center p-2 bg-main'>
-         <SignupComponent 
-            username={username} 
+      <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoggedin}>
+        {isLoading && <Loader />}
+        <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
+          <SignupComponent
+            username={username}
             setUsername={setUsername}
-            password={password} 
+            password={password}
             setPassword={setPassword}
-            email={email} 
+            email={email}
             setEmail={setEmail}
-            handleFormSubmit={(e) => handleSignupWithEmailPassword({
-              e:e,
-              email:email,
-              password:password,
-              setIsLoading:setIsLoading,
-              setPassword:setPassword,
-              username:username,
-              setUserdata:setUserdata,
-              setUsername:setUsername,
-              navigate:navigate,
-              userData:userData
-            })}
+            handleFormSubmit={(e) =>
+              handleSignupWithEmailPassword({
+                e: e,
+                email: email,
+                password: password,
+                setIsLoading: setIsLoading,
+                setPassword: setPassword,
+                username: username,
+                setUserdata: setUserdata,
+                setUsername: setUsername,
+                navigate: navigate,
+                userData: userData,
+              })
+            }
             isLoading={isLoading}
-            handleSignupGoogle={() => handleGoogleSignin({
-              setIsLoading:setIsLoading,
-              isLoged:isLoggedin})}
-            />
-    </div>
-    </Layout>
+            handleSignupGoogle={() =>
+              handleGoogleSignin({
+                setIsLoading: setIsLoading,
+                isLoged: isLoggedin,
+              })
+            }
+          />
+        </div>
+      </Layout>
     </Suspense>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

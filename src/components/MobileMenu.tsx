@@ -1,22 +1,21 @@
-import { CgProfile } from 'react-icons/cg'
-import { GrTransaction } from 'react-icons/gr'
-import { IoHome } from 'react-icons/io5'
-import { SiGoogleanalytics } from 'react-icons/si'
-import { LuTags } from 'react-icons/lu'
-import { NavLink } from 'react-router-dom'
+import { CgProfile } from "react-icons/cg";
+import { GrTransaction } from "react-icons/gr";
+import { IoHome } from "react-icons/io5";
+import { SiGoogleanalytics } from "react-icons/si";
+import { LuTags } from "react-icons/lu";
+import { NavLink } from "react-router-dom";
 
 const mobileNavItems = [
-  { to: '/', label: 'Home', icon: IoHome },
-  { to: '/analytics', label: 'Analytics', icon: SiGoogleanalytics },
-  { to: '/transactions', label: 'Transactions', icon: GrTransaction },
-  { to: '/categories', label: 'Categories', icon: LuTags },
-  { to: '/me', label: 'Profile', icon: CgProfile },
+  { to: "/", label: "Home", icon: IoHome },
+  { to: "/analytics", label: "Analytics", icon: SiGoogleanalytics },
+  { to: "/transactions", label: "Transactions", icon: GrTransaction },
+  { to: "/categories", label: "Categories", icon: LuTags },
+  { to: "/me", label: "Profile", icon: CgProfile },
 ] as const;
 
 const MobileMenu = () => {
-
   return (
-    <div className='mobile-menu'>
+    <div className="mobile-menu">
       {mobileNavItems.map((item) => {
         const Icon = item.icon;
 
@@ -25,16 +24,16 @@ const MobileMenu = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `mobile-menu-items ${isActive ? 'mobile-menu-items-active' : ''}`
+              `mobile-menu-items ${isActive ? "mobile-menu-items-active" : ""}`
             }
           >
             <Icon size={20} />
-            <span className='text-[10px] font-semibold'>{item.label}</span>
+            <span className="text-[10px] font-semibold">{item.label}</span>
           </NavLink>
         );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default MobileMenu
+export default MobileMenu;

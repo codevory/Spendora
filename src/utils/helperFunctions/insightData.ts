@@ -1,44 +1,45 @@
 import type { IncomeType, TransactionType } from "../../types/transactionType";
-import { useMemo } from 'react'
+import { useMemo } from "react";
 interface InsightData {
-    monthTitle: string;
-    totalExpense: number;
-    totalIncome: number;
-    avgDailySpend: number;
-    dailyRunRate: number;
-    projectedSpend: number;
-    savingsRate: number;
-    expenseDeltaPercent: number;
-    topCategory: { name: string; amount: number; sharePercent: number } | null;
-    biggestExpense: { name: string; amount: number; date: string } | null;
+  monthTitle: string;
+  totalExpense: number;
+  totalIncome: number;
+  avgDailySpend: number;
+  dailyRunRate: number;
+  projectedSpend: number;
+  savingsRate: number;
+  expenseDeltaPercent: number;
+  topCategory: { name: string; amount: number; sharePercent: number } | null;
+  biggestExpense: { name: string; amount: number; date: string } | null;
 }
 interface IncomeTxnsTpe {
-    incomeTransactions:IncomeType[];
-    transactions:TransactionType[]
+  incomeTransactions: IncomeType[];
+  transactions: TransactionType[];
 }
 
+export const getTopCategory = (transactions: TransactionType[]) => {
+  const map: Record<string, number> = {};
+  if (!transactions.length) return { category: null, amount: 0 };
 
+  transactions.forEach((t) => {
+    map[t.category] = (map[t.category] || 0) + t.amount;
+  });
 
-export const getTopCategory  = (transactions:TransactionType[]) => {
-    const map:Record<string,number> = {};
-    if(!transactions.length) return {category:null,amount:0};
-    
-    transactions.forEach((t) => {
-        map[t.category] = (map[t.category] || 0 ) + t.amount ;
-    });
-    
-    const entries = Object.entries(map);
-    if(!entries.length) return {category:null,amount:0};
-    
- const [category,amount] = entries.length ? entries.reduce((max,curr) => (curr[1] > max[1] ? curr : max)) : [null,0]
- 
- return {category,amount};
-}
+  const entries = Object.entries(map);
+  if (!entries.length) return { category: null, amount: 0 };
 
+  const [category, amount] = entries.length
+    ? entries.reduce((max, curr) => (curr[1] > max[1] ? curr : max))
+    : [null, 0];
 
-export const insightData = ({incomeTransactions,transactions}:IncomeTxnsTpe) => {
-return useMemo<InsightData>(() => {
+  return { category, amount };
+};
 
+export const insightData = ({
+  incomeTransactions,
+  transactions,
+}: IncomeTxnsTpe) => {
+  return useMemo<InsightData>(() => {
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -64,9 +65,18 @@ return useMemo<InsightData>(() => {
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     });
 
-    const totalExpense = currentMonthTxns.reduce((acc, t) => acc + Number(t.amount), 0);
-    const previousExpense = prevMonthTxns.reduce((acc, t) => acc + Number(t.amount), 0);
-    const totalIncome = currentMonthIncome.reduce((acc, t) => acc + Number(t.amount), 0);
+    const totalExpense = currentMonthTxns.reduce(
+      (acc, t) => acc + Number(t.amount),
+      0,
+    );
+    const previousExpense = prevMonthTxns.reduce(
+      (acc, t) => acc + Number(t.amount),
+      0,
+    );
+    const totalIncome = currentMonthIncome.reduce(
+      (acc, t) => acc + Number(t.amount),
+      0,
+    );
 
     const avgDailySpend = totalExpense / dayOfMonth;
     const projectedSpend = avgDailySpend * daysInMonth;
@@ -79,23 +89,26 @@ return useMemo<InsightData>(() => {
     if (previousExpense === 0) {
       expenseDeltaPercent = totalExpense > 0 ? 100 : 0;
     } else {
-      expenseDeltaPercent = ((totalExpense - previousExpense) / previousExpense) * 100;
+      expenseDeltaPercent =
+        ((totalExpense - previousExpense) / previousExpense) * 100;
     }
 
-    const categoryMap = currentMonthTxns.reduce<Record<string, number>>((acc, txn) => {
-      acc[txn.category] = (acc[txn.category] || 0) + Number(txn.amount);
-      return acc;
-    }, {});
-
-    const topCategoryEntry = Object.entries(categoryMap).reduce<[string, number] | null>(
-      (top, current) => {
-        if (!top || current[1] > top[1]) {
-          return current;
-        }
-        return top;
+    const categoryMap = currentMonthTxns.reduce<Record<string, number>>(
+      (acc, txn) => {
+        acc[txn.category] = (acc[txn.category] || 0) + Number(txn.amount);
+        return acc;
       },
-      null,
+      {},
     );
+
+    const topCategoryEntry = Object.entries(categoryMap).reduce<
+      [string, number] | null
+    >((top, current) => {
+      if (!top || current[1] > top[1]) {
+        return current;
+      }
+      return top;
+    }, null);
 
     const topCategory =
       topCategoryEntry && totalExpense > 0
@@ -106,15 +119,14 @@ return useMemo<InsightData>(() => {
           }
         : null;
 
-    const biggestTxn = currentMonthTxns.reduce<typeof currentMonthTxns[number] | null>(
-      (max, txn) => {
-        if (!max || txn.amount > max.amount) {
-          return txn;
-        }
-        return max;
-      },
-      null,
-    );
+    const biggestTxn = currentMonthTxns.reduce<
+      (typeof currentMonthTxns)[number] | null
+    >((max, txn) => {
+      if (!max || txn.amount > max.amount) {
+        return txn;
+      }
+      return max;
+    }, null);
 
     const biggestExpense = biggestTxn
       ? {
@@ -125,7 +137,10 @@ return useMemo<InsightData>(() => {
       : null;
 
     return {
-      monthTitle: now.toLocaleString("en-US", { month: "long", year: "numeric" }),
+      monthTitle: now.toLocaleString("en-US", {
+        month: "long",
+        year: "numeric",
+      }),
       totalExpense,
       totalIncome,
       avgDailySpend,
@@ -137,5 +152,4 @@ return useMemo<InsightData>(() => {
       biggestExpense,
     };
   }, [incomeTransactions, transactions]);
-}
-
+};

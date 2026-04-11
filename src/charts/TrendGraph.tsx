@@ -21,7 +21,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const options = {
@@ -51,7 +51,8 @@ const options = {
       padding: 12,
       displayColors: false,
       callbacks: {
-        label: (context) => ` ₹${Number(context.parsed.y).toLocaleString("en-IN")}`,
+        label: (context) =>
+          ` ₹${Number(context.parsed.y).toLocaleString("en-IN")}`,
       },
     },
   },
@@ -80,9 +81,9 @@ const options = {
   },
 } satisfies ChartOptions<"line">;
 interface TrendGraphPropsType {
-  data:ChartData<"line">;
+  data: ChartData<"line">;
 }
-const TrendGraph = ({data}:TrendGraphPropsType) => {
+const TrendGraph = ({ data }: TrendGraphPropsType) => {
   return (
     <div className="chart trend-graph min-h-80 rounded-2xl border border-slate-700 bg-slate-900/50 p-3 md:p-4">
       <Line
