@@ -1,4 +1,5 @@
 import React,{ useState,Suspense } from 'react'
+import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from 'react-hot-toast'
 import './App.css'
 import { Outlet, Route, Routes } from 'react-router-dom'
@@ -30,6 +31,7 @@ function App() {
    </Routes>
    <Outlet />
      <Toaster />
+     <Analytics />
       </div>
     </Suspense>
     </>
