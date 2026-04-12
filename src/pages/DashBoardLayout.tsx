@@ -14,14 +14,13 @@ interface DashboardPropsType {
 const DashBoardLayout = ({
   onToggle,
   isOpen,
-  isLoggedin,
 }: DashboardPropsType) => {
   const [modalState, setModalState] = useState<
     "income" | "category" | "closed"
   >("closed");
   return (
     <div className="relative">
-      <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={isLoggedin}>
+      <Layout onToggle={onToggle} isOpen={isOpen}>
         <>
           {modalState !== "closed" &&
             createPortal(

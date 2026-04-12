@@ -6,13 +6,12 @@ import { getFirebaseServices } from "../backend/firebaseLazy";
 import type { Auth } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useMemo, useState } from "react";
-
+import { isLoggedin } from "../pages/Signin";
 interface NavbarPropsType {
   onToggle: () => void;
-  isLoggedin: boolean;
 }
 
-const Navbar = ({ onToggle, isLoggedin }: NavbarPropsType) => {
+const Navbar = ({ onToggle }: NavbarPropsType) => {
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState<string>("Guest");
   const [photoURL, setPhotoURL] = useState<string>("/default-man.webp");

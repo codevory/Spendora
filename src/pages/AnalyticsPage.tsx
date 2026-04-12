@@ -9,11 +9,11 @@ interface AnalyticsPropsType {
   onToggle: () => void;
   isOpen: boolean;
 }
-const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
+const AnalyticsPage = ({ onToggle, isOpen}: AnalyticsPropsType) => {
   const { analysisData } = useUserData();
   return (
       <div className="bg-main">
-        <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={false}>
+        <Layout onToggle={onToggle} isOpen={isOpen} >
           <div className="container-main space-y-6">
             <section className="rounded-2xl border border-slate-700 bg-linear-to-r from-slate-800 to-slate-900 p-4 md:p-6 shadow-lg">
               <p className="text-xs tracking-wider text-slate-400">

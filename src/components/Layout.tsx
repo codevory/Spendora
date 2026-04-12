@@ -8,9 +8,8 @@ interface LayoutProps {
   children: ReactNode;
   isOpen: boolean;
   onToggle: () => void;
-  isLoggedin: boolean;
 }
-const Layout = ({ children, onToggle, isOpen, isLoggedin }: LayoutProps) => {
+const Layout = ({ children, onToggle, isOpen }: LayoutProps) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const Layout = ({ children, onToggle, isOpen, isLoggedin }: LayoutProps) => {
   return (
     <div className="flex flex-col ">
       <div className="navbar">
-        <Navbar onToggle={onToggle} isLoggedin={isLoggedin} />
+        <Navbar onToggle={onToggle} />
       </div>
       <div className="flex ">
         <div

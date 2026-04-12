@@ -1,4 +1,7 @@
+import { isLoggedin } from "../pages/Signin";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useState,useEffect } from 'react'
+
 
 interface UserProfileProps {
   name: string;
@@ -17,6 +20,16 @@ const UserProfile = ({
   onLogout,
   onDeleteAccount,
 }: UserProfileProps) => {
+  const [btnContent,setBtnContent] = useState<string>('Login')
+
+ useEffect(() => {
+  if(!isLoggedin){
+    setBtnContent("Login")
+  }
+  else{
+    setBtnContent("Logout")
+  }
+ },[isLoggedin])
   return (
     <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 shadow-lg">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -44,13 +57,15 @@ const UserProfile = ({
 
       <div className="mt-5 flex flex-col gap-2">
         <ThemeSwitcher />
-        <button
+      <button
           type="button"
           onClick={onLogout}
-          className="h-10 rounded-lg bg-slate-900 text-slate-100 font-semibold cursor-pointer transition hover:bg-slate-700 active:scale-95"
+          className={`h-10 rounded-lg bg-slate-900 text-slate-100 font-semiboldtransition hover:bg-slate-700 
+            active:scale-95 cursor-pointer`}
         >
-          Logout
+         {btnContent}
         </button>
+
         <button
           type="button"
           onClick={onDeleteAccount}

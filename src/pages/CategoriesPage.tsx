@@ -6,7 +6,7 @@ interface CategoriesPagePropsType {
   onToggle: () => void;
   isOpen: boolean;
 }
-const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
+const CategoriesPage = ({ onToggle, isOpen}: CategoriesPagePropsType) => {
   const data = useAppSelector((state) => state.transaction.transactions);
   const categoryCount = useAppSelector(
     (state) => state.transaction.categories.length,
@@ -14,7 +14,7 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
   const totalTransactions = data.length;
 
   return (
-    <Layout onToggle={onToggle} isOpen={isOpen} isLoggedin={true}>
+    <Layout onToggle={onToggle} isOpen={isOpen} >
       <div className="bg-main min-h-[calc(100vh-4rem)] p-4 md:p-6">
         <div className="space-y-6">
           <section className="rounded-2xl border border-slate-700 bg-linear-to-r from-slate-800 to-slate-900 p-4 md:p-6 shadow-lg">

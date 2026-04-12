@@ -21,7 +21,7 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
 
   isLoggedin = isLoged;
   return (
-      <Layout isOpen={isOpen} onToggle={onToggle} isLoggedin={isLoged}>
+      <Layout isOpen={isOpen} onToggle={onToggle}>
         {isLoading && <Loader />}
         <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
           <LoginComponent

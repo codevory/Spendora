@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 interface UserAccountPropsType {
   onToggle: () => void;
   isOpen: boolean;
-  isLoggedin: boolean;
 }
 interface userData {
   name: string;
@@ -22,7 +21,6 @@ interface userData {
 
 const UserAccountPage = ({
   onToggle,
-  isLoggedin,
   isOpen,
 }: UserAccountPropsType) => {
   const navigate = useNavigate();
@@ -126,7 +124,7 @@ const UserAccountPage = ({
   };
 
   return (
-    <Layout onToggle={onToggle} isLoggedin={isLoggedin} isOpen={isOpen}>
+    <Layout onToggle={onToggle} isOpen={isOpen}>
       <div className="bg-main min-h-[calc(100vh-4rem)] p-4 md:p-6">
         {isLoading ? <Loader /> : null}
 
