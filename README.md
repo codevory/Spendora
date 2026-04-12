@@ -1,74 +1,106 @@
 # Spendora
 
-Spendora is a personal finance dashboard for tracking expenses, income, and spending categories in one place. It is built with React, TypeScript, Vite, Redux Toolkit, Tailwind CSS, and Chart.js.
+Spendora is a personal finance tracker that helps users manage expenses, income, and categories with a modern analytics-first dashboard.
 
-The app focuses on three things:
+The project is built with React, TypeScript, Vite, Redux Toolkit, Tailwind CSS, Chart.js, and Firebase Authentication.
 
-- Recording transactions quickly.
-- Showing a clear snapshot of spending habits.
-- Keeping data in the browser so it remains available after refresh.
+## Features
 
-## What You Can Do
-
-- Add and review expense transactions.
-- Add income entries.
-- Create and manage spending categories.
-- Filter transactions by category and date range.
-- Compare monthly spending with charts and summary cards.
-- Open detailed views for individual transactions.
-
-## Main Screens
-
-- Dashboard: summary cards, recent transactions, quick add form, and spending charts.
-- Transactions: browse transaction history, filter by category, and search by date range.
-- Categories: create categories and view the categories already in use.
-- Add Income: record income entries in a dedicated form.
+- Expense transaction management (add, edit, delete, and detail view)
+- Income tracking with monthly analysis integration
+- Category management for custom spending buckets
+- Analytics dashboard with:
+  - income vs expense trend
+  - spending distribution chart
+  - monthly insight cards (savings rate, top category, biggest expense, projected spend)
+- Recent transactions panel and responsive dashboard layout
+- Email/password authentication and Google sign-in (Firebase)
+- Toast notifications for user feedback
+- Local persistence through browser localStorage
 
 ## Tech Stack
 
 - React 19
 - TypeScript
 - Vite
-- Redux Toolkit
+- Redux Toolkit + React Redux
 - React Router
 - Tailwind CSS 4
-- Chart.js and react-chartjs-2
-- react-hot-toast for notifications
+- Chart.js + react-chartjs-2
+- Firebase (Auth + Firestore Lite)
+- react-hot-toast
+
+## Routing
+
+- `/` - main dashboard layout
+- `/transactions` - transaction listing and management
+- `/transactions/tnx-details/:id` - transaction detail page
+- `/categories` - category management
+- `/analytics` - analytics and monthly insights
+- `/signin` - sign-in page
+- `/signup` - registration page
+- `/me` - user account page
+
+## Data Persistence
+
+Redux state is synchronized with localStorage for offline-friendly persistence.
+
+Storage keys used by the app:
+
+- `userTransactions`
+- `userIncomeData`
+- `userCategories`
+
+To reset local app data, clear browser site storage for the app origin.
+
+## Firebase Setup
+
+Create a `.env` file in the project root and add:
+
+```env
+VITE_FIREBASE_API_KEY=your_value
+VITE_Auth_Domain=your_value
+VITE_Project_Id=your_value
+VITE_storage_Bucket=your_value
+VITE_messagingSender_Id=your_value
+VITE_app_Id=your_value
+VITE_measurement_Id=your_value
+```
+
+Note: environment variable names must match exactly.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18 or newer
+- Node.js 18+
 - npm
 
-### Install Dependencies
+### Install
 
 ```bash
 npm install
 ```
 
-### Start the Development Server
+### Run Development Server
 
 ```bash
 npm run dev
 ```
 
-Vite will start a local server and print the address in the terminal.
-
-### Create a Production Build
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-### Preview the Production Build
+### Preview Production Build
 
 ```bash
 npm run preview
 ```
 
-### Run Linting
+### Lint
 
 ```bash
 npm run lint
@@ -76,40 +108,14 @@ npm run lint
 
 ## Project Structure
 
-- src/pages: route-level screens and page layouts.
-- src/components: reusable UI blocks and forms.
-- src/charts: chart components used on the dashboard and transaction views.
-- src/store: Redux store and feature slices.
-- src/Hooks: shared hooks, including local storage bootstrapping.
-- src/types: TypeScript types for transactions, income, and categories.
-- src/utils: helper utilities used across the app.
-
-## Data Persistence
-
-Spendora stores user data in browser local storage so the app can restore existing entries after a reload.
-
-The current storage keys are:
-
-- userTransactions
-- userIncomeData
-- userCategories
-
-If you want to reset the app state, clear the site data in your browser.
-
-## Routing Overview
-
-- /: dashboard
-- /transactions: transaction list and filters
-- /transactions/tnx-details/:id: transaction detail view
-- /categories: category management
-- /add-income: income entry form
-
-## Notes
-
-- Chart data is derived from the stored transaction list.
-- The UI is designed for finance tracking rather than general-purpose task management.
-- Some dashboard values are computed from the current transaction data and monthly totals.
+- `src/pages` - route-level screens and composed layouts
+- `src/components` - reusable UI and forms
+- `src/charts` - chart wrappers and graph modules
+- `src/store` - Redux store and feature slices
+- `src/Hooks` - shared hooks and analytics data shaping
+- `src/backend` - Firebase setup and auth helpers
+- `src/utils` - business helpers and utility logic
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under MIT. See [LICENSE](LICENSE).
