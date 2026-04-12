@@ -7,6 +7,7 @@ interface UserProfileProps {
   name: string;
   age?: number;
   email: string;
+  image?:string;
   onLogout?: () => void;
   onDeleteAccount?: () => void;
 }
@@ -15,6 +16,7 @@ const UserProfile = ({
   name,
   age,
   email,
+  image,
   onLogout,
   onDeleteAccount,
 }: UserProfileProps) => {
@@ -33,7 +35,7 @@ const UserProfile = ({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3 items-center">
           <img
-            src={"default-man.webp"}
+            src={image}
             alt={name}
             width={78}
             height={78}

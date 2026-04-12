@@ -149,7 +149,7 @@ const UserAccountPage = ({
             <UserProfile
               name={data?.name || "Spendora User"}
               email={data?.email || auth?.currentUser?.email || "No email"}
-              image={data?.image || "/girl1.png"}
+              image={data?.image || "/default-man.webp"}
               age={data?.age}
               onLogout={handleLogout}
               onDeleteAccount={handleDeleteAccount}
