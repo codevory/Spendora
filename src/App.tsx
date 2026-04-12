@@ -3,8 +3,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "react-hot-toast";
 import "./App.css";
 import { Outlet, Route, Routes } from "react-router-dom";
-import Loader from "./components/Loader";
 import EmptyState from "./components/EmptyState";
+import SkeletalLoader from "./components/SkeletonLoader";
 
 const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
 const TransactionLayout = React.lazy(() => import("./pages/TransactionLayout"));
@@ -17,7 +17,7 @@ const UserAccountPage = React.lazy(() => import("./pages/UserAccountPage"));
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<SkeletalLoader />}>
       <>
         <div>
           <Routes>
@@ -83,12 +83,12 @@ function App() {
               path="/me"
               element={
                 <UserAccountPage
-                  isLoggedin={false}
                   isOpen={isOpen}
                   onToggle={() => setIsOpen((p) => !p)}
                 />
               }
             />
+            <Route path="/skeletal" element={<SkeletalLoader />} />
             <Route path="*" element={<EmptyState content="No page found" /> } />
           </Routes>
           <Outlet />
