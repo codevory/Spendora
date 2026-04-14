@@ -14,8 +14,6 @@ const mobileNavItems = [
 ] as const;
 
 const MobileMenu = () => {
-
-
   return (
     <div className="mobile-menu">
       {mobileNavItems.map((item) => {

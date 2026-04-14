@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useMemo } from 'react'
-
+import { useMemo } from "react";
 
 interface UserProfileProps {
   name: string;
   age?: number;
   email: string;
-  image?:string;
+  image?: string;
   onLogout?: () => void;
   onDeleteAccount?: () => void;
 }
@@ -20,12 +19,11 @@ const UserProfile = ({
   onLogout,
   onDeleteAccount,
 }: UserProfileProps) => {
-
-  const userStatus = localStorage.getItem("isLoggedin")
-  const status = JSON.parse(userStatus !== null ? userStatus : '')
- const isAuthenticated = useMemo(() => {
- return Boolean(status)
- },[status])
+  const userStatus = localStorage.getItem("isLoggedin");
+  const status = JSON.parse(userStatus !== null ? userStatus : "");
+  const isAuthenticated = useMemo(() => {
+    return Boolean(status);
+  }, [status]);
 
   return (
     <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 shadow-lg">
@@ -55,21 +53,21 @@ const UserProfile = ({
       <div className="mt-5 flex flex-col gap-2">
         <ThemeSwitcher />
         {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={onLogout}
-              className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-4 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="/signin"
-              className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
-            >
-              Login
-            </Link>
-          )}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-4 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            to="/signin"
+            className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
+          >
+            Login
+          </Link>
+        )}
         <button
           type="button"
           onClick={onDeleteAccount}

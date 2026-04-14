@@ -1,7 +1,20 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { getFirebaseServices } from "../backend/firebaseLazy";
 import toast from "react-hot-toast";
+import type { AppDispatch } from "../store/store";
+import {
+  setLoginStatus,
+  setUserData,
+  setError,
+} from "../store/features/userAuthenication";
 
+interface HandleAuthProps {
+  dispatch: AppDispatch;
+  navigate: (path: string) => void;
+  setLoginStatus: typeof setLoginStatus;
+  setUserData: typeof setUserData;
+  setError: typeof setError;
+}
 interface handleGoogleSigninProps {
   setIsLoading: (val: boolean) => void;
 }
@@ -32,4 +45,42 @@ export async function handleGoogleSignin({
     console.log(credential);
     throw err;
   }
+}
+
+export async function handleLogout({
+  dispatch,
+  setLoginStatus,
+  setUserData,
+  navigate,
+}: HandleAuthProps) {
+  const { signOut } = await import("firebase/auth");
+  const { auth } = await getFirebaseServices();
+  await signOut(auth);
+  dispatch(setLoginStatus(false));
+  dispatch(setUserData(null));
+  navigate("/signin");
+}
+
+export async function handleDeleteAccount({
+  dispatch,
+  navigate,
+  setError,
+  setLoginStatus,
+  setUserData,
+}: HandleAuthProps) {
+  const { auth } = await getFirebaseServices();
+  if (!auth?.currentUser) {
+    dispatch(
+      setError({
+        message: "Account deletion requires a signed-in user.",
+        code: 404,
+      }),
+    );
+    return;
+  }
+
+  auth.currentUser.delete();
+  dispatch(setUserData(null));
+  dispatch(setLoginStatus(false));
+  navigate("/signup");
 }

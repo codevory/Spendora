@@ -4,34 +4,31 @@ import Layout from "../components/Layout";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
-import { getFirebaseServices } from "../backend/firebaseLazy";
-import { setError, setLoginStatus, setUserData } from "../store/features/userAuthenication";
+import {
+  setError,
+  setLoginStatus,
+  setUserData,
+} from "../store/features/userAuthenication";
+import { handleDeleteAccount, handleLogout } from "../utils/authService";
 
 interface UserAccountPropsType {
   onToggle: () => void;
   isOpen: boolean;
 }
 
-const UserAccountPage = ({
-  onToggle,
-  isOpen,
-}: UserAccountPropsType) => {
-  const dispatch = useAppDispatch()
+const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  // const [data, setData] = useState<userData | null>(null);
-  // const [isLoading, setIsLoading] = useState<boolean>(true);
-  // const [error, setError] = useState<string | null>(null);
-  // const [auth, setAuth] = useState<Auth | null>(null);
   const transactions = useAppSelector(
     (state) => state.transaction.transactions,
   );
   const incomes = useAppSelector(
     (state) => state.incomeTransaction.incomeTransactions,
   );
-  const user = useAppSelector((state) => state.userData)
-   const isLoading = user.isLoading
-   const data = user.userData
-   const error = user.error
+  const user = useAppSelector((state) => state.userData);
+  const isLoading = user.isLoading;
+  const data = user.userData;
+  const error = user.error;
 
   const accountStats = useMemo(() => {
     const totalExpense = transactions.reduce((acc, txn) => acc + txn.amount, 0);
@@ -46,29 +43,8 @@ const UserAccountPage = ({
     };
   }, [incomes, transactions]);
 
-  const handleLogout = async () => {
-    const { signOut } = await import("firebase/auth");
-    const { auth } = await getFirebaseServices();
-    await signOut(auth);
-    dispatch(setLoginStatus(false))
-    dispatch(setUserData(null))
-    navigate("/signin");
-  };
-
-  const handleDeleteAccount = async () => {
-    const { auth } = await getFirebaseServices();
-    if (!auth?.currentUser) {
-      dispatch(setError({
-        message: "Account deletion requires a signed-in user.",
-        code: 404,
-      }));
-      return;
-    }
-
-    auth.currentUser.delete();
-    dispatch(setUserData(null))
-    dispatch(setLoginStatus(false))
-  };
+  const onDelete = handleDeleteAccount;
+  const onLogout = handleLogout;
 
   return (
     <Layout onToggle={onToggle} isOpen={isOpen}>
@@ -98,8 +74,24 @@ const UserAccountPage = ({
               email={data?.email || "No email"}
               image={data?.image || "/default-man.webp"}
               age={data?.age}
-              onLogout={handleLogout}
-              onDeleteAccount={handleDeleteAccount}
+              onLogout={() =>
+                onLogout({
+                  dispatch: dispatch,
+                  setError: setError,
+                  setLoginStatus: setLoginStatus,
+                  setUserData: setUserData,
+                  navigate: navigate,
+                })
+              }
+              onDeleteAccount={() =>
+                onDelete({
+                  dispatch: dispatch,
+                  setError: setError,
+                  setLoginStatus: setLoginStatus,
+                  setUserData: setUserData,
+                  navigate: navigate,
+                })
+              }
             />
 
             <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 shadow-lg">
@@ -114,13 +106,13 @@ const UserAccountPage = ({
                 <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
                   <p className="text-xs text-slate-400">Total income</p>
                   <p className="mt-1 text-xl font-bold text-emerald-300">
-                    INR {accountStats.totalIncome.toLocaleString("en-IN")}
+                    ₹ {accountStats.totalIncome.toLocaleString("en-IN")}
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
                   <p className="text-xs text-slate-400">Total expense</p>
                   <p className="mt-1 text-xl font-bold text-rose-300">
-                    INR {accountStats.totalExpense.toLocaleString("en-IN")}
+                    ₹ {accountStats.totalExpense.toLocaleString("en-IN")}
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
@@ -128,7 +120,7 @@ const UserAccountPage = ({
                   <p
                     className={`mt-1 text-xl font-bold ${accountStats.balance >= 0 ? "text-emerald-300" : "text-rose-300"}`}
                   >
-                    INR {accountStats.balance.toLocaleString("en-IN")}
+                    ₹ {accountStats.balance.toLocaleString("en-IN")}
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">

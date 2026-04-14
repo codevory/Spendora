@@ -88,7 +88,7 @@ function App() {
               }
             />
             <Route path="/skeletal" element={<SkeletalLoader />} />
-            <Route path="*" element={<EmptyState content="No page found" /> } />
+            <Route path="*" element={<EmptyState content="No page found" />} />
           </Routes>
           <Outlet />
           <Toaster />

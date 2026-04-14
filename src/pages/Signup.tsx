@@ -27,39 +27,39 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   return (
-      <Layout isOpen={isOpen} onToggle={onToggle}>
-        {isLoading && <Loader />}
-        <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
-          <SignupComponent
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-            email={email}
-            setEmail={setEmail}
-            handleFormSubmit={(e) =>
-              handleSignupWithEmailPassword({
-                e: e,
-                email: email,
-                password: password,
-                setIsLoading: setIsLoading,
-                setPassword: setPassword,
-                username: username,
-                setUserdata: setUserdata,
-                setUsername: setUsername,
-                navigate: navigate,
-                userData: userData,
-              })
-            }
-            isLoading={isLoading}
-            handleSignupGoogle={() =>
-              handleGoogleSignin({
-                setIsLoading: setIsLoading,
-              })
-            }
-          />
-        </div>
-      </Layout>
+    <Layout isOpen={isOpen} onToggle={onToggle}>
+      {isLoading && <Loader />}
+      <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
+        <SignupComponent
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+          email={email}
+          setEmail={setEmail}
+          handleFormSubmit={(e) =>
+            handleSignupWithEmailPassword({
+              e: e,
+              email: email,
+              password: password,
+              setIsLoading: setIsLoading,
+              setPassword: setPassword,
+              username: username,
+              setUserdata: setUserdata,
+              setUsername: setUsername,
+              navigate: navigate,
+              userData: userData,
+            })
+          }
+          isLoading={isLoading}
+          handleSignupGoogle={() =>
+            handleGoogleSignin({
+              setIsLoading: setIsLoading,
+            })
+          }
+        />
+      </div>
+    </Layout>
   );
 };
 

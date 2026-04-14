@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import transactionReducer from "./features/transaction";
 import incomeTransactionReducer from "./features/incomeTransaction";
-import  userAuthReducer from "./features/userAuthenication";
+import userAuthReducer from "./features/userAuthenication";
 import {
   useDispatch,
   useSelector,

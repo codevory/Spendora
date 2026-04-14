@@ -11,10 +11,7 @@ interface DashboardPropsType {
   isOpen: boolean;
   isLoggedin: boolean;
 }
-const DashBoardLayout = ({
-  onToggle,
-  isOpen,
-}: DashboardPropsType) => {
+const DashBoardLayout = ({ onToggle, isOpen }: DashboardPropsType) => {
   const [modalState, setModalState] = useState<
     "income" | "category" | "closed"
   >("closed");

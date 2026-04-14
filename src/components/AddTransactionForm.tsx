@@ -2,12 +2,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import type { TransactionType } from "../types/transactionType";
-import {
-  addTransaction,
-  setTransactionError,
-  setTransactionStatus,
-} from "../store/features/transaction";
 import "../App.css";
+import { handleAddExpenseTransaction } from "../utils/helperFunctions/hanldeFormActions";
 
 interface AddTransactionFormPropsType {
   setModalState: (val: "category") => void;
@@ -29,59 +25,32 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
     amount: amount !== "" ? amount : Number(amount),
     category: category,
     transactionId: "",
-    createdAt: Number(new Date()),
+    createdAt: Number(new Date(date)),
     type: "expense",
   };
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (amount !== "" && amount <= 0) {
-      failed("kindly add valid amount");
-      return;
-    }
-    if (
-      category === undefined ||
-      category.trim() === "add new" ||
-      category.trim() === "select" ||
-      category.trim() === ""
-    ) {
-      return failed("Kindly select category");
-    }
-
-    const tId = `txn-${Date.now().toFixed(4)}-${new Date().getMilliseconds().toFixed(2)}`;
-    const transactionData: TransactionType = {
-      ...transaction,
-      transactionId: tId,
-    };
-
-    try {
-      dispatch(setTransactionStatus("pending"));
-      dispatch(setTransactionError(null));
-      dispatch(addTransaction(transactionData));
-      dispatch(setTransactionStatus("success"));
-      console.log(transactionData);
-    } catch (err) {
-      if (err instanceof Error) {
-        dispatch(setTransactionError({ message: err.message, code: 500 }));
-      } else {
-        dispatch(setTransactionError({ message: "Error Unknown", code: 404 }));
-        console.log(err);
-      }
-      dispatch(setTransactionStatus("failed"));
-      //toast message
-      failed("Failed to add Expense");
-    } finally {
-      Success();
-      setAmount("");
-      setPayee("");
-      setCategory("select");
-    }
-  }
+  const handleSubmitTransaction = handleAddExpenseTransaction;
 
   return (
     <>
       <div className="form-card card mx-auto">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form
+          onSubmit={(e) =>
+            handleSubmitTransaction({
+              e: e,
+              setAmount: setAmount,
+              setCategory: setCategory,
+              setPayee: setPayee,
+              category: category,
+              success: Success,
+              failed: failed,
+              amount: amount,
+              dispatch: dispatch,
+              transaction: transaction,
+            })
+          }
+          className="flex flex-col gap-5"
+        >
           {/* Amount */}
           <div className="relative">
             <label className="text-sm text-muted mb-1 block">Amount</label>

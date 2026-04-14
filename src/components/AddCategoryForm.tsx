@@ -1,8 +1,7 @@
 import toast from "react-hot-toast";
-import { addNewCategory } from "../store/features/transaction";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { useState } from "react";
-import type { CategoryPropsType } from "../types/transactionType";
+import { handleAddCategory } from "../utils/helperFunctions/hanldeFormActions";
 
 type CategoryFormProps = {
   setModalState: (val: "closed") => void;
@@ -13,44 +12,26 @@ const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
   const categories = useAppSelector((state) => state.transaction.categories);
 
   const dispatch = useAppDispatch();
-  const success = () => toast.success("added Successfully");
+  const success = (message: string) => toast.success(message);
   const failed = (message: string) => toast.error(message);
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (category.trim().length < 3) return failed("kindly type category name");
-
-    const normalized = category.trim().toLowerCase();
-    const exists = categories.some((c) => {
-      const name = c?.name?.trim().toLowerCase();
-      return name === normalized;
-    });
-    if (exists) {
-      return failed("😩Category already exists");
-    }
-    const newCategory: CategoryPropsType = {
-      name: category,
-      id: Date.now().toFixed(6),
-    };
-    try {
-      dispatch(addNewCategory(newCategory));
-    } catch (error) {
-      failed("Failed to add");
-      if (error instanceof Error) {
-        failed(error.message);
-      }
-      console.log(error);
-    } finally {
-      success();
-      setCategory("");
-    }
-    setModalState("closed");
-  }
+  const onSubmit = handleAddCategory;
   return (
     <div className="flex flex-col gap-2 ">
       <h2>Add New Category</h2>
       <form
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={(e) =>
+          onSubmit({
+            e: e,
+            dispatch: dispatch,
+            success: success,
+            failed: failed,
+            setCategory: setCategory,
+            setModalState: setModalState,
+            categories: categories,
+            category: category,
+          })
+        }
         className="form flex flex-col gap-2 "
       >
         <div className=" flex flex-col">

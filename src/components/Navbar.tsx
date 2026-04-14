@@ -8,7 +8,10 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { getUserData } from "../backend/getUserData";
-import { setLoginStatus, setUserData } from "../store/features/userAuthenication";
+import {
+  setLoginStatus,
+  setUserData,
+} from "../store/features/userAuthenication";
 interface NavbarPropsType {
   onToggle: () => void;
 }
@@ -20,7 +23,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   const [photoURL, setPhotoURL] = useState<string>("/default-man.webp");
   const [hasSession, setHasSession] = useState<boolean>(false);
   const [auth, setFirebaseAuth] = useState<Auth | null>(null);
-  const isLoggedin = useAppSelector((state) => state.userData.isLoggedin)
+  const isLoggedin = useAppSelector((state) => state.userData.isLoggedin);
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
 

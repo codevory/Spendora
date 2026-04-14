@@ -165,11 +165,10 @@ function getMonthlyExpense({ trans, month }: MonthlyDataTypes) {
     })
     .reduce<Record<string, number>>((acc, curr) => {
       const month = new Date(curr.date).toLocaleDateString("en-US", {
-    month: "short",
-  })
+        month: "short",
+      });
       if (!acc[month]) {
-        acc[month] =
-          (acc[month] ?? 0) + Number(curr.amount);
+        acc[month] = (acc[month] ?? 0) + Number(curr.amount);
       } else {
         acc[month] += Number(curr.amount);
       }
@@ -190,16 +189,14 @@ function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
       return date.getMonth() >= start && date.getFullYear() <= end;
     })
     .reduce<Record<string, number>>((acc, curr) => {
-    const month = new Date(curr.date).toLocaleDateString("en-US", {
-    month: "short",
-  })
+      const month = new Date(curr.date).toLocaleDateString("en-US", {
+        month: "short",
+      });
       if (!acc[month]) {
-        acc[month] =
-          (acc[month] ?? 0) + Number(curr.amount);
+        acc[month] = (acc[month] ?? 0) + Number(curr.amount);
       } else {
         acc[month] += Number(curr.amount);
       }
       return acc;
     }, {});
 }
-

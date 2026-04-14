@@ -28,7 +28,9 @@ const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
           >
             <Icon size={20} />
             {isOpen ? (
-              <span className="text-sm md:font-medium lg:font-semibold">{item.label}</span>
+              <span className="text-sm md:font-medium lg:font-semibold">
+                {item.label}
+              </span>
             ) : null}
           </NavLink>
         );

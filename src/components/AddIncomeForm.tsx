@@ -1,12 +1,7 @@
 import { useState } from "react";
-import type { IncomeType } from "../types/transactionType";
 import { useAppDispatch } from "../store/store";
 import toast from "react-hot-toast";
-import { addIncomeTransaction } from "../store/features/incomeTransaction";
-import {
-  setTransactionError,
-  setTransactionStatus,
-} from "../store/features/transaction";
+import { handleAddIncomeTransaction } from "../utils/helperFunctions/hanldeFormActions";
 
 type IncomeFormPropsType = {
   setModalState: (val: "closed") => void;
@@ -20,45 +15,22 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
   const success = (message: string) => toast.success(message);
   const failed = (message: string) => toast.error(message);
 
-  function handleAddIncome(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (amount === 0 || incomeSource === "" || incomeDate === "")
-      return failed("kindly fill all details");
-    const addIncome: IncomeType = {
-      amount: amount !== "" ? amount : 0,
-      source: incomeSource,
-      date: incomeDate,
-      transactionId: crypto.randomUUID(),
-      createdAt: Date.now(),
-      type: "income",
-    };
-
-    try {
-      dispatch(setTransactionError(null));
-      dispatch(setTransactionStatus("pending"));
-      dispatch(addIncomeTransaction(addIncome));
-    } catch (error) {
-      if (error instanceof Error) {
-        dispatch(
-          setTransactionError({
-            message: error.message,
-            code: 201,
-          }),
-        );
-        failed(error.message);
-      }
-      console.error(error);
-    } finally {
-      success("🎉 income added successfully");
-    }
-    console.log(addIncome);
-    setModalState("closed");
-  }
-
+  const onSubmit = handleAddIncomeTransaction;
   return (
     <div className="form-card card mx-auto  min-h-70 min-w-100">
       <form
-        onSubmit={(e) => handleAddIncome(e)}
+        onSubmit={(e) =>
+          onSubmit({
+            e: e,
+            dispatch: dispatch,
+            setModalState: setModalState,
+            success: success,
+            incomeDate: incomeDate,
+            incomeSource: incomeSource,
+            amount: amount,
+            failed: failed,
+          })
+        }
         className="flex flex-col gap-5"
       >
         <div className="flex flex-col gap-1 relative">

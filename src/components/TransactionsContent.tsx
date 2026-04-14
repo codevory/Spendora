@@ -10,11 +10,10 @@ interface TransactionsContentPropsType {
 
 const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
   const visibleData = useMemo(() => {
-    if (query === undefined) {
-      return data;
-    }
+    const filtered =
+      query === undefined ? data : data.filter((txn) => txn.category === query);
 
-    return data.filter((txn) => txn.category === query).sort((a,b) => b.createdAt - a.createdAt)
+    return [...filtered].sort((a, b) => b.createdAt - a.createdAt);
   }, [query, data]);
 
   const noData = (

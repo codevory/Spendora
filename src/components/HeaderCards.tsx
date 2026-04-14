@@ -28,10 +28,26 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
     weekStart.setDate(now.getDate() - 6);
     weekStart.setHours(0, 0, 0, 0);
 
-    const monthlyExpense = getMonthlyTotal(transactions, currentMonth, currentYear);
-    const monthlyIncome = getMonthlyTotal(userIncome, currentMonth, currentYear);
-    const monthlyIncomeChange = getMonthOverMonthChange(userIncome, currentMonth, currentYear);
-    const monthlyExpenseChange = getMonthOverMonthChange(transactions, currentMonth, currentYear);
+    const monthlyExpense = getMonthlyTotal(
+      transactions,
+      currentMonth,
+      currentYear,
+    );
+    const monthlyIncome = getMonthlyTotal(
+      userIncome,
+      currentMonth,
+      currentYear,
+    );
+    const monthlyIncomeChange = getMonthOverMonthChange(
+      userIncome,
+      currentMonth,
+      currentYear,
+    );
+    const monthlyExpenseChange = getMonthOverMonthChange(
+      transactions,
+      currentMonth,
+      currentYear,
+    );
     const monthlyNet = monthlyIncome - monthlyExpense;
 
     const currentMonthTransactions = transactions.filter((txn) => {

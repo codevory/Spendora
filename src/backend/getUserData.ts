@@ -1,7 +1,19 @@
 import { type AppDispatch } from "../store/store";
-import { setError, setLoading, setLoginStatus, setUserData, type userDataType } from '../store/features/userAuthenication';
-import { getFirebaseServices } from './firebaseLazy'
-import { collection, getDocs, limit, query, where } from "firebase/firestore/lite";
+import {
+  setError,
+  setLoading,
+  setLoginStatus,
+  setUserData,
+  type userDataType,
+} from "../store/features/userAuthenication";
+import { getFirebaseServices } from "./firebaseLazy";
+import {
+  collection,
+  getDocs,
+  limit,
+  query,
+  where,
+} from "firebase/firestore/lite";
 
 export async function getUserData(dispatch: AppDispatch) {
   try {
@@ -29,7 +41,9 @@ export async function getUserData(dispatch: AppDispatch) {
     );
 
     const snapshot = await getDocs(userQuery);
-    const docData = snapshot.docs[0]?.data() as Partial<userDataType> | undefined;
+    const docData = snapshot.docs[0]?.data() as
+      | Partial<userDataType>
+      | undefined;
 
     const resolved: userDataType = {
       name: docData?.name || user.displayName || "Spendora User",
@@ -58,4 +72,4 @@ export async function getUserData(dispatch: AppDispatch) {
   }
 }
 
-export default getUserData
+export default getUserData;

@@ -28,13 +28,13 @@ export const incomeTransactionSlice = createSlice({
         JSON.stringify(state.incomeTransactions),
       );
     },
-    setTransactionError: (
+    setIncomeTransactionError: (
       state,
       action: PayloadAction<incomeTransactionState["error"]>,
     ) => {
       state.error = action.payload;
     },
-    setTransactionStatus: (
+    setIncomeTransactionStatus: (
       state,
       action: PayloadAction<incomeTransactionState["status"]>,
     ) => {
@@ -44,4 +44,8 @@ export const incomeTransactionSlice = createSlice({
 });
 
 export default incomeTransactionSlice.reducer;
-export const { addIncomeTransaction } = incomeTransactionSlice.actions;
+export const {
+  addIncomeTransaction,
+  setIncomeTransactionError,
+  setIncomeTransactionStatus,
+} = incomeTransactionSlice.actions;
