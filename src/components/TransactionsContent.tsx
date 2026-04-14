@@ -14,7 +14,7 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
       return data;
     }
 
-    return data.sort((as,b) => b.createdAt - as.createdAt).filter((txn) => txn.category === query)
+    return data.filter((txn) => txn.category === query).sort((a,b) => b.createdAt - a.createdAt)
   }, [query, data]);
 
   const noData = (

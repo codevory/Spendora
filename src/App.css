@@ -238,9 +238,17 @@ input[type="number"] {
     @apply scale-105 w-25 bg-emerald-600;
   }
 
-  .sidebar {
-    display: none;
+  .sidebar{
+  padding: 0;
   }
+
+.sidebar-item {
+  @apply flex items-center gap-2 px-4 py-2 rounded-md text-slate-300 hover:bg-slate-800 hover:text-white transition cursor-pointer;
+}
+ .layout{
+  padding:0;
+ }
+
 
   .form-container {
     margin-left: 10px;

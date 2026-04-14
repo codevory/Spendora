@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import Navbar from "./Navbar";
 import SidebarMenu from "./SidebarMenu";
+import SkeletalLoader from "./SkeletonLoader";
 
 const MobileMenu = lazy(() => import("./MobileMenu"));
 
@@ -36,10 +37,10 @@ const Layout = ({ children, onToggle, isOpen }: LayoutProps) => {
         >
           <SidebarMenu isOpen={isOpen} />
         </div>
-        <div className="max-w-dvw w-full">{children}</div>
+        <div className="max-w-dvw w-full layout">{children}</div>
       </div>
       {isMobile ? (
-        <Suspense fallback={null}>
+        <Suspense fallback={<SkeletalLoader />}>
           <MobileMenu />
         </Suspense>
       ) : null}
