@@ -1,7 +1,11 @@
 import { useMemo } from "react";
-import type { IncomeType, TransactionType } from "../types/transactionType";
 import { useAppSelector } from "../store/store";
-import { getTopCategory } from "../utils/helperFunctions/insightData";
+import {
+  getLargestTransactionInRange,
+  getMonthOverMonthChange,
+  getMonthlyTotal,
+  getTopCategory,
+} from "../utils/helperFunctions/transactionMetrics";
 
 interface HeaderCardsPropsType {
   setModalState: (val: "income") => void;
@@ -24,26 +28,10 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
     weekStart.setDate(now.getDate() - 6);
     weekStart.setHours(0, 0, 0, 0);
 
-    const monthlyExpense = getMonthlyData(
-      transactions,
-      currentMonth,
-      currentYear,
-    );
-    const monthlyIncome = getMonthlyIncome(
-      userIncome,
-      currentMonth,
-      currentYear,
-    );
-    const monthlyIncomeChange = getMonthlyIncomeChangePercent(
-      userIncome,
-      currentMonth,
-      currentYear,
-    );
-    const monthlyExpenseChange = getMonthlyExpenseChangePercent(
-      transactions,
-      currentMonth,
-      currentYear,
-    );
+    const monthlyExpense = getMonthlyTotal(transactions, currentMonth, currentYear);
+    const monthlyIncome = getMonthlyTotal(userIncome, currentMonth, currentYear);
+    const monthlyIncomeChange = getMonthOverMonthChange(userIncome, currentMonth, currentYear);
+    const monthlyExpenseChange = getMonthOverMonthChange(transactions, currentMonth, currentYear);
     const monthlyNet = monthlyIncome - monthlyExpense;
 
     const currentMonthTransactions = transactions.filter((txn) => {
@@ -55,17 +43,11 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
     const topCategoryShare =
       monthlyExpense > 0 ? (topCategory.amount / monthlyExpense) * 100 : 0;
 
-    const largestExpenseThisWeek = transactions
-      .filter((txn) => {
-        const d = new Date(txn.date);
-        return d >= weekStart && d <= now;
-      })
-      .reduce<TransactionType | null>((max, txn) => {
-        if (!max || txn.amount > max.amount) {
-          return txn;
-        }
-        return max;
-      }, null);
+    const largestExpenseThisWeek = getLargestTransactionInRange(
+      transactions,
+      weekStart,
+      now,
+    );
 
     const spendingProgress =
       monthlyIncome > 0
@@ -162,99 +144,3 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
 };
 
 export default HeaderCards;
-
-function getMonthlyData(
-  transactions: TransactionType[],
-  currentMonth: number,
-  currentYear: number,
-) {
-  if (!transactions.length) {
-    return 0;
-  }
-
-  return transactions
-    .filter((t) => {
-      const date = new Date(t.date);
-      return (
-        date.getMonth() === currentMonth && date.getFullYear() === currentYear
-      );
-    })
-    .reduce((total, t) => total + t.amount, 0);
-}
-
-function getMonthlyIncome(
-  transactions: IncomeType[],
-  currentMonth: number,
-  currentYear: number,
-) {
-  if (!transactions.length) return 0;
-
-  return transactions
-    .filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    })
-    .reduce((acc, amt) => acc + amt.amount, 0);
-}
-
-function getMonthlyIncomeChangePercent(
-  transactions: IncomeType[],
-  currentMonth: number, // 0-11
-  currentYear: number,
-): number {
-  if (!transactions.length) return 0;
-
-  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-
-  const currentTotal = transactions
-    .filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    })
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const prevTotal = transactions
-    .filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
-    })
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  if (prevTotal === 0) {
-    return currentTotal > 0 ? 100 : 0;
-  }
-
-  return ((currentTotal - prevTotal) / prevTotal) * 100;
-}
-
-function getMonthlyExpenseChangePercent(
-  transactions: TransactionType[],
-  currentMonth: number,
-  currentYear: number,
-): number {
-  if (!transactions.length) return 0;
-
-  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-
-  const currentTotal = transactions
-    .filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    })
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const prevTotal = transactions
-    .filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
-    })
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  if (prevTotal === 0) {
-    return currentTotal > 0 ? 100 : 0;
-  }
-
-  return ((currentTotal - prevTotal) / prevTotal) * 100;
-}

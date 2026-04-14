@@ -1,5 +1,11 @@
 import type { IncomeType, TransactionType } from "../../types/transactionType";
 import { useMemo } from "react";
+import {
+  getMonthlyExpenseTotal,
+  getMonthlyIncomeTotal,
+  getTopCategory,
+} from "./transactionMetrics";
+
 interface InsightData {
   monthTitle: string;
   totalExpense: number;
@@ -16,24 +22,6 @@ interface IncomeTxnsTpe {
   incomeTransactions: IncomeType[];
   transactions: TransactionType[];
 }
-
-export const getTopCategory = (transactions: TransactionType[]) => {
-  const map: Record<string, number> = {};
-  if (!transactions.length) return { category: null, amount: 0 };
-
-  transactions.forEach((t) => {
-    map[t.category] = (map[t.category] || 0) + t.amount;
-  });
-
-  const entries = Object.entries(map);
-  if (!entries.length) return { category: null, amount: 0 };
-
-  const [category, amount] = entries.length
-    ? entries.reduce((max, curr) => (curr[1] > max[1] ? curr : max))
-    : [null, 0];
-
-  return { category, amount };
-};
 
 export const insightData = ({
   incomeTransactions,
@@ -55,27 +43,20 @@ export const insightData = ({
     const prevMonth = prevDate.getMonth();
     const prevYear = prevDate.getFullYear();
 
-    const prevMonthTxns = transactions.filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
-    });
-
-    const currentMonthIncome = incomeTransactions.filter((txn) => {
-      const d = new Date(txn.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    });
-
-    const totalExpense = currentMonthTxns.reduce(
-      (acc, t) => acc + Number(t.amount),
-      0,
+    const totalExpense = getMonthlyExpenseTotal(
+      transactions,
+      currentMonth,
+      currentYear,
     );
-    const previousExpense = prevMonthTxns.reduce(
-      (acc, t) => acc + Number(t.amount),
-      0,
+    const previousExpense = getMonthlyExpenseTotal(
+      transactions,
+      prevMonth,
+      prevYear,
     );
-    const totalIncome = currentMonthIncome.reduce(
-      (acc, t) => acc + Number(t.amount),
-      0,
+    const totalIncome = getMonthlyIncomeTotal(
+      incomeTransactions,
+      currentMonth,
+      currentYear,
     );
 
     const avgDailySpend = totalExpense / dayOfMonth;
@@ -93,29 +74,14 @@ export const insightData = ({
         ((totalExpense - previousExpense) / previousExpense) * 100;
     }
 
-    const categoryMap = currentMonthTxns.reduce<Record<string, number>>(
-      (acc, txn) => {
-        acc[txn.category] = (acc[txn.category] || 0) + Number(txn.amount);
-        return acc;
-      },
-      {},
-    );
-
-    const topCategoryEntry = Object.entries(categoryMap).reduce<
-      [string, number] | null
-    >((top, current) => {
-      if (!top || current[1] > top[1]) {
-        return current;
-      }
-      return top;
-    }, null);
+    const topCategoryEntry = getTopCategory(currentMonthTxns);
 
     const topCategory =
-      topCategoryEntry && totalExpense > 0
+      topCategoryEntry.category && totalExpense > 0
         ? {
-            name: topCategoryEntry[0],
-            amount: topCategoryEntry[1],
-            sharePercent: (topCategoryEntry[1] / totalExpense) * 100,
+            name: topCategoryEntry.category,
+            amount: topCategoryEntry.amount,
+            sharePercent: (topCategoryEntry.amount / totalExpense) * 100,
           }
         : null;
 
