@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 
 interface handleGoogleSigninProps {
   setIsLoading: (val: boolean) => void;
-  isLoged: boolean;
 }
 
 const success = (message: string) => toast.success(message);
@@ -12,7 +11,6 @@ const fail = (message: string) => toast.error(message);
 
 export async function handleGoogleSignin({
   setIsLoading,
-  isLoged,
 }: handleGoogleSigninProps) {
   try {
     setIsLoading(true);
@@ -22,7 +20,6 @@ export async function handleGoogleSignin({
     console.log(credentials);
     success("🎉 signin successfull");
     setIsLoading(false);
-    isLoged = true;
     return result;
   } catch (err: any) {
     if (err instanceof Error) {
@@ -33,8 +30,6 @@ export async function handleGoogleSignin({
     const credential = GoogleAuthProvider.credentialFromError(err);
     console.log(email);
     console.log(credential);
-    isLoged = false;
     throw err;
   }
-  console.log(isLoged);
 }

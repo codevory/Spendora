@@ -1,6 +1,6 @@
-import { isLoggedin } from "../pages/Signin";
+import { Link } from "react-router-dom";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useState,useEffect } from 'react'
+import { useMemo } from 'react'
 
 
 interface UserProfileProps {
@@ -20,16 +20,13 @@ const UserProfile = ({
   onLogout,
   onDeleteAccount,
 }: UserProfileProps) => {
-  const [btnContent,setBtnContent] = useState<string>('Login')
 
- useEffect(() => {
-  if(!isLoggedin){
-    setBtnContent("Login")
-  }
-  else{
-    setBtnContent("Logout")
-  }
- },[isLoggedin])
+  const userStatus = localStorage.getItem("isLoggedin")
+  const status = JSON.parse(userStatus !== null ? userStatus : '')
+ const isAuthenticated = useMemo(() => {
+ return Boolean(status)
+ },[status])
+
   return (
     <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 shadow-lg">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -57,15 +54,22 @@ const UserProfile = ({
 
       <div className="mt-5 flex flex-col gap-2">
         <ThemeSwitcher />
-      <button
-          type="button"
-          onClick={onLogout}
-          className={`h-10 rounded-lg bg-slate-900 text-slate-100 font-semiboldtransition hover:bg-slate-700 
-            active:scale-95 cursor-pointer`}
-        >
-         {btnContent}
-        </button>
-
+        {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-4 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/signin"
+              className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
+            >
+              Login
+            </Link>
+          )}
         <button
           type="button"
           onClick={onDeleteAccount}

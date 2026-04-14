@@ -6,29 +6,39 @@ import { getFirebaseServices } from "../backend/firebaseLazy";
 import type { Auth } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useMemo, useState } from "react";
-import { isLoggedin } from "../pages/Signin";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { getUserData } from "../backend/getUserData";
+import { setLoginStatus, setUserData } from "../store/features/userAuthenication";
 interface NavbarPropsType {
   onToggle: () => void;
 }
 
 const Navbar = ({ onToggle }: NavbarPropsType) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [displayName, setDisplayName] = useState<string>("Guest");
   const [photoURL, setPhotoURL] = useState<string>("/default-man.webp");
   const [hasSession, setHasSession] = useState<boolean>(false);
-  const [auth, setAuth] = useState<Auth | null>(null);
-
+  const [auth, setFirebaseAuth] = useState<Auth | null>(null);
+  const isLoggedin = useAppSelector((state) => state.userData.isLoggedin)
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
 
     getFirebaseServices().then(({ auth: firebaseAuth }) => {
-      setAuth(firebaseAuth);
+      setFirebaseAuth(firebaseAuth);
       unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
         setHasSession(Boolean(user));
         setDisplayName(
           user?.displayName || user?.email?.split("@")[0] || "Guest",
         );
-        setPhotoURL(user?.photoURL || "/default-man.webp");
+        setPhotoURL(user?.photoURL ?? "/default-man.webp");
+
+        if (user) {
+          void getUserData(dispatch);
+        } else {
+          dispatch(setLoginStatus(false));
+          dispatch(setUserData(null));
+        }
       });
     });
 
@@ -47,6 +57,8 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
     try {
       await signOut(auth);
     } finally {
+      dispatch(setLoginStatus(false));
+      dispatch(setUserData(null));
       navigate("/signin");
     }
   };

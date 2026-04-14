@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isLoggedin } from "./Signin";
 import Loader from "../components/Loader";
 import { handleGoogleSignin } from "../utils/authService";
 import { handleSignupWithEmailPassword } from "../utils/helperFunctions/hanldeSignup";
@@ -27,7 +26,6 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
   return (
       <Layout isOpen={isOpen} onToggle={onToggle}>
         {isLoading && <Loader />}
@@ -57,7 +55,6 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
             handleSignupGoogle={() =>
               handleGoogleSignin({
                 setIsLoading: setIsLoading,
-                isLoged: isLoggedin,
               })
             }
           />

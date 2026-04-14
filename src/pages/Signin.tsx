@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleGoogleSignin } from "../utils/authService";
 import Loader from "../components/Loader";
 import { handleSigninWithPassword } from "../utils/helperFunctions/handleSignin";
 import LoginComponent from "../components/LoginComponent";
 import Layout from "../components/Layout";
+import { useAppDispatch } from "../store/store";
+import { getUserData } from "../backend/getUserData";
 
 interface SigninPropsType {
   isOpen: boolean;
@@ -18,6 +20,15 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
   const [isLoged, setIsLoged] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (!isLoged) {
+      return;
+    }
+
+    void getUserData(dispatch);
+  }, [dispatch, isLoged]);
 
   isLoggedin = isLoged;
   return (
@@ -44,7 +55,6 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
             handleGoogleSign={() =>
               handleGoogleSignin({
                 setIsLoading: setIsLoading,
-                isLoged: isLoged,
               })
             }
           />

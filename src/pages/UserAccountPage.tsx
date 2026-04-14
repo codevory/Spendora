@@ -1,101 +1,37 @@
-import { useEffect, useMemo, useState } from "react";
-import type { Auth } from "firebase/auth";
+import { useMemo } from "react";
 import UserProfile from "../components/UserProfile";
 import Layout from "../components/Layout";
-import { useAppSelector } from "../store/store";
-import { collection, getDocs, limit, query, where } from "firebase/firestore/lite";
-import { getFirebaseServices } from "../backend/firebaseLazy";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
+import { getFirebaseServices } from "../backend/firebaseLazy";
+import { setError, setLoginStatus, setUserData } from "../store/features/userAuthenication";
 
 interface UserAccountPropsType {
   onToggle: () => void;
   isOpen: boolean;
-}
-interface userData {
-  name: string;
-  age?: number;
-  email: string;
-  image?: string;
 }
 
 const UserAccountPage = ({
   onToggle,
   isOpen,
 }: UserAccountPropsType) => {
+  const dispatch = useAppDispatch()
   const navigate = useNavigate();
-  const [data, setData] = useState<userData | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [auth, setAuth] = useState<Auth | null>(null);
+  // const [data, setData] = useState<userData | null>(null);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [error, setError] = useState<string | null>(null);
+  // const [auth, setAuth] = useState<Auth | null>(null);
   const transactions = useAppSelector(
     (state) => state.transaction.transactions,
   );
   const incomes = useAppSelector(
     (state) => state.incomeTransaction.incomeTransactions,
   );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadUser = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const { auth, db } = await getFirebaseServices();
-        setAuth(auth);
-
-
-        const user = auth.currentUser;
-        if (!user?.email) {
-          if (isMounted) {
-            setData(null);
-            setError("No authenticated user found. Please sign in again.");
-          }
-          return;
-        }
-
-        const userQuery = query(
-          collection(db, "users"),
-          where("email", "==", user.email),
-          limit(1),
-        );
-
-        const snapshot = await getDocs(userQuery);
-        const docData = snapshot.docs[0]?.data() as
-          | Partial<userData>
-          | undefined;
-
-        const resolved: userData = {
-          name: docData?.name || user.displayName || "Spendora User",
-          email: docData?.email || user.email,
-          age: typeof docData?.age === "number" ? docData.age : undefined,
-          image: docData?.image || "/default-man.webp",
-        };
-
-        if (isMounted) {
-          setData(resolved);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(
-            err instanceof Error ? err.message : "Failed to load account",
-          );
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadUser();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const user = useAppSelector((state) => state.userData)
+   const isLoading = user.isLoading
+   const data = user.userData
+   const error = user.error
 
   const accountStats = useMemo(() => {
     const totalExpense = transactions.reduce((acc, txn) => acc + txn.amount, 0);
@@ -111,16 +47,27 @@ const UserAccountPage = ({
   }, [incomes, transactions]);
 
   const handleLogout = async () => {
-    if (!auth) return;
     const { signOut } = await import("firebase/auth");
+    const { auth } = await getFirebaseServices();
     await signOut(auth);
+    dispatch(setLoginStatus(false))
+    dispatch(setUserData(null))
     navigate("/signin");
   };
 
-  const handleDeleteAccount = () => {
-    setError(
-      "Account deletion requires re-authentication. This action is not enabled yet.",
-    );
+  const handleDeleteAccount = async () => {
+    const { auth } = await getFirebaseServices();
+    if (!auth?.currentUser) {
+      dispatch(setError({
+        message: "Account deletion requires a signed-in user.",
+        code: 404,
+      }));
+      return;
+    }
+
+    auth.currentUser.delete();
+    dispatch(setUserData(null))
+    dispatch(setLoginStatus(false))
   };
 
   return (
@@ -140,7 +87,7 @@ const UserAccountPage = ({
             </p>
             {error ? (
               <p className="mt-3 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
-                {error}
+                {error.message}
               </p>
             ) : null}
           </section>
@@ -148,7 +95,7 @@ const UserAccountPage = ({
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
             <UserProfile
               name={data?.name || "Spendora User"}
-              email={data?.email || auth?.currentUser?.email || "No email"}
+              email={data?.email || "No email"}
               image={data?.image || "/default-man.webp"}
               age={data?.age}
               onLogout={handleLogout}
