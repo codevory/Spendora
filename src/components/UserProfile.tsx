@@ -26,7 +26,7 @@ const UserProfile = ({
   }, [status]);
 
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 shadow-lg">
+    <div className="card glass p-5 shadow-lg">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3 items-center">
           <img

@@ -25,7 +25,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
           return (
             <article
               key={txn.id}
-              className="rounded-xl border border-slate-700 bg-slate-900/80 p-4 shadow-md transition hover:border-slate-500"
+              className="category-card rounded-xl border border-slate-700 bg-slate-900/80 p-4 shadow-md transition hover:border-slate-500"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -47,7 +47,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
                   Used in your transaction history
                 </p>
                 <button
-                  className="rounded-xl bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-300 transition hover:bg-rose-500/25 active:scale-95"
+                  className="category-delete rounded-xl px-4 py-2 text-sm font-semibold text-rose-300 transition active:scale-95"
                   onClick={() =>
                     onDelete({
                       category: txn,

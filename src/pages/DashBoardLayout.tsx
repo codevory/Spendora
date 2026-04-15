@@ -22,7 +22,6 @@ const DashBoardLayout = ({ onToggle, isOpen }: DashboardPropsType) => {
           {modalState !== "closed" &&
             createPortal(
               <ModalBox
-                isForm={modalState}
                 form={
                   modalState === "income" ? (
                     <AddIncomeForm setModalState={setModalState} />

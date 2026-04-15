@@ -31,8 +31,10 @@ const RecentTransactions = () => {
   });
   const copy = [...normalizedIncomeData, ...normalizedExpenseData];
   return (
-    <div className="card mt-6">
-      <h2 className="text-lg font-semibold mb-4">Recent Transactions</h2>
+    <div className="card recent-transactions mt-6">
+      <h2 className="recent-transactions-title text-lg font-semibold mb-4">
+        Recent Transactions
+      </h2>
 
       {copy
         .sort((a, b) => b.createdAt - a.createdAt)
@@ -40,10 +42,10 @@ const RecentTransactions = () => {
           return (
             <div
               key={item.transactionId}
-              className="transaction-item border-b border-slate-700 last:border-none"
+              className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"
             >
               <div>
-                <p className="font-medium">{item.name}</p>
+                <p className="font-medium recent-transaction-name">{item.name}</p>
                 <p className="text-sm text-muted">
                   {formateDate().format(new Date(item.date))} •{" "}
                   {getDayName(item.date)}
@@ -51,7 +53,7 @@ const RecentTransactions = () => {
               </div>
 
               <div
-                className={`${item.type === "expense" ? "text-red-400" : "text-green-400"}`}
+                className={`${item.type === "expense" ? "recent-transaction-amount-expense" : "recent-transaction-amount-income"}`}
               >
                 <span className="font-semibold flex items-center">
                   {`${item.type === "expense" ? "-" : "+"}`}₹{item.amount}

@@ -104,7 +104,7 @@ const SignupComponent = ({
           sign in
         </Link>
       </form>
-      <span className=" h-8 my-2 w-full text-center font-bold text-white ">
+      <span className=" h-8 my-2 w-full text-center font-bold text-slate-200 ">
         OR
       </span>
       <div className="w-full h-[30%] flex flex-col">

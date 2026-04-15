@@ -119,7 +119,7 @@ const ViewTransactionDetails = ({
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
-                className="rounded-xl bg-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-600 active:scale-95"
+                className="rounded-xl bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-slate-600 active:scale-95"
                 onClick={() => handleSearchTxns()}
               >
                 Apply filter

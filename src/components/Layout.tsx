@@ -33,7 +33,7 @@ const Layout = ({ children, onToggle, isOpen }: LayoutProps) => {
       </div>
       <div className="flex ">
         <div
-          className={` ${isOpen ? "w-[14%] transform-content" : "w-[6%] transform-content -transate-x-20"} sidebar bg-green-900`}
+          className={`${isOpen ? "w-[14%] transform-content" : "w-[6%] transform-content -transate-x-20"} sidebar`}
         >
           <SidebarMenu isOpen={isOpen} />
         </div>

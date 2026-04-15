@@ -52,7 +52,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
         {isLoading ? <Loader /> : null}
 
         <div className="space-y-6">
-          <section className="rounded-2xl border border-slate-700 bg-linear-to-r from-slate-800 to-slate-900 p-4 md:p-6 shadow-lg">
+          <section className="profile-hero rounded-2xl p-4 md:p-6 shadow-lg">
             <p className="text-xs tracking-[0.3em] text-slate-400">ACCOUNT</p>
             <h1 className="mt-2 text-2xl md:text-3xl font-bold text-slate-100">
               Profile and preferences
@@ -94,7 +94,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
               }
             />
 
-            <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 shadow-lg">
+            <div className="card glass p-5 shadow-lg">
               <h2 className="text-xl font-semibold text-slate-100">
                 Financial summary
               </h2>
@@ -103,19 +103,19 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
               </p>
 
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
+                <div className="profile-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Total income</p>
                   <p className="mt-1 text-xl font-bold text-emerald-300">
                     ₹ {accountStats.totalIncome.toLocaleString("en-IN")}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
+                <div className="profile-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Total expense</p>
                   <p className="mt-1 text-xl font-bold text-rose-300">
                     ₹ {accountStats.totalExpense.toLocaleString("en-IN")}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
+                <div className="profile-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Current balance</p>
                   <p
                     className={`mt-1 text-xl font-bold ${accountStats.balance >= 0 ? "text-emerald-300" : "text-rose-300"}`}
@@ -123,7 +123,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
                     ₹ {accountStats.balance.toLocaleString("en-IN")}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3">
+                <div className="profile-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Transactions</p>
                   <p className="mt-1 text-xl font-bold text-slate-100">
                     {accountStats.transactionCount}

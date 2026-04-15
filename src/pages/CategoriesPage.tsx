@@ -17,7 +17,7 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
     <Layout onToggle={onToggle} isOpen={isOpen}>
       <div className="bg-main min-h-[calc(100vh-4rem)] p-4 md:p-6">
         <div className="space-y-6">
-          <section className="rounded-2xl border border-slate-700 bg-linear-to-r from-slate-800 to-slate-900 p-4 md:p-6 shadow-lg">
+          <section className="categories-hero rounded-2xl p-4 md:p-6 shadow-lg">
             <p className="text-xs tracking-[0.3em] text-slate-400">
               CATEGORIES
             </p>
@@ -62,7 +62,7 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-            <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-4 md:p-5 shadow-lg">
+            <div className="card glass categories-panel p-4 md:p-5 shadow-lg">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-100">
@@ -78,20 +78,20 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
             </div>
 
             <div className="space-y-4">
-              <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-4 md:p-5 shadow-lg">
+              <div className="card glass categories-panel p-4 md:p-5 shadow-lg">
                 <h2 className="text-lg font-semibold text-slate-100">
                   Category tips
                 </h2>
                 <div className="mt-3 space-y-3 text-sm text-slate-300">
-                  <p className="rounded-xl border border-slate-700 bg-slate-900/60 p-3">
+                  <p className="category-tip rounded-xl p-3">
                     Keep only categories you actively use so your charts stay
                     readable.
                   </p>
-                  <p className="rounded-xl border border-slate-700 bg-slate-900/60 p-3">
+                  <p className="category-tip rounded-xl p-3">
                     Rename or regroup spending patterns in your entry forms
                     before they spread across reports.
                   </p>
-                  <p className="rounded-xl border border-slate-700 bg-slate-900/60 p-3">
+                  <p className="category-tip rounded-xl p-3">
                     Remove stale categories to keep monthly insights focused and
                     easier to scan.
                   </p>

@@ -120,7 +120,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
 
       <div className="p-3 md:p-6 bg-slate-800 rounded-2xl border glass border-slate-700 shadow-lg">
         <p className="text-slate-400 text-sm font-medium">Monthly Spending</p>
-        <h2 className="text-xl md:text-3xl font-bold text-white mt-1">
+        <h2 className="text-xl md:text-3xl font-bold text-slate-100 mt-1">
           ₹ {metrics.monthlyExpense.toLocaleString("en-IN")}
         </h2>
         <div className="mt-4 h-1 w-full bg-slate-700 rounded-full">
@@ -139,7 +139,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
 
       <div className="p-3 md:p-6 bg-slate-800 rounded-2xl border glass border-slate-700 shadow-lg">
         <p className="text-slate-400 text-sm font-medium">Top Category</p>
-        <h2 className="text-xl md:text-3xl font-bold text-white mt-1">{`${metrics.topCategory.category ?? "Top Category"}`}</h2>
+        <h2 className="text-xl md:text-3xl font-bold text-slate-100 mt-1">{`${metrics.topCategory.category ?? "Top Category"}`}</h2>
         <div className="mt-2 md:mt-4 flex items-center gap-2">
           <span className="p-1 bg-orange-500/20 text-orange-500 rounded">
             {metrics.topCategoryShare.toFixed(0)}%
