@@ -7,7 +7,7 @@ type IncomeFormPropsType = {
   setModalState: (val: "closed") => void;
 };
 const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
-  const [amount, setAmount] = useState<number | "">("");
+  const [amount, setAmount] = useState<number | ''>('');
   const [incomeSource, setIncomeSource] = useState<string>("");
   const [incomeDate, setIncomeDate] = useState<string>("");
 
@@ -41,7 +41,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
             required
-          />
+           />
         </div>
 
         <div className="flex flex-col gap-1 relative">

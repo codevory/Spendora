@@ -37,7 +37,7 @@ type commonTypes = Pick<
 >;
 interface handleAddIncomeTransactionProps extends commonTypes {
   incomeSource: string;
-  amount: number | "";
+  amount: number | '';
   incomeDate: string;
   success: (val: string) => string;
   setModalState: (val: "closed") => void;
@@ -127,10 +127,11 @@ export function handleAddIncomeTransaction({
   setModalState,
 }: handleAddIncomeTransactionProps) {
   e.preventDefault();
-  if (amount === 0 || incomeSource === "" || incomeDate === "")
-    return failed("kindly fill all details");
+  if (amount !== '' && amount < 0)
+    return failed("Not valid income amount");
+  if(incomeDate === "" || incomeSource === "") return failed("Fill all required details")
   const addIncome: IncomeType = {
-    amount: amount !== "" ? amount : 0,
+    amount: amount !== '' ? amount : 0 ,
     source: incomeSource,
     date: incomeDate,
     transactionId: crypto.randomUUID(),

@@ -10,7 +10,7 @@ const RecentTransactions = () => {
 
   const normalizedIncomeData = userIncomeTxns.map((txn) => {
     return {
-      amount: txn.amount,
+      amount: txn.amount.toString().replace("-",''),
       transactionId: txn.transactionId,
       name: txn.source,
       date: txn.date,
