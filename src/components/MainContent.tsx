@@ -122,7 +122,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               <AddTransactionForm setModalState={setModalState} />
             </div>
 
-            <div className="rounded-2xl border border-slate-700 bg-linear-to-br from-slate-800 to-slate-900 p-4 shadow-lg">
+            <div className="card snapshot-hero p-4 shadow-lg">
               <p className="text-xs tracking-[0.22em] text-slate-400">
                 7 DAY SNAPSHOT
               </p>
@@ -131,19 +131,19 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               </h3>
 
               <div className="mt-3 grid grid-cols-1 gap-3">
-                <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+                <div className="snapshot-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Total spent</p>
                   <p className="mt-1 text-xl font-bold text-rose-300">
                     ₹ {weeklySnapshot.totalSpent.toLocaleString("en-IN")}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+                <div className="snapshot-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Transactions</p>
                   <p className="mt-1 text-xl font-bold text-slate-100">
                     {weeklySnapshot.count}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+                <div className="snapshot-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Top category</p>
                   <p className="mt-1 text-base font-semibold text-indigo-300">
                     {weeklySnapshot.topCategory
@@ -165,7 +165,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               Latest debits and credits in chronological order.
             </p>
           </div>
-          <div className="transactions-box h-72 overflow-y-auto">
+          <div className="transactions-box h-72 overflow-y-auto mb-10 lg:mb-3">
             <RecentTransactions />
           </div>
         </section>

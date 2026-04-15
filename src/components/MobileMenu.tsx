@@ -8,7 +8,7 @@ import { LuTags } from "react-icons/lu";
 const mobileNavItems = [
   { to: "/", label: "Home", icon: IoHome },
   { to: "/analytics", label: "Analytics", icon: SiGoogleanalytics },
-  { to: "/transactions", label: "Transactions", icon: GrTransaction },
+  { to: "/transactions", label: "Txns", icon: GrTransaction },
   { to: "/categories", label: "Categories", icon: LuTags },
   { to: "/me", label: "Profile", icon: CgProfile },
 ] as const;

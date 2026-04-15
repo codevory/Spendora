@@ -94,7 +94,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
               }
             />
 
-            <div className="card glass p-5 shadow-lg">
+            <div className="card glass p-5 shadow-lg mb-15 lg:mb-1">
               <h2 className="text-xl font-semibold text-slate-100">
                 Financial summary
               </h2>

@@ -17,7 +17,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
 
   const onSubmit = handleAddIncomeTransaction;
   return (
-    <div className="form-card card mx-auto  min-h-70 min-w-100">
+    <div className="form-card card mx-auto  min-h-70 ">
       <form
         onSubmit={(e) =>
           onSubmit({
@@ -55,7 +55,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
         </div>
 
         <div className="input-field">
-          <label className="text-muted block mb-1 text-sm">income Date</label>
+          <label className="text-muted block mb-1 text-sm">income received</label>
           <input
             className="bg-transparent w-full outline-none input"
             type="date"

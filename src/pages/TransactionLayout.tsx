@@ -53,7 +53,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
     <>
       <Layout onToggle={onToggle} isOpen={isOpen}>
         <div className="container-main space-y-6">
-          <section className="rounded-2xl border border-slate-700 bg-linear-to-r from-slate-800 to-slate-900 p-4 md:p-6 shadow-lg">
+          <section className="transactions-hero rounded-2xl p-4 md:p-6 shadow-lg">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-xs tracking-wider text-slate-400">

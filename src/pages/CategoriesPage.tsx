@@ -77,7 +77,7 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
               <DisplayAvailableCategories data={data} />
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 min-h-60 mb-20 lg:mb-5">
               <div className="card glass categories-panel p-4 md:p-5 shadow-lg">
                 <h2 className="text-lg font-semibold text-slate-100">
                   Category tips

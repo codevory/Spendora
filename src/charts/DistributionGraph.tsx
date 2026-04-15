@@ -7,50 +7,61 @@ import {
   Filler,
   type ChartOptions,
 } from "chart.js";
+import { useMemo } from "react";
 import { Pie } from "react-chartjs-2";
 import { useUserData } from "../Hooks/useUserData";
+import useThemeContext from "../Hooks/useThemeContext";
 import EmptyState from "../components/EmptyState";
 
 ChartJS.register(Tooltip, Legend, Title, ArcElement, Filler);
 
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "bottom" as const,
-      labels: {
-        color: "#cbd5e1",
-        usePointStyle: true,
-        pointStyle: "circle" as const,
-        padding: 14,
-        boxWidth: 10,
-      },
-    },
-    tooltip: {
-      backgroundColor: "rgba(15, 23, 42, 0.96)",
-      titleColor: "#f8fafc",
-      bodyColor: "#e2e8f0",
-      borderColor: "rgba(148, 163, 184, 0.25)",
-      borderWidth: 1,
-      callbacks: {
-        label: (context) => {
-          const label = context.label ?? "Category";
-          const value = Number(context.parsed ?? 0);
-          return `${label}: ₹${value.toLocaleString("en-IN")}`;
-        },
-      },
-    },
-  },
-} satisfies ChartOptions<"pie">;
-
 const DistributionGraph = () => {
   const { pieData } = useUserData();
+  const { isDark } = useThemeContext();
+
+  const options = useMemo(
+    () =>
+      ({
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "bottom" as const,
+            labels: {
+              color: isDark ? "#cbd5e1" : "#334155",
+              usePointStyle: true,
+              pointStyle: "circle" as const,
+              padding: 14,
+              boxWidth: 10,
+            },
+          },
+          tooltip: {
+            backgroundColor: isDark
+              ? "rgba(15, 23, 42, 0.96)"
+              : "rgba(248, 250, 252, 0.98)",
+            titleColor: isDark ? "#f8fafc" : "#0f172a",
+            bodyColor: isDark ? "#e2e8f0" : "#334155",
+            borderColor: isDark
+              ? "rgba(148, 163, 184, 0.25)"
+              : "rgba(148, 163, 184, 0.4)",
+            borderWidth: 1,
+            callbacks: {
+              label: (context) => {
+                const label = context.label ?? "Category";
+                const value = Number(context.parsed ?? 0);
+                return `${label}: ₹${value.toLocaleString("en-IN")}`;
+              },
+            },
+          },
+        },
+      }) satisfies ChartOptions<"pie">,
+    [isDark],
+  );
 
   if (!pieData.labels?.length) {
     return (
       <EmptyState
-        content={<div className="empty-state">{"Nothing to display"}</div>}
+        content={<div className="chart-empty-state">{"Nothing to display"}</div>}
       />
     );
   }

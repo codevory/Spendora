@@ -52,28 +52,28 @@ const MonthlyInsights = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+        <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Spent this month</p>
           <p className="mt-1 text-lg font-semibold text-slate-100">
             {formatCurrency(inshightsSafe(insights.totalExpense))}
           </p>
         </div>
 
-        <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+        <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Projected month-end spend</p>
           <p className="mt-1 text-lg font-semibold text-slate-100">
             {formatCurrency(inshightsSafe(insights.projectedSpend))}
           </p>
         </div>
 
-        <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+        <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Average daily spend</p>
           <p className="mt-1 text-lg font-semibold text-slate-100">
             {formatCurrency(inshightsSafe(insights.avgDailySpend))}
           </p>
         </div>
 
-        <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+        <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Savings rate</p>
           <p
             className={`mt-1 text-lg font-semibold ${
@@ -99,7 +99,7 @@ const MonthlyInsights = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+        <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Top category</p>
           {insights.topCategory ? (
             <>
@@ -118,7 +118,7 @@ const MonthlyInsights = () => {
           )}
         </div>
 
-        <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
+        <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Biggest expense</p>
           {insights.biggestExpense ? (
             <>
@@ -145,9 +145,9 @@ const MonthlyInsights = () => {
         </div>
       </div>
 
-      <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-3 text-sm text-blue-100">
+      <div className="insight-suggestion rounded-xl p-3 text-sm mb-15 lg:mb-3">
         <p className="font-medium">Suggestion</p>
-        <p className="mt-1 text-xs leading-5 text-blue-200">
+        <p className="mt-1 text-xs leading-5">
           {insights.savingsRate < 20
             ? "Your savings rate is below 20%. Try trimming your top category this week to improve month-end balance."
             : "Strong momentum. Keep your average daily spend under control to protect your savings target."}
