@@ -1,5 +1,6 @@
 import { useAppSelector } from "../store/store";
 import { insightData } from "../utils/helperFunctions/insightData";
+import { formatCurrency } from "../utils/currency";
 
 const MonthlyInsights = () => {
   const incomeTransactions = useAppSelector(
@@ -8,9 +9,10 @@ const MonthlyInsights = () => {
   const expenseTransactions = useAppSelector(
     (state) => state.transaction.transactions,
   );
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
 
   const insights = insightData({
-    incomeTransactions: incomeTransactions,
+    incomeTransactions,
     transactions: expenseTransactions,
   });
 
@@ -55,21 +57,21 @@ const MonthlyInsights = () => {
         <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Spent this month</p>
           <p className="mt-1 text-lg font-semibold text-slate-100">
-            {formatCurrency(inshightsSafe(insights.totalExpense))}
+            {formatCurrency(insights.totalExpense ?? 0, currencyKey)}
           </p>
         </div>
 
         <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Projected month-end spend</p>
           <p className="mt-1 text-lg font-semibold text-slate-100">
-            {formatCurrency(inshightsSafe(insights.projectedSpend))}
+            {formatCurrency(insights.projectedSpend ?? 0, currencyKey)}
           </p>
         </div>
 
         <div className="insight-tile rounded-xl p-3">
           <p className="text-xs text-slate-400">Average daily spend</p>
           <p className="mt-1 text-lg font-semibold text-slate-100">
-            {formatCurrency(inshightsSafe(insights.avgDailySpend))}
+            {formatCurrency(insights.avgDailySpend ?? 0, currencyKey)}
           </p>
         </div>
 
@@ -107,7 +109,7 @@ const MonthlyInsights = () => {
                 {insights.topCategory.name}
               </p>
               <p className="text-xs text-slate-400">
-                {formatCurrency(inshightsSafe(insights.topCategory.amount))} (
+                {formatCurrency(insights.topCategory.amount ?? 0, currencyKey)} (
                 {insights.topCategory.sharePercent.toFixed(1)}% of total)
               </p>
             </>
@@ -126,7 +128,7 @@ const MonthlyInsights = () => {
                 {insights.biggestExpense.name}
               </p>
               <p className="text-xs text-slate-400">
-                {formatCurrency(inshightsSafe(insights.biggestExpense.amount))}{" "}
+                {formatCurrency(insights.biggestExpense.amount ?? 0, currencyKey)}{" "}
                 on{" "}
                 {new Date(insights.biggestExpense.date).toLocaleDateString(
                   "en-US",
@@ -156,17 +158,5 @@ const MonthlyInsights = () => {
     </div>
   );
 };
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function inshightsSafe(value: number) {
-  return Number.isFinite(value) ? value : 0;
-}
 
 export default MonthlyInsights;

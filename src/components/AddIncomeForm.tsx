@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useAppDispatch } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import toast from "react-hot-toast";
 import { handleAddIncomeTransaction } from "../utils/helperFunctions/hanldeFormActions";
+import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
 
 type IncomeFormPropsType = {
   setModalState: (val: "closed") => void;
@@ -10,6 +11,8 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
   const [amount, setAmount] = useState<number | ''>('');
   const [incomeSource, setIncomeSource] = useState<string>("");
   const [incomeDate, setIncomeDate] = useState<string>("");
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
+  const currencyMeta = getCurrencyMeta(currencyKey);
 
   const dispatch = useAppDispatch();
   const success = (message: string) => toast.success(message);
@@ -27,14 +30,14 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             success: success,
             incomeDate: incomeDate,
             incomeSource: incomeSource,
-            amount: amount,
+            amount: amount === '' ? 0 : convertToBaseAmount(amount, currencyKey),
             failed: failed,
           })
         }
         className="flex flex-col gap-5"
       >
         <div className="flex flex-col gap-1 relative">
-          <label className="text-muted block mb-1 text-sm">amount</label>
+          <label className="text-muted block mb-1 text-sm">amount ({currencyMeta.currencySymbol})</label>
           <input
             className="bg-transparent w-full outline-none input"
             type="number"

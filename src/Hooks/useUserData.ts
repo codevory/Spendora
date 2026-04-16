@@ -7,6 +7,12 @@ interface MonthlyDataTypes {
   month: number;
 }
 
+export interface UserOriginItem {
+  key: string;
+  country: string;
+  currencySymbol: string;
+}
+
 export const useUserData = () => {
   const trans = useAppSelector((state) => state.transaction.transactions);
   const incomeTrans = useAppSelector(
@@ -127,7 +133,9 @@ export const useUserData = () => {
     ],
   };
 
-  return { pieData, barData, lineData, analysisData };
+  const userOriginsList = getUserOriginsList();
+
+  return { pieData, barData, lineData, analysisData, userOriginsList };
 };
 
 function getMonthlyData({ trans, month }: MonthlyDataTypes) {
@@ -199,4 +207,21 @@ function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
       }
       return acc;
     }, {});
+}
+
+export function getUserOriginsList(){
+  const userOriginsList: UserOriginItem[] | undefined = [
+    { key: "IN", country: "India", currencySymbol: "₹" },
+    { key: "US", country: "United States", currencySymbol: "$" },
+    { key: "GB", country: "United Kingdom", currencySymbol: "£" },
+    { key: "DE", country: "Germany", currencySymbol: "€" },
+    { key: "JP", country: "Japan", currencySymbol: "¥" },
+    { key: "CA", country: "Canada", currencySymbol: "$" },
+    { key: "AU", country: "Australia", currencySymbol: "$" },
+    { key: "SG", country: "Singapore", currencySymbol: "$" },
+    { key: "AE", country: "United Arab Emirates", currencySymbol: "د.إ" },
+    { key: "ZA", country: "South Africa", currencySymbol: "R" },
+  ];
+
+  return userOriginsList;
 }

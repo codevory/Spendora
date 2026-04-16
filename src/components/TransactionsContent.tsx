@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import type { TransactionType } from "../types/transactionType";
 import EmptyState from "./EmptyState";
+import { useAppSelector } from "../store/store";
+import { formatCurrency } from "../utils/currency";
 
 interface TransactionsContentPropsType {
   query?: TransactionType["category"];
@@ -9,6 +11,7 @@ interface TransactionsContentPropsType {
 }
 
 const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const visibleData = useMemo(() => {
     const filtered =
       query === undefined ? data : data.filter((txn) => txn.category === query);
@@ -80,7 +83,7 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
 
               <div className="text-right">
                 <span className="inline-flex rounded-full bg-rose-500/15 px-3 py-1 text-sm font-semibold text-rose-300">
-                  ₹{txn.amount}
+                  {formatCurrency(txn.amount, currencyKey)}
                 </span>
               </div>
             </div>

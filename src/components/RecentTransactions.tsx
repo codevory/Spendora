@@ -1,4 +1,5 @@
 import { useAppSelector } from "../store/store";
+import { formatCurrency } from "../utils/currency";
 
 const RecentTransactions = () => {
   const userExpenseTxns = useAppSelector(
@@ -7,10 +8,11 @@ const RecentTransactions = () => {
   const userIncomeTxns = useAppSelector(
     (state) => state.incomeTransaction.incomeTransactions,
   );
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
 
   const normalizedIncomeData = userIncomeTxns.map((txn) => {
     return {
-      amount: txn.amount.toString().replace("-",''),
+      amount: txn.amount,
       transactionId: txn.transactionId,
       name: txn.source,
       date: txn.date,
@@ -56,7 +58,7 @@ const RecentTransactions = () => {
                 className={`${item.type === "expense" ? "recent-transaction-amount-expense" : "recent-transaction-amount-income"}`}
               >
                 <span className="font-semibold flex items-center">
-                  {`${item.type === "expense" ? "-" : "+"}`}₹{item.amount}
+                  {`${item.type === "expense" ? "-" : "+"}`}{formatCurrency(Number(item.amount.toString().replace("-",'')), currencyKey)}
                 </span>
               </div>
             </div>

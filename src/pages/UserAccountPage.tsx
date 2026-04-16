@@ -10,6 +10,7 @@ import {
   setUserData,
 } from "../store/features/userAuthenication";
 import { handleDeleteAccount, handleLogout } from "../utils/authService";
+import { formatCurrency } from "../utils/currency";
 
 interface UserAccountPropsType {
   onToggle: () => void;
@@ -25,6 +26,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
   const incomes = useAppSelector(
     (state) => state.incomeTransaction.incomeTransactions,
   );
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const user = useAppSelector((state) => state.userData);
   const isLoading = user.isLoading;
   const data = user.userData;
@@ -106,13 +108,13 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
                 <div className="profile-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Total income</p>
                   <p className="mt-1 text-xl font-bold text-emerald-300">
-                    ₹ {accountStats.totalIncome.toLocaleString("en-IN")}
+                    {formatCurrency(accountStats.totalIncome, currencyKey)}
                   </p>
                 </div>
                 <div className="profile-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Total expense</p>
                   <p className="mt-1 text-xl font-bold text-rose-300">
-                    ₹ {accountStats.totalExpense.toLocaleString("en-IN")}
+                    {formatCurrency(accountStats.totalExpense, currencyKey)}
                   </p>
                 </div>
                 <div className="profile-stat rounded-xl p-3">
@@ -120,7 +122,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
                   <p
                     className={`mt-1 text-xl font-bold ${accountStats.balance >= 0 ? "text-emerald-300" : "text-rose-300"}`}
                   >
-                    ₹ {accountStats.balance.toLocaleString("en-IN")}
+                    {formatCurrency(accountStats.balance, currencyKey)}
                   </p>
                 </div>
                 <div className="profile-stat rounded-xl p-3">

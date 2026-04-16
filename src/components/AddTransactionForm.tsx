@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import type { TransactionType } from "../types/transactionType";
 import "../App.css";
 import { handleAddExpenseTransaction } from "../utils/helperFunctions/hanldeFormActions";
+import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
 
 interface AddTransactionFormPropsType {
   setModalState: (val: "category") => void;
@@ -14,6 +15,8 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const [payee, setPayee] = useState<string>("");
   const [category, setCategory] = useState<string>("select");
   const categories = useAppSelector((state) => state.transaction.categories);
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
+  const currencyMeta = getCurrencyMeta(currencyKey);
 
   const dispatch = useAppDispatch();
   const Success = () => toast.success("Expense Added Successfully");
@@ -22,7 +25,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const transaction: TransactionType = {
     name: payee,
     date: date,
-    amount: amount !== "" ? amount : Number(amount),
+    amount: amount !== "" ? convertToBaseAmount(amount, currencyKey) : 0,
     category: category,
     transactionId: "",
     createdAt: Number(new Date(date)),
@@ -55,7 +58,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
           <div className="relative">
             <label className="text-sm text-muted mb-1 block">Amount</label>
             <div className="flex items-center input">
-              <span className="mr-2 text-muted">₹</span>
+              <span className="mr-2 text-muted">{currencyMeta.currencySymbol}</span>
               <input
                 type="number"
                 placeholder="Enter amount"

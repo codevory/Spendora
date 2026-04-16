@@ -7,6 +7,7 @@ import HeaderCards from "./HeaderCards";
 import TrendGraph from "../charts/TrendGraph";
 import DistributionGraph from "../charts/DistributionGraph";
 import OverviewGraph from "../charts/OverviewGraph";
+import { formatCurrency } from "../utils/currency";
 
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
@@ -17,6 +18,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   const transactions = useAppSelector(
     (state) => state.transaction.transactions,
   );
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const { lineData } = useUserData();
 
   const weeklySnapshot = useMemo(() => {
@@ -103,7 +105,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               </div>
             </div>
 
-            <div className="analysis-container m-0 overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/60 p-2">
+            <div className="analysis-container m-0 overflow-x-scroll rounded-xl border border-slate-700 bg-slate-900/60 p-2">
               {activeGraph === "pie" ? (
                 <DistributionGraph />
               ) : activeGraph === "bar" ? (
@@ -134,7 +136,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
                 <div className="snapshot-stat rounded-xl p-3">
                   <p className="text-xs text-slate-400">Total spent</p>
                   <p className="mt-1 text-xl font-bold text-rose-300">
-                    ₹ {weeklySnapshot.totalSpent.toLocaleString("en-IN")}
+                    {formatCurrency(weeklySnapshot.totalSpent, currencyKey)}
                   </p>
                 </div>
                 <div className="snapshot-stat rounded-xl p-3">

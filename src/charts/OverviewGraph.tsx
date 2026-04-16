@@ -12,6 +12,8 @@ import {
 } from "chart.js";
 import { useUserData } from "../Hooks/useUserData";
 import useThemeContext from "../Hooks/useThemeContext";
+import { useAppSelector } from "../store/store";
+import { formatCurrency } from "../utils/currency";
 
 ChartJS.register(
   BarElement,
@@ -27,6 +29,7 @@ ChartJS.register(
 const OverviewGraph = () => {
   const { barData } = useUserData();
   const { isDark } = useThemeContext()
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   
   const options = {
     responsive: true,
@@ -54,7 +57,7 @@ const OverviewGraph = () => {
         borderWidth: 1,
         callbacks: {
           label: (context) =>
-            ` ${context.dataset.label ?? "Value"}: ₹${Number(context.parsed.y).toLocaleString("en-IN")}`,
+            ` ${context.dataset.label ?? "Value"}: ${formatCurrency(Number(context.parsed.y), currencyKey)}`,
         },
       },
     },
@@ -74,7 +77,7 @@ const OverviewGraph = () => {
         },
         ticks: {
           color: isDark ? "#94a3b8" :'slate',
-          callback: (value) => `₹${Number(value).toLocaleString("en-IN")}`,
+          callback: (value) => formatCurrency(Number(value), currencyKey),
         },
       },
     },

@@ -6,6 +6,7 @@ import {
   getMonthlyTotal,
   getTopCategory,
 } from "../utils/helperFunctions/transactionMetrics";
+import { formatCurrency } from "../utils/currency";
 
 interface HeaderCardsPropsType {
   setModalState: (val: "income") => void;
@@ -18,6 +19,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
   const userIncome = useAppSelector(
     (state) => state.incomeTransaction.incomeTransactions,
   );
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const transactions = Array.isArray(selectedState) ? selectedState : [];
 
   const metrics = useMemo(() => {
@@ -93,21 +95,21 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           <h2
             className={`text-md lg:text-3xl font-bold mt-1 ${metrics.monthlyNet >= 0 ? "text-emerald-300" : "text-rose-300"}`}
           >
-            ₹ {metrics.monthlyNet.toLocaleString("en-IN")}
+            {formatCurrency(metrics.monthlyNet, currencyKey)}
           </h2>
           <button
             onClick={() => setModalState("income")}
-            className="p-1.5 lg:px-4 font-md lg:font-semibold btn-primary rounded-xl active:scale-95 cursor-pointer"
+            className="p-1 lg:px-4 font-md lg:font-semibold btn-primary rounded-xl active:scale-95 cursor-pointer"
           >
             Add Income
           </button>
         </div>
         <div className="mt-1 lg:mt-3 space-y-1">
           <p className="text-xs text-slate-400">
-            Income: ₹ {metrics.monthlyIncome.toLocaleString("en-IN")}
+            Income: {formatCurrency(metrics.monthlyIncome, currencyKey)}
           </p>
           <p className="text-xs text-slate-400">
-            Spent: ₹ {metrics.monthlyExpense.toLocaleString("en-IN")}
+            Spent: {formatCurrency(metrics.monthlyExpense, currencyKey)}
           </p>
         </div>
         <div
@@ -121,7 +123,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
       <div className="p-3 md:p-6 bg-slate-800 rounded-2xl border glass border-slate-700 shadow-lg">
         <p className="text-slate-400 text-sm font-medium">Monthly Spending</p>
         <h2 className="text-xl md:text-3xl font-bold text-slate-100 mt-1">
-          ₹ {metrics.monthlyExpense.toLocaleString("en-IN")}
+          {formatCurrency(metrics.monthlyExpense, currencyKey)}
         </h2>
         <div className="mt-4 h-1 w-full bg-slate-700 rounded-full">
           <div
@@ -151,7 +153,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
         <div className="mt-3 text-xs text-slate-400">
           Largest this week:{" "}
           {metrics.largestExpenseThisWeek
-            ? `${metrics.largestExpenseThisWeek.name} (₹ ${metrics.largestExpenseThisWeek.amount.toLocaleString("en-IN")})`
+            ? `${metrics.largestExpenseThisWeek.name} (${formatCurrency(metrics.largestExpenseThisWeek.amount, currencyKey)})`
             : "No weekly expense"}
         </div>
       </div>

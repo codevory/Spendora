@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { getUserOriginsList } from "../Hooks/useUserData";
+import { setUserCountry } from "../store/features/userSelections";
 
 interface UserProfileProps {
   name: string;
@@ -19,11 +22,29 @@ const UserProfile = ({
   onLogout,
   onDeleteAccount,
 }: UserProfileProps) => {
+  const dispatch = useAppDispatch();
   const userStatus = localStorage.getItem("isLoggedin");
   const status = JSON.parse(userStatus !== null ? userStatus : "");
   const isAuthenticated = useMemo(() => {
     return Boolean(status);
   }, [status]);
+
+  const userOriginDetails = useAppSelector((state) => state.origin.userOrigin);
+  const userOrigins = getUserOriginsList()
+  const [userKey, setUserKey] = useState(userOriginDetails.key)
+
+  useEffect(() => {
+    setUserKey(userOriginDetails.key);
+  }, [userOriginDetails.key]);
+
+     function onSubmitForm(event: React.SubmitEvent<HTMLFormElement>){
+        event.preventDefault();
+        const selectedOne = userOrigins.find((u) => u.key === userKey)
+
+        if (selectedOne) {
+          dispatch(setUserCountry(selectedOne));
+        }
+    }
 
   return (
     <div className="card glass p-5 shadow-lg">
@@ -44,13 +65,21 @@ const UserProfile = ({
             ) : null}
           </div>
         </div>
-
         <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
           Active account
         </span>
       </div>
 
-      <div className="mt-5 flex flex-col gap-2">
+      <div className="mt-5 flex flex-col gap-4">
+        <form onSubmit={onSubmitForm} className="form flex items-center gap-3">
+          <select value={userKey} onChange={(e) => setUserKey(e.target.value)} className="outline-none bg-slate-800">
+            {
+              userOrigins.map((u) => <option key={u.key} value={u.key}>{u.key}</option>)
+            }
+          </select>
+          <span>{userOriginDetails.currencySymbol}</span>
+          <button className="form-button">Change</button>
+        </form>
         <ThemeSwitcher />
         {isAuthenticated ? (
           <button
@@ -65,7 +94,7 @@ const UserProfile = ({
             to="/signin"
             className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
           >
-            Login
+            Login  /  Regiser
           </Link>
         )}
         <button

@@ -12,6 +12,7 @@ import {
   setLoginStatus,
   setUserData,
 } from "../store/features/userAuthenication";
+import DisplayUserOrigin from "./DisplayUserOrigin";
 interface NavbarPropsType {
   onToggle: () => void;
 }
@@ -67,58 +68,73 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   };
 
   return (
-    <div className="navbar h-16 border-b border-slate-700/70 px-4 md:px-6">
-      <div className="flex h-full items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+    <nav
+      className="navbar border-b border-slate-700/70 px-2 py-3 md:px-6"
+      aria-label="Top navigation"
+    >
+      <div className="navbar-shell mx-auto w-full max-w-425 rounded-2xl border border-slate-700/70 bg-linear-to-r from-slate-900/95 via-slate-900/90 to-slate-800/90 px-3 py-2 shadow-xl shadow-slate-950/30 backdrop-blur md:px-4">
+        <div className="flex min-h-12 w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-3 md:gap-4">
+          <div className="flex min-w-0 items-center gap-2 md:gap-3">
           <button
             type="button"
             onClick={onToggle}
-            className="hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
+            className="navbar-menu-btn hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-600/70 bg-slate-950/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
             aria-label="Toggle sidebar"
           >
             <HiOutlineMenu size={22} />
           </button>
 
-          <div className="hidden md:block">
-            <p className="text-xs tracking-[0.2em] text-slate-500">SPENDORA</p>
-            <p className="text-sm font-semibold text-slate-200">
-              Personal finance dashboard
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="hidden md:block">
-            <ThemeSwitcher />
+            <div className="min-w-0">
+              <p className="navbar-brand-eyebrow text-[10px] font-semibold tracking-[0.28em] text-indigo-200/70 md:text-xs">
+                SPENDORA
+              </p>
+              <p className="navbar-brand-title truncate text-xs font-semibold text-slate-100 sm:block sm:text-sm">
+                Personal finance dashboard
+              </p>
+            </div>
           </div>
 
-          {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-4 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="/signin"
-              className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
-            >
-              Login
-            </Link>
-          )}
+          <div className="hidden justify-center sm:flex">
+            <DisplayUserOrigin />
+          </div>
 
-          <div className="rounded-xl border border-slate-700 bg-slate-900/70 px-2 py-1">
-            <ProfileComponent
-              user={displayName}
-              imgSrc={photoURL}
-              isLoggedin={isAuthenticated}
-            />
+          <div className="ml-auto flex items-center justify-end gap-2 sm:ml-0 md:gap-3">
+            <div className="sm:hidden">
+              <DisplayUserOrigin />
+            </div>
+
+            <div className="hidden md:block">
+              <ThemeSwitcher />
+            </div>
+
+            {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="navbar-action-btn h-9 rounded-lg border border-slate-600/70 bg-slate-900 px-3 text-xs font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95 sm:h-10 sm:px-4 sm:text-sm"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/signin"
+                className="flex h-9 items-center justify-center rounded-lg bg-linear-to-r from-indigo-600 to-violet-500 px-3 text-xs font-semibold text-white transition hover:from-indigo-500 hover:to-violet-400 active:scale-95 sm:h-10 sm:px-4 sm:text-sm"
+              >
+                Login
+              </Link>
+            )}
+
+            <div className="navbar-profile-wrap rounded-xl border border-slate-600/70 bg-slate-950/65 px-2 py-1">
+              <ProfileComponent
+                user={displayName}
+                imgSrc={photoURL}
+                isLoggedin={isAuthenticated}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 

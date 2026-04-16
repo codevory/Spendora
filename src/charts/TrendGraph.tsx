@@ -13,6 +13,8 @@ import {
   type ChartOptions,
 } from "chart.js";
 import useThemeContext from "../Hooks/useThemeContext";
+import { useAppSelector } from "../store/store";
+import { formatCurrency } from "../utils/currency";
 
 ChartJS.register(
   CategoryScale,
@@ -30,6 +32,7 @@ interface TrendGraphPropsType {
 }
 const TrendGraph = ({ data }: TrendGraphPropsType) => {
   const { isDark } = useThemeContext()
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -62,7 +65,7 @@ const TrendGraph = ({ data }: TrendGraphPropsType) => {
         displayColors: false,
         callbacks: {
           label: (context) =>
-            ` ₹${Number(context.parsed.y).toLocaleString("en-IN")}`,
+            ` ${formatCurrency(Number(context.parsed.y), currencyKey)}`,
         },
       },
     },
@@ -85,7 +88,7 @@ const TrendGraph = ({ data }: TrendGraphPropsType) => {
         },
         ticks: {
           color: isDark ? "#94a3b8" : 'slate',
-          callback: (value) => `₹${Number(value).toLocaleString("en-IN")}`,
+          callback: (value) => formatCurrency(Number(value), currencyKey),
         },
       },
     },

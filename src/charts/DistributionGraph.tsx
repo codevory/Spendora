@@ -12,12 +12,15 @@ import { Pie } from "react-chartjs-2";
 import { useUserData } from "../Hooks/useUserData";
 import useThemeContext from "../Hooks/useThemeContext";
 import EmptyState from "../components/EmptyState";
+import { useAppSelector } from "../store/store";
+import { formatCurrency } from "../utils/currency";
 
 ChartJS.register(Tooltip, Legend, Title, ArcElement, Filler);
 
 const DistributionGraph = () => {
   const { pieData } = useUserData();
   const { isDark } = useThemeContext();
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
 
   const options = useMemo(
     () =>
@@ -49,7 +52,7 @@ const DistributionGraph = () => {
               label: (context) => {
                 const label = context.label ?? "Category";
                 const value = Number(context.parsed ?? 0);
-                return `${label}: ₹${value.toLocaleString("en-IN")}`;
+                return `${label}: ${formatCurrency(value, currencyKey)}`;
               },
             },
           },

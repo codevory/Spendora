@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import EmptyState from "./EmptyState";
 import { useMemo } from "react";
 import type { TransactionType } from "../types/transactionType";
+import { useAppSelector } from "../store/store";
+import { formatCurrency } from "../utils/currency";
 
 interface TransactionDetailsPropsType {
   data?: TransactionType[];
@@ -21,6 +23,10 @@ const ViewTransactionDetails = ({
   handleSearchTxns,
 }: TransactionDetailsPropsType) => {
   const { id } = useParams();
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
+  const currencySymbol = useAppSelector(
+    (state) => state.origin.userOrigin.currencySymbol,
+  );
 
   if (data === undefined) {
     return <EmptyState content={"No data found"} />;
@@ -136,11 +142,11 @@ const ViewTransactionDetails = ({
             </p>
             <div className="mt-2 flex items-center gap-3">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-500/15 text-rose-300">
-                ₹
+                {currencySymbol}
               </div>
               <div>
                 <p className="text-2xl font-bold text-slate-100">
-                  ₹{tnxFound.amount}
+                  {formatCurrency(tnxFound.amount, currencyKey)}
                 </p>
                 <p className="text-sm text-slate-400">
                   Recorded spending entry
