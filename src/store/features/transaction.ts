@@ -88,8 +88,18 @@ export const transactionSlice = createSlice({
       state.categories = removeCategory;
       localStorage.setItem("userCategories", JSON.stringify(state.categories));
     },
-  },
-});
+    updateCategory: (state,action:PayloadAction<CategoryPropsType>) => {
+      const selected = state.categories.find((c) => c.id === action.payload.id)
+      if(selected !== undefined && action.payload.name !== ''){
+        selected.name = action.payload.name
+        localStorage.setItem("userCategories", JSON.stringify(state.categories));
+      }
+      else{
+        throw new Error("Failed to update category from store")
+      }
+    },
+  }})
+
 
 export default transactionSlice.reducer;
 export const {
@@ -100,4 +110,5 @@ export const {
   updateTransaction,
   addNewCategory,
   deleteCategory,
+  updateCategory
 } = transactionSlice.actions;

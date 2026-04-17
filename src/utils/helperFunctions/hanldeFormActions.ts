@@ -1,4 +1,6 @@
 import type { AppDispatch } from "../../store/store";
+import { updateCategory } from "../../store/features/transaction";
+
 import type {
   CategoryPropsType,
   IncomeType,
@@ -223,3 +225,47 @@ export function handleDeleteCategory({
     console.error(error);
   }
 }
+
+export interface HandleRenameCategoryProps {
+  e: React.SubmitEvent<HTMLFormElement>;
+  category:CategoryPropsType;
+  nextCategoryName: string;
+  success:(val:string) => string;
+  fail:(val:string) => string;
+  setIsLoading:(val:boolean) => void;
+  dispatch:AppDispatch;
+  setModalState: (val: "income" | "category" | "closed") => void;
+}
+export function handleRenameCategory({
+  e,
+  category,
+  nextCategoryName,
+  success,
+  fail,
+  setIsLoading,
+  dispatch,
+  setModalState,
+}:HandleRenameCategoryProps){
+    e.preventDefault();
+    try {
+      setIsLoading(true)
+      const trimmedCategoryName = nextCategoryName.trim();
+
+      if (!trimmedCategoryName || trimmedCategoryName.length < 3) {
+        return fail("kindly type category name");
+      }
+
+      if (!category?.id) {
+        return fail("Invalid category");
+      }
+
+      dispatch(updateCategory({ ...category, name: trimmedCategoryName }))
+      success("Updated successfully")
+      setModalState("closed");
+    } catch (error) {
+      error instanceof Error ?  fail(error.message) : console.error("error : Failed to update category")
+    }
+    finally{
+      setIsLoading(false)
+    }
+  }

@@ -5,9 +5,17 @@ import { handleAddCategory } from "../utils/helperFunctions/hanldeFormActions";
 
 type CategoryFormProps = {
   setModalState: (val: "closed") => void;
+  buttonContent ? : string;
+  formHeading ? : string;
+  categoryState ? : string;
+  handleCategoryState ? : (val:string) => void;
+  handleFormSubmit?: (e: React.SubmitEvent<HTMLFormElement>, categoryName: string) => void;
 };
 
-const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
+const AddNewCategoryForm = ({ setModalState,buttonContent,formHeading,categoryState
+  ,handleCategoryState,handleFormSubmit
+ }: CategoryFormProps) => {
+  
   const [category, setCategory] = useState<string>("");
   const categories = useAppSelector((state) => state.transaction.categories);
 
@@ -16,11 +24,20 @@ const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
   const failed = (message: string) => toast.error(message);
 
   const onSubmit = handleAddCategory;
+  const categoryValue = categoryState !== undefined ? categoryState : category;
+
   return (
     <div className="flex flex-col gap-2 text-slate-100">
-      <h2 className="text-lg font-semibold">Add New Category</h2>
+      <h2 className="text-lg font-semibold">{formHeading ?? 'Add New Category'}</h2>
       <form
-        onSubmit={(e) =>
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          if (handleFormSubmit) {
+            handleFormSubmit(e, categoryValue);
+            return;
+          }
+
           onSubmit({
             e: e,
             dispatch: dispatch,
@@ -29,9 +46,9 @@ const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
             setCategory: setCategory,
             setModalState: setModalState,
             categories: categories,
-            category: category,
-          })
-        }
+            category: categoryValue,
+          });
+        }}
         className="form flex flex-col gap-2 "
       >
         <div className=" flex flex-col">
@@ -39,8 +56,8 @@ const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
           <input
             className="input"
             type="text"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            value={categoryValue}
+            onChange={(e) => handleCategoryState !== undefined ? handleCategoryState(e.target.value) : setCategory(e.target.value)}
             required
           />
         </div>
@@ -49,7 +66,7 @@ const AddNewCategoryForm = ({ setModalState }: CategoryFormProps) => {
           className="btn-primary w-20 h-11 font-semibold active:scale-95"
           type="submit"
         >
-          Add
+         {buttonContent ?? 'Add'}
         </button>
       </form>
     </div>
