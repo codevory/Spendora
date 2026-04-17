@@ -86,13 +86,34 @@ export const transactionSlice = createSlice({
         (cat) => cat.id !== action.payload.id,
       );
       state.categories = removeCategory;
+
+      // Cascade delete: remove all transactions that use the deleted category name.
+      const deletedCategoryName = action.payload.name.trim().toLowerCase();
+      state.transactions = state.transactions.filter(
+        (t) => t.category.trim().toLowerCase() !== deletedCategoryName,
+      );
+
       localStorage.setItem("userCategories", JSON.stringify(state.categories));
+      localStorage.setItem("userTransactions", JSON.stringify(state.transactions));
     },
     updateCategory: (state,action:PayloadAction<CategoryPropsType>) => {
-      const selected = state.categories.find((c) => c.id === action.payload.id)
-      if(selected !== undefined && action.payload.name !== ''){
-        selected.name = action.payload.name
+      const selected = state.categories.findIndex((c) => c.id === action.payload.id)
+      const nextCategoryName = action.payload.name.trim();
+
+      if(selected !== -1 && nextCategoryName !== ''){
+        const previousCategoryName = state.categories[selected].name.trim().toLowerCase();
+
+        state.categories[selected] = { ...action.payload, name: nextCategoryName };
+
+        // Cascade rename: update every transaction linked by category name.
+        state.transactions = state.transactions.map((t) =>
+          t.category.trim().toLowerCase() === previousCategoryName
+            ? { ...t, category: nextCategoryName }
+            : t,
+        );
+
         localStorage.setItem("userCategories", JSON.stringify(state.categories));
+        localStorage.setItem("userTransactions", JSON.stringify(state.transactions));
       }
       else{
         throw new Error("Failed to update category from store")

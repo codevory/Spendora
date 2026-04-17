@@ -210,7 +210,7 @@ export function handleDeleteCategory({
   failed,
 }: HandleDeleteCategoryProps) {
   const confirmDelete = (val: string) =>
-    window.confirm(`are you sure to delete ${val} category`);
+    window.confirm(`Transcactions added in ${val} category will be deleted`);
   try {
     if (confirmDelete(category.name)) {
       dispatch(deleteCategory(category));

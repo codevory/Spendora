@@ -15,8 +15,7 @@ interface DisplayCategoriesPropsType {
 }
 const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
   const [modalState, setModalState] = useState<
-  "income" | "category" | "closed"
->("closed");
+  "income" | "category" | "closed">("closed");
   const [category, setCategory] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryPropsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +58,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
                 </div>
 
                 <span className="rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-semibold text-indigo-300">
-                  {usageCount} cats
+                  {usageCount} txns
                 </span>
               </div>
 
