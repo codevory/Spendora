@@ -1,5 +1,12 @@
+import { useMemo } from "react";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  day: "2-digit",
+  month: "long",
+});
 
 const RecentTransactions = () => {
   const userExpenseTxns = useAppSelector(
@@ -10,36 +17,40 @@ const RecentTransactions = () => {
   );
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
 
-  const normalizedIncomeData = userIncomeTxns.map((txn) => {
-    return {
-      amount: txn.amount,
-      transactionId: txn.transactionId,
-      name: txn.source,
-      date: txn.date,
-      createdAt: txn.createdAt,
-      type: txn.type ?? "income",
-    };
-  });
+  const sortedTransactions = useMemo(() => {
+    const normalizedIncomeData = userIncomeTxns.map((txn) => {
+      return {
+        amount: txn.amount,
+        transactionId: txn.transactionId,
+        name: txn.source,
+        date: txn.date,
+        dateTimestamp: new Date(txn.date).getTime(),
+        type: txn.type ?? "income",
+      };
+    });
 
-  const normalizedExpenseData = userExpenseTxns.map((txn) => {
-    return {
-      amount: txn.amount,
-      transactionId: txn.transactionId,
-      name: txn.name,
-      date: txn.date,
-      createdAt: txn.createdAt,
-      type: txn.type ?? "expense",
-    };
-  });
-  const copy = [...normalizedIncomeData, ...normalizedExpenseData];
+    const normalizedExpenseData = userExpenseTxns.map((txn) => {
+      return {
+        amount: txn.amount,
+        transactionId: txn.transactionId,
+        name: txn.name,
+        date: txn.date,
+        dateTimestamp: new Date(txn.date).getTime(),
+        type: txn.type ?? "expense",
+      };
+    });
+
+    const combined = [...normalizedExpenseData, ...normalizedIncomeData];
+    return combined.sort((a, b) => b.dateTimestamp - a.dateTimestamp);
+  }, [userExpenseTxns, userIncomeTxns]);
+
   return (
     <div className="card recent-transactions mt-6">
       <h2 className="recent-transactions-title text-lg font-semibold mb-4">
         Recent Transactions
       </h2>
 
-      {copy
-        .sort((a, b) => b.createdAt - a.createdAt)
+      {sortedTransactions
         .map((item) => {
           return (
             <div
@@ -49,7 +60,7 @@ const RecentTransactions = () => {
               <div>
                 <p className="font-medium recent-transaction-name">{item.name}</p>
                 <p className="text-sm text-muted">
-                  {formateDate().format(new Date(item.date))} •{" "}
+                  {dateFormatter.format(new Date(item.date))} •{" "}
                   {getDayName(item.date)}
                 </p>
               </div>
@@ -73,13 +84,5 @@ export default RecentTransactions;
 function getDayName(dateString: string) {
   return new Date(dateString).toLocaleDateString("en-us", {
     weekday: "short",
-  });
-}
-
-function formateDate() {
-  return new Intl.DateTimeFormat("en-Us", {
-    year: "numeric",
-    day: "2-digit",
-    month: "long",
   });
 }
