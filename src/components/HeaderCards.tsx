@@ -99,7 +99,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           </h2>
           <button
             onClick={() => setModalState("income")}
-            className="p-1 lg:px-4 font-md lg:font-semibold btn-primary rounded-xl active:scale-95 cursor-pointer"
+            className="px-1 lg:px-2 mx-2 font-sm lg:font-semibold w-30 bg-blue-900 h-10 lg:h-12 rounded-xl active:scale-95 cursor-pointer"
           >
             Add Income
           </button>

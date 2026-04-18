@@ -1,19 +1,21 @@
-import { useMemo, useState } from "react";
+import React,{Suspense, useMemo, useState } from "react";
 import AddTransactionForm from "../components/AddTransactionForm";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
 import { useAppSelector } from "../store/store";
 import HeaderCards from "./HeaderCards";
-import TrendGraph from "../charts/TrendGraph";
-import DistributionGraph from "../charts/DistributionGraph";
-import OverviewGraph from "../charts/OverviewGraph";
 import { formatCurrency } from "../utils/currency";
+import GraphSkeleton from "./GraphSkeleton";
 
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
 }
 
 const MainContent = ({ setModalState }: MainContentPropsType) => {
+  const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
+  const DistributionGraph = React.lazy(() => import("../charts/DistributionGraph"));
+  const OverviewGraph = React.lazy(() => import("../charts/OverviewGraph"));
+
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
   const transactions = useAppSelector(
     (state) => state.transaction.transactions,
@@ -107,11 +109,17 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
 
             <div className="analysis-container m-0 overflow-x-scroll rounded-xl border border-slate-700 bg-slate-900/60 p-2">
               {activeGraph === "pie" ? (
-                <DistributionGraph />
+                <Suspense fallback={<GraphSkeleton />}>
+                  <DistributionGraph />
+                </Suspense>
               ) : activeGraph === "bar" ? (
-                <OverviewGraph />
+                <Suspense fallback={<GraphSkeleton />}>
+                  <OverviewGraph />
+                </Suspense>
               ) : (
-                <TrendGraph data={lineData} />
+                <Suspense fallback={<GraphSkeleton />}>
+                  <TrendGraph data={lineData} />
+                </Suspense>
               )}
             </div>
           </div>

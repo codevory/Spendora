@@ -751,3 +751,59 @@ color:rgb(0, 0, 0);
 }
 
 /* skeleton loading ends here */
+
+.graph-skeleton {
+  background:
+    radial-gradient(circle at 14% 18%, rgba(79, 70, 229, 0.18), transparent 34%),
+    linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.74));
+}
+
+.graph-skeleton-grid {
+  background:
+    linear-gradient(to top, rgba(100, 116, 139, 0.26) 1px, transparent 1px) 0 0 / 100% 24%,
+    rgba(15, 23, 42, 0.44);
+}
+
+.graph-skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(100, 116, 139, 0.42);
+}
+
+.graph-skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    100deg,
+    transparent 15%,
+    rgba(255, 255, 255, 0.14) 45%,
+    rgba(255, 255, 255, 0.36) 50%,
+    rgba(255, 255, 255, 0.14) 55%,
+    transparent 85%
+  );
+  animation: graphShimmer 1.55s infinite;
+}
+
+.theme-light .graph-skeleton {
+  background:
+    radial-gradient(circle at 14% 18%, rgba(99, 102, 241, 0.2), transparent 35%),
+    linear-gradient(160deg, rgba(248, 250, 252, 0.95), rgba(226, 232, 240, 0.92));
+}
+
+.theme-light .graph-skeleton-grid {
+  background:
+    linear-gradient(to top, rgba(148, 163, 184, 0.2) 1px, transparent 1px) 0 0 / 100% 24%,
+    rgba(226, 232, 240, 0.66);
+}
+
+.theme-light .graph-skeleton-shimmer {
+  background-color: rgba(148, 163, 184, 0.4);
+}
+
+@keyframes graphShimmer {
+  100% {
+    transform: translateX(120%);
+  }
+}
