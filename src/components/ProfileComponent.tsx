@@ -1,4 +1,4 @@
-import { CgProfile } from "react-icons/cg";
+import { ProfileCircleIcon } from "./icons/LocalIcons";
 
 interface ProfileProps {
   isLoggedin: boolean;
@@ -6,7 +6,7 @@ interface ProfileProps {
   user: string;
 }
 const ProfileComponent = ({ isLoggedin, imgSrc, user }: ProfileProps) => {
-  if (!isLoggedin) return <CgProfile size={25} />;
+  if (!isLoggedin) return <ProfileCircleIcon size={25} />;
   return (
     <div className="flex items-center justify-center relative">
       <img

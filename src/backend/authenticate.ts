@@ -1,11 +1,9 @@
-import { PiPizzaThin } from "react-icons/pi";
-
 const key = {
   username: "shahijahan_123",
   password: "12340000",
   name: "Shahijahan",
   age: 21,
-  image: PiPizzaThin,
+  image: "/default-man.webp",
 };
 
 interface AuthenticatePropsType {

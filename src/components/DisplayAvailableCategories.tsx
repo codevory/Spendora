@@ -5,11 +5,11 @@ import EmptyState from "./EmptyState";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import toast from "react-hot-toast";
 import { handleDeleteCategory } from "../utils/helperFunctions/hanldeFormActions";
-import { HiPencil } from "react-icons/hi";
 import ModalBox from "./ModalBox";
 import AddNewCategoryForm from "./AddCategoryForm";
 import Loader from "./Loader";
 import { handleRenameCategory } from "../utils/helperFunctions/hanldeFormActions";
+import useThemeContext from "../Hooks/useThemeContext";
 interface DisplayCategoriesPropsType {
   data: TransactionType[];
 }
@@ -25,7 +25,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
   const success = (mesg: string) => toast.success(mesg);
   const fail = (msg: string) => toast.error(msg);
 
-
+  const { isDark } = useThemeContext()
   const onDelete = handleDeleteCategory;
   return (
     <div className="space-y-3">
@@ -53,7 +53,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
                       setSelectedCategory(cat);
                       setCategory(cat.name);
                       setModalState("category");
-                      }} className="active:scale-95 cursor-pointer">{<HiPencil size={20} />}</button>
+                      }} className="active:scale-95 cursor-pointer">{<img color="red" src={`${isDark ? '/pencil-light.svg' : '/pencil-dark.svg'}`} width={18} height={20} />}</button>
                   </div>
                 </div>
 

@@ -1,4 +1,3 @@
-import { HiOutlineMenu } from "react-icons/hi";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileComponent from "./ProfileComponent";
@@ -13,6 +12,7 @@ import {
   setUserData,
 } from "../store/features/userAuthenication";
 import DisplayUserOrigin from "./DisplayUserOrigin";
+import useThemeContext from "../Hooks/useThemeContext";
 interface NavbarPropsType {
   onToggle: () => void;
 }
@@ -25,6 +25,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   const [hasSession, setHasSession] = useState<boolean>(false);
   const [auth, setFirebaseAuth] = useState<Auth | null>(null);
   const isLoggedin = useAppSelector((state) => state.userData.isLoggedin);
+  const { isDark } = useThemeContext()
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
 
@@ -81,7 +82,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
             className="navbar-menu-btn hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-600/70 bg-slate-950/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
             aria-label="Toggle sidebar"
           >
-            <HiOutlineMenu size={22} />
+            <img src={`${isDark ? '/menu-light.svg' : '/menu-dark.svg'}`} alt="menu" />
           </button>
 
             <div className="min-w-0">

@@ -1,7 +1,7 @@
 import React from "react";
-import { BiLock, BiUser } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import Loader from "./Loader";
+import { LockOutlineIcon, UserOutlineIcon } from "./icons/LocalIcons";
 
 interface SignupomponentPropsType {
   username: string;
@@ -48,7 +48,7 @@ const SignupComponent = ({
                 required
               />
               <p className="absolute bottom-4 left-1 ">
-                {<BiUser size={22} />}
+                {<UserOutlineIcon size={22} />}
               </p>
             </div>
           </div>
@@ -69,7 +69,7 @@ const SignupComponent = ({
                 required
               />
               <p className="absolute bottom-3 left-1 ">
-                {<BiLock size={22} />}
+                {<LockOutlineIcon size={22} />}
               </p>
             </div>
           </div>
@@ -89,7 +89,7 @@ const SignupComponent = ({
                 required
               />
               <p className="absolute bottom-3 left-1 ">
-                {<BiLock size={22} />}
+                {<LockOutlineIcon size={22} />}
               </p>
             </div>
           </div>

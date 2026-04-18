@@ -538,6 +538,13 @@ input[type="number"] {
   }
 }
 
+.theme-light .svg-icons{
+color:rgb(0, 0, 0);
+}
+.theme-dark .svg-icons{
+  color:white
+}
+
 @media (width <= 770px) {
   .chart {
     @apply max-w-dvw h-75 flex justify-center;
