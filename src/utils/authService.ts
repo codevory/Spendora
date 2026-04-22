@@ -1,5 +1,4 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getFirebaseServices } from "../backend/firebaseLazy";
 import toast from "react-hot-toast";
 import type { AppDispatch } from "../store/store";
 import {
@@ -17,33 +16,57 @@ interface HandleAuthProps {
 }
 interface handleGoogleSigninProps {
   setIsLoading: (val: boolean) => void;
+  deps?: {
+    getFirebaseServices?: () => Promise<any>;
+    signInWithPopup?: (...args: any[]) => Promise<any>;
+    credentialFromResult?: (...args: any[]) => any;
+    credentialFromError?: (...args: any[]) => any;
+    success?: (...args: any[]) => any;
+    fail?: (...args: any[]) => any;
+  };
 }
 
 const success = (message: string) => toast.success(message);
 const fail = (message: string) => toast.error(message);
 
+async function loadFirebaseServices() {
+  const { getFirebaseServices } = await import("../backend/firebaseLazy");
+  return getFirebaseServices();
+}
+
 export async function handleGoogleSignin({
   setIsLoading,
+  deps,
 }: handleGoogleSigninProps) {
   try {
     setIsLoading(true);
-    const { auth, provider } = await getFirebaseServices();
-    const result = await signInWithPopup(auth, provider);
-    const credentials = GoogleAuthProvider.credentialFromResult(result);
+    const getServices = deps?.getFirebaseServices ?? loadFirebaseServices;
+    const popupSignIn = deps?.signInWithPopup ?? signInWithPopup;
+    const fromResult =
+      deps?.credentialFromResult ?? GoogleAuthProvider.credentialFromResult;
+    const successToast = deps?.success ?? success;
+
+    const { auth, provider } = await getServices();
+    const result = await popupSignIn(auth, provider);
+    const credentials = fromResult(result);
     console.log(credentials);
-    success("🎉 signin successfull");
-    setIsLoading(false);
+    successToast("🎉 signin successfull");
     return result;
   } catch (err: any) {
     if (err instanceof Error) {
       console.error(err);
-      fail(err.message);
+      const failToast = deps?.fail ?? fail;
+      failToast(err.message);
     }
     const email = err.customData?.email;
-    const credential = GoogleAuthProvider.credentialFromError(err);
+    const fromError =
+      deps?.credentialFromError ?? GoogleAuthProvider.credentialFromError;
+    const credential = fromError(err);
     console.log(email);
     console.log(credential);
     throw err;
+  } finally {
+    setIsLoading(false);
   }
 }
 
@@ -54,7 +77,7 @@ export async function handleLogout({
   navigate,
 }: HandleAuthProps) {
   const { signOut } = await import("firebase/auth");
-  const { auth } = await getFirebaseServices();
+  const { auth } = await loadFirebaseServices();
   await signOut(auth);
   dispatch(setLoginStatus(false));
   dispatch(setUserData(null));
@@ -68,7 +91,7 @@ export async function handleDeleteAccount({
   setLoginStatus,
   setUserData,
 }: HandleAuthProps) {
-  const { auth } = await getFirebaseServices();
+  const { auth } = await loadFirebaseServices();
   if (!auth?.currentUser) {
     dispatch(
       setError({

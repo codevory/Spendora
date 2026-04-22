@@ -39,7 +39,7 @@ type commonTypes = Pick<
 >;
 interface handleAddIncomeTransactionProps extends commonTypes {
   incomeSource: string;
-  amount: number | '';
+  amount: number | "";
   incomeDate: string;
   success: (val: string) => string;
   setModalState: (val: "closed") => void;
@@ -129,11 +129,11 @@ export function handleAddIncomeTransaction({
   setModalState,
 }: handleAddIncomeTransactionProps) {
   e.preventDefault();
-  if (amount !== '' && amount < 0)
-    return failed("Not valid income amount");
-  if(incomeDate === "" || incomeSource === "") return failed("Fill all required details")
+  if (amount !== "" && amount < 0) return failed("Not valid income amount");
+  if (incomeDate === "" || incomeSource === "")
+    return failed("Fill all required details");
   const addIncome: IncomeType = {
-    amount: amount !== '' ? amount : 0 ,
+    amount: amount !== "" ? amount : 0,
     source: incomeSource,
     date: incomeDate,
     transactionId: crypto.randomUUID(),
@@ -228,12 +228,12 @@ export function handleDeleteCategory({
 
 export interface HandleRenameCategoryProps {
   e: React.SubmitEvent<HTMLFormElement>;
-  category:CategoryPropsType;
+  category: CategoryPropsType;
   nextCategoryName: string;
-  success:(val:string) => string;
-  fail:(val:string) => string;
-  setIsLoading:(val:boolean) => void;
-  dispatch:AppDispatch;
+  success: (val: string) => string;
+  fail: (val: string) => string;
+  setIsLoading: (val: boolean) => void;
+  dispatch: AppDispatch;
   setModalState: (val: "income" | "category" | "closed") => void;
 }
 export function handleRenameCategory({
@@ -245,27 +245,28 @@ export function handleRenameCategory({
   setIsLoading,
   dispatch,
   setModalState,
-}:HandleRenameCategoryProps){
-    e.preventDefault();
-    try {
-      setIsLoading(true)
-      const trimmedCategoryName = nextCategoryName.trim();
+}: HandleRenameCategoryProps) {
+  e.preventDefault();
+  try {
+    setIsLoading(true);
+    const trimmedCategoryName = nextCategoryName.trim();
 
-      if (!trimmedCategoryName || trimmedCategoryName.length < 3) {
-        return fail("kindly type category name");
-      }
-
-      if (!category?.id) {
-        return fail("Invalid category");
-      }
-
-      dispatch(updateCategory({ ...category, name: trimmedCategoryName }))
-      success("Updated successfully")
-      setModalState("closed");
-    } catch (error) {
-      error instanceof Error ?  fail(error.message) : console.error("error : Failed to update category")
+    if (!trimmedCategoryName || trimmedCategoryName.length < 3) {
+      return fail("kindly type category name");
     }
-    finally{
-      setIsLoading(false)
+
+    if (!category?.id) {
+      return fail("Invalid category");
     }
+
+    dispatch(updateCategory({ ...category, name: trimmedCategoryName }));
+    success("Updated successfully");
+    setModalState("closed");
+  } catch (error) {
+    error instanceof Error
+      ? fail(error.message)
+      : console.error("error : Failed to update category");
+  } finally {
+    setIsLoading(false);
   }
+}
