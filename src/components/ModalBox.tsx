@@ -10,7 +10,7 @@ const ModalBox = ({ onClose, form }: CategoryModalPropsType) => {
       <div className="relative w-full max-w-md rounded-xl border border-slate-700 bg-slate-800 p-5 text-slate-100 shadow-2xl">
         <button
           onClick={onClose}
-          className="btn-primary absolute right-2 top-2"
+          className="btn-primary absolute right-2 top-1 z-100"
         >
           Close
         </button>

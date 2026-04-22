@@ -25,7 +25,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   const [hasSession, setHasSession] = useState<boolean>(false);
   const [auth, setFirebaseAuth] = useState<Auth | null>(null);
   const isLoggedin = useAppSelector((state) => state.userData.isLoggedin);
-  const { isDark } = useThemeContext()
+  const { isDark } = useThemeContext();
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
 
@@ -76,14 +76,17 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
       <div className="navbar-shell mx-auto w-full max-w-425 rounded-2xl border border-slate-700/70 bg-linear-to-r from-slate-900/95 via-slate-900/90 to-slate-800/90 px-3 py-2 shadow-xl shadow-slate-950/30 backdrop-blur md:px-4">
         <div className="flex min-h-12 w-full items-center justify-between gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-3 md:gap-4">
           <div className="flex min-w-0 items-center gap-2 md:gap-3">
-          <button
-            type="button"
-            onClick={onToggle}
-            className="navbar-menu-btn hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-600/70 bg-slate-950/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
-            aria-label="Toggle sidebar"
-          >
-            <img src={`${isDark ? '/menu-light.svg' : '/menu-dark.svg'}`} alt="menu" />
-          </button>
+            <button
+              type="button"
+              onClick={onToggle}
+              className="navbar-menu-btn hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-600/70 bg-slate-950/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
+              aria-label="Toggle sidebar"
+            >
+              <img
+                src={`${isDark ? "/menu-light.svg" : "/menu-dark.svg"}`}
+                alt="menu"
+              />
+            </button>
 
             <div className="min-w-0">
               <p className="navbar-brand-eyebrow text-[10px] font-semibold tracking-[0.28em] text-indigo-200/70 md:text-xs">

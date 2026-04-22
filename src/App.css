@@ -52,19 +52,26 @@ input[type="number"] {
   @apply p-4 md:p-6 lg:p-8;
 }
 
+.auth-page {
+  @apply flex min-h-[calc(100vh-4rem)] items-center justify-center p-2;
+}
+
+.auth-shell {
+  @apply mx-auto flex w-full justify-center;
+  max-width: 40rem;
+}
+
+.auth-card {
+  @apply mx-auto flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg sm:p-5;
+}
+
+.form-card {
+  @apply mx-auto w-full max-w-md;
+}
+
 /* ===== Cards ===== */
 .card {
-  @apply bg-slate-800 rounded-2xl p-5 shadow-lg border border-slate-700;
-}
-
-/* ===== Dashboard Cards ===== */
-.dashboard-card {
-  @apply bg-linear-to-br from-indigo-500 to-purple-600 text-white 
-  rounded-2xl p-5 shadow-lg w-60 h-30  flex justify-center items-center;
-}
-
-.card-redish {
-  @apply bg-linear-to-br from-indigo-800 to-pink-400;
+  @apply bg-slate-800 rounded-2xl p-3 shadow-lg border border-slate-700;
 }
 
 /* ===== Inputs ===== */
@@ -99,15 +106,6 @@ input[type="number"] {
   @apply text-indigo-400;
 }
 
-/* ===== Labels / Tags ===== */
-.tag {
-  @apply px-2 py-1 rounded-md text-xs font-medium;
-}
-
-.tag-entertainment {
-  @apply bg-purple-500/20 text-purple-400;
-}
-
 /* ===== Transactions ===== */
 .transaction-item {
   @apply flex justify-between items-center p-3 rounded-lg hover:bg-slate-800 transition;
@@ -128,36 +126,25 @@ input[type="number"] {
   @apply h-14  text-white p-2 flex justify-center  gap-10;
 }
 
-/* forms */
-.login-card {
-  @apply w-md h-120 overflow-hidden p-3 flex flex-col gap-1 justify-between items-center;
+.auth-field {
+  @apply relative;
 }
-.input-field {
-  @apply flex gap-2 items-center;
+
+.auth-icon {
+  @apply absolute left-3 top-1/2 -translate-y-1/2;
 }
-.input-box {
-  @apply outline-none bg-transparent w-full h-full ml-4 py-2;
+
+.auth-link {
+  @apply inline-flex rounded-md px-3 py-1 text-sm font-medium text-indigo-200 cursor-pointer transition hover:text-white active:scale-95;
 }
-.login-btn {
-  @apply text-center font-medium cursor-pointer active:scale-95;
-}
-.google-login {
-  @apply bg-linear-to-br from-blue-600 to-red-500  from-25% to-55%;
-}
-.facebook-login {
-  @apply bg-linear-to-tl from-blue-600 to-75%;
+
+.auth-social-button {
+  @apply flex w-full min-h-12 items-center justify-center rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-center font-medium text-slate-200 placeholder-slate-400 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 active:scale-95;
 }
 
 .analysis-container {
   margin: 10px;
   padding: 5px;
-}
-
-.form-container {
-  margin-inline: 5px;
-  min-width: 200px;
-  height: fit-content;
-  margin-top: 30px;
 }
 
 .chart {
@@ -326,11 +313,11 @@ input[type="number"] {
   border: 1px solid #cbd5e1;
   color: #0f172a;
 }
-.theme-light .form-button{
-  @apply w-18 h-8 rounded-xl p-1 bg-blue-600 cursor-pointer active:scale-95 font-mono text-white
+.theme-light .form-button {
+  @apply w-18 h-8 rounded-xl p-1 bg-blue-600 cursor-pointer active:scale-95 font-mono text-white;
 }
-.theme-dark .form-button{
- @apply w-18 h-8 rounded-xl p-1 bg-blue-600 cursor-pointer active:scale-95 font-mono
+.theme-dark .form-button {
+  @apply w-18 h-8 rounded-xl p-1 bg-blue-600 cursor-pointer active:scale-95 font-mono;
 }
 
 .categories-panel {
@@ -528,21 +515,6 @@ input[type="number"] {
   .layout {
     padding: 0;
   }
-
-  .form-container {
-    margin-left: 10px;
-    margin-top: 15px;
-    width: 90%;
-    height: fit-content;
-    margin-top: 65px;
-  }
-}
-
-.theme-light .svg-icons{
-color:rgb(0, 0, 0);
-}
-.theme-dark .svg-icons{
-  color:white
 }
 
 @media (width <= 770px) {
@@ -570,15 +542,6 @@ color:rgb(0, 0, 0);
 
   .sidebar {
     display: none;
-  }
-  
-  .form-container {
-    margin-inline: 2px;
-    margin-block: 5px;
-    width: 90%;
-    flex-grow: initial;
-    height: fit-content;
-    margin-top: 5px;
   }
 
   .mobile-menu {
@@ -624,11 +587,6 @@ color:rgb(0, 0, 0);
   }
 }
 
-.empty-state {
-  min-width: 150px;
-  min-height: 150px;
-  background-color: red;
-}
 /* skeleton loading card */
 .skeleton-parent {
   @apply w-dvw h-dvh px-3 py-4 overflow-hidden;
@@ -754,13 +712,18 @@ color:rgb(0, 0, 0);
 
 .graph-skeleton {
   background:
-    radial-gradient(circle at 14% 18%, rgba(79, 70, 229, 0.18), transparent 34%),
+    radial-gradient(
+      circle at 14% 18%,
+      rgba(79, 70, 229, 0.18),
+      transparent 34%
+    ),
     linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.74));
 }
 
 .graph-skeleton-grid {
   background:
-    linear-gradient(to top, rgba(100, 116, 139, 0.26) 1px, transparent 1px) 0 0 / 100% 24%,
+    linear-gradient(to top, rgba(100, 116, 139, 0.26) 1px, transparent 1px) 0
+      0 / 100% 24%,
     rgba(15, 23, 42, 0.44);
 }
 
@@ -788,13 +751,22 @@ color:rgb(0, 0, 0);
 
 .theme-light .graph-skeleton {
   background:
-    radial-gradient(circle at 14% 18%, rgba(99, 102, 241, 0.2), transparent 35%),
-    linear-gradient(160deg, rgba(248, 250, 252, 0.95), rgba(226, 232, 240, 0.92));
+    radial-gradient(
+      circle at 14% 18%,
+      rgba(99, 102, 241, 0.2),
+      transparent 35%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(248, 250, 252, 0.95),
+      rgba(226, 232, 240, 0.92)
+    );
 }
 
 .theme-light .graph-skeleton-grid {
   background:
-    linear-gradient(to top, rgba(148, 163, 184, 0.2) 1px, transparent 1px) 0 0 / 100% 24%,
+    linear-gradient(to top, rgba(148, 163, 184, 0.2) 1px, transparent 1px) 0 0 /
+      100% 24%,
     rgba(226, 232, 240, 0.66);
 }
 

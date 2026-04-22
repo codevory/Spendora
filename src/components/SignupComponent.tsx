@@ -27,19 +27,20 @@ const SignupComponent = ({
   handleFormSubmit,
 }: SignupomponentPropsType) => {
   return (
-    <div className="card login-card min-h-135">
-      <form
-        onSubmit={(e) => handleFormSubmit(e)}
-        className="flex flex-col gap-5 w-sm h-[70%] relative"
-      >
-        <div className="flex flex-col gap-3">
+    <div className="auth-card ">
+      <form onSubmit={handleFormSubmit} className="flex w-full flex-col gap-4">
+        <div className="flex flex-col gap-4">
           <div>
-            <label className="text-muted" htmlFor="username">
+            <label
+              className="mb-1.5 block text-sm font-medium text-muted"
+              htmlFor="username"
+            >
               username
             </label>
-            <div className="relative input flex gap-1 items-center">
+            <div className="input auth-field flex items-center gap-1 rounded-xl px-4 py-3">
+              <p className="auth-icon">{<UserOutlineIcon size={22} />}</p>
               <input
-                className="input-box"
+                className="w-full bg-transparent py-1 pl-10 outline-none"
                 id="username"
                 minLength={6}
                 placeholder="John"
@@ -47,19 +48,20 @@ const SignupComponent = ({
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
-              <p className="absolute bottom-4 left-1 ">
-                {<UserOutlineIcon size={22} />}
-              </p>
             </div>
           </div>
 
           <div>
-            <label className="text-muted" htmlFor="password">
+            <label
+              className="mb-1.5 block text-sm font-medium text-muted"
+              htmlFor="password"
+            >
               password
             </label>
-            <div className="relative input input-feld">
+            <div className="input auth-field flex items-center gap-1 rounded-xl px-4 py-3">
+              <p className="auth-icon">{<LockOutlineIcon size={22} />}</p>
               <input
-                className="input-box "
+                className="w-full bg-transparent py-1 pl-10 outline-none"
                 id="password"
                 minLength={8}
                 type="password"
@@ -68,19 +70,20 @@ const SignupComponent = ({
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <p className="absolute bottom-3 left-1 ">
-                {<LockOutlineIcon size={22} />}
-              </p>
             </div>
           </div>
 
           <div>
-            <label className="text-muted" htmlFor="email">
+            <label
+              className="mb-1.5 block text-sm font-medium text-muted"
+              htmlFor="email"
+            >
               email
             </label>
-            <div className="relative input input-feld">
+            <div className="input auth-field flex items-center gap-1 rounded-xl px-4 py-3">
+              <p className="auth-icon">{<LockOutlineIcon size={22} />}</p>
               <input
-                className="input-box "
+                className="w-full bg-transparent py-1 pl-10 outline-none"
                 id="email"
                 minLength={12}
                 type="email"
@@ -88,36 +91,27 @@ const SignupComponent = ({
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <p className="absolute bottom-3 left-1 ">
-                {<LockOutlineIcon size={22} />}
-              </p>
             </div>
           </div>
         </div>
         <button className="btn-primary" type="submit">
           {isLoading ? <Loader /> : "Signup"}
         </button>
-        <Link
-          to="/signin"
-          className="absolute top-1/1 right-0  w-23 h-auto items-center rounded-md login-btn "
-        >
-          sign in
-        </Link>
+        <div className="flex justify-end mb-2">
+          <Link to="/signin" className="auth-link">
+            sign in
+          </Link>
+        </div>
       </form>
-      <span className=" h-8 my-2 w-full text-center font-bold text-slate-200 ">
-        OR
-      </span>
-      <div className="w-full h-[30%] flex flex-col">
-        <div className=" flex-col input-field">
+
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <button
-            onClick={() => handleSignupGoogle}
-            className="input google-login login-btn"
+            onClick={handleSignupGoogle}
+            className="auth-social-button bg-linear-to-br from-blue-600 to-red-500 from-25% to-55%"
           >
-            Signup with Google
+            continue with Google
           </button>
-          <span className="input facebook-login login-btn">
-            Signup with Facebook
-          </span>
         </div>
       </div>
     </div>

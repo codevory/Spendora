@@ -1,4 +1,4 @@
-import React,{Suspense, useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import AddTransactionForm from "../components/AddTransactionForm";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
@@ -13,7 +13,9 @@ interface MainContentPropsType {
 
 const MainContent = ({ setModalState }: MainContentPropsType) => {
   const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
-  const DistributionGraph = React.lazy(() => import("../charts/DistributionGraph"));
+  const DistributionGraph = React.lazy(
+    () => import("../charts/DistributionGraph"),
+  );
   const OverviewGraph = React.lazy(() => import("../charts/OverviewGraph"));
 
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");

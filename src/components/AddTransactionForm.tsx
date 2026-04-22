@@ -2,7 +2,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import type { TransactionType } from "../types/transactionType";
-import "../App.css";
 import { handleAddExpenseTransaction } from "../utils/helperFunctions/hanldeFormActions";
 import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
 
@@ -32,14 +31,12 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
     type: "expense",
   };
 
-  const handleSubmitTransaction = handleAddExpenseTransaction;
-
   return (
     <>
-      <div className="form-card card mx-auto">
+      <div className="form-card">
         <form
           onSubmit={(e) =>
-            handleSubmitTransaction({
+            handleAddExpenseTransaction({
               e: e,
               setAmount: setAmount,
               setCategory: setCategory,
@@ -58,7 +55,9 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
           <div className="relative">
             <label className="text-sm text-muted mb-1 block">Amount</label>
             <div className="flex items-center input">
-              <span className="mr-2 text-muted">{currencyMeta.currencySymbol}</span>
+              <span className="mr-2 text-muted">
+                {currencyMeta.currencySymbol}
+              </span>
               <input
                 type="number"
                 placeholder="Enter amount"

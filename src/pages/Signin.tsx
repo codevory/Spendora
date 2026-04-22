@@ -34,30 +34,32 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
   return (
     <Layout isOpen={isOpen} onToggle={onToggle}>
       {isLoading && <Loader />}
-      <div className="max-w-dvw h-dvh flex justify-center items-center p-2 bg-main">
-        <LoginComponent
-          email={email}
-          password={password}
-          setEmail={setEmail}
-          setPassword={setPassword}
-          handleFormSubmit={(e) =>
-            handleSigninWithPassword({
-              navigate: navigate,
-              email: email,
-              e: e,
-              setEmail: setEmail,
-              setIsLoading: setIsLoading,
-              setIsLoged: setIsLoged,
-              setPassword: setPassword,
-              password: password,
-            })
-          }
-          handleGoogleSign={() =>
-            handleGoogleSignin({
-              setIsLoading: setIsLoading,
-            })
-          }
-        />
+      <div className="auth-page">
+        <div className="auth-shell">
+          <LoginComponent
+            email={email}
+            password={password}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            handleFormSubmit={(e) =>
+              handleSigninWithPassword({
+                navigate: navigate,
+                email: email,
+                e: e,
+                setEmail: setEmail,
+                setIsLoading: setIsLoading,
+                setIsLoged: setIsLoged,
+                setPassword: setPassword,
+                password: password,
+              })
+            }
+            handleGoogleSign={() =>
+              handleGoogleSignin({
+                setIsLoading: setIsLoading,
+              })
+            }
+          />
+        </div>
       </div>
     </Layout>
   );

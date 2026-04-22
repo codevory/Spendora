@@ -25,12 +25,11 @@ ChartJS.register(
   Filler,
 );
 
-
 const OverviewGraph = () => {
   const { barData } = useUserData();
-  const { isDark } = useThemeContext()
+  const { isDark } = useThemeContext();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
-  
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -38,22 +37,22 @@ const OverviewGraph = () => {
       legend: {
         position: "bottom" as const,
         labels: {
-          usePointStyle:true,
-          pointStyle:'star' as const ,
-          color: isDark ? '#cbd5e1' : 'slate',
+          usePointStyle: true,
+          pointStyle: "star" as const,
+          color: isDark ? "#cbd5e1" : "slate",
           boxWidth: 10,
           padding: 15,
         },
       },
       tooltip: {
-       backgroundColor: isDark
-              ? "rgba(15, 23, 42, 0.96)"
-              : "rgba(248, 250, 252, 0.98)",
-            titleColor: isDark ? "#f8fafc" : "#0f172a",
-            bodyColor: isDark ? "#e2e8f0" : "#334155",
-            borderColor: isDark
-              ? "rgba(148, 163, 184, 0.25)"
-              : "rgba(148, 163, 184, 0.4)",
+        backgroundColor: isDark
+          ? "rgba(15, 23, 42, 0.96)"
+          : "rgba(248, 250, 252, 0.98)",
+        titleColor: isDark ? "#f8fafc" : "#0f172a",
+        bodyColor: isDark ? "#e2e8f0" : "#334155",
+        borderColor: isDark
+          ? "rgba(148, 163, 184, 0.25)"
+          : "rgba(148, 163, 184, 0.4)",
         borderWidth: 1,
         callbacks: {
           label: (context) =>
@@ -64,19 +63,19 @@ const OverviewGraph = () => {
     scales: {
       x: {
         grid: {
-          color:"rgba(148, 163, 184, 0.1)" ,
+          color: "rgba(148, 163, 184, 0.1)",
         },
         ticks: {
-          color: isDark ? "#94a3b8" :' slate',
+          color: isDark ? "#94a3b8" : " slate",
         },
       },
       y: {
         beginAtZero: true,
         grid: {
-          color:"rgba(148, 163, 184, 0.1)",
+          color: "rgba(148, 163, 184, 0.1)",
         },
         ticks: {
-          color: isDark ? "#94a3b8" :'slate',
+          color: isDark ? "#94a3b8" : "slate",
           callback: (value) => formatCurrency(Number(value), currencyKey),
         },
       },

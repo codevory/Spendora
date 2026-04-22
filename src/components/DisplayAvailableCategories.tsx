@@ -1,5 +1,8 @@
-import type { CategoryPropsType, TransactionType } from "../types/transactionType";
-import { useState } from 'react'
+import type {
+  CategoryPropsType,
+  TransactionType,
+} from "../types/transactionType";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import EmptyState from "./EmptyState";
 import { useAppDispatch, useAppSelector } from "../store/store";
@@ -15,9 +18,11 @@ interface DisplayCategoriesPropsType {
 }
 const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
   const [modalState, setModalState] = useState<
-  "income" | "category" | "closed">("closed");
+    "income" | "category" | "closed"
+  >("closed");
   const [category, setCategory] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<CategoryPropsType | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryPropsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   if (!data.length) return <EmptyState content={"No data available"} />;
   const categories = useAppSelector((state) => state.transaction.categories);
@@ -25,7 +30,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
   const success = (mesg: string) => toast.success(mesg);
   const fail = (msg: string) => toast.error(msg);
 
-  const { isDark } = useThemeContext()
+  const { isDark } = useThemeContext();
   const onDelete = handleDeleteCategory;
   return (
     <div className="space-y-3">
@@ -49,11 +54,23 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
                     <h3 className="mt-1 text-lg font-semibold text-slate-200">
                       {cat.name}
                     </h3>
-                    <button onClick={() => {
-                      setSelectedCategory(cat);
-                      setCategory(cat.name);
-                      setModalState("category");
-                      }} className="active:scale-95 cursor-pointer">{<img color="red" src={`${isDark ? '/pencil-light.svg' : '/pencil-dark.svg'}`} width={18} height={20} />}</button>
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setCategory(cat.name);
+                        setModalState("category");
+                      }}
+                      className="active:scale-95 cursor-pointer"
+                    >
+                      {
+                        <img
+                          color="red"
+                          src={`${isDark ? "/pencil-light.svg" : "/pencil-dark.svg"}`}
+                          width={18}
+                          height={20}
+                        />
+                      }
+                    </button>
                   </div>
                 </div>
 
@@ -84,9 +101,8 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
           );
         })}
       </div>
-      {
-        modalState === "category" && selectedCategory
-          ? createPortal(
+      {modalState === "category" && selectedCategory
+        ? createPortal(
             <ModalBox
               onClose={() => {
                 setModalState("closed");
@@ -117,8 +133,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
             />,
             document.body,
           )
-          : null
-      }
+        : null}
       {isLoading ? <Loader /> : null}
     </div>
   );

@@ -11,7 +11,6 @@ interface TransactionLayoutProps {
   onToggle: () => void;
   isOpen: boolean;
 }
-
 const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [query, setQuery] = useState<TransactionType["category"] | undefined>();
   const [dateFrom, setDateFrom] = useState<string>("");
@@ -47,7 +46,6 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   };
 
   const { lineData } = useUserData();
-  const selectedCount = filteredData.length;
 
   return (
     <>
@@ -75,7 +73,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
                     Visible
                   </p>
                   <p className="mt-1 text-lg font-semibold text-slate-100">
-                    {selectedCount}
+                    {filteredData.length}
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2">

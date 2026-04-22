@@ -64,7 +64,9 @@ const DistributionGraph = () => {
   if (!pieData.labels?.length) {
     return (
       <EmptyState
-        content={<div className="chart-empty-state">{"Nothing to display"}</div>}
+        content={
+          <div className="chart-empty-state">{"Nothing to display"}</div>
+        }
       />
     );
   }

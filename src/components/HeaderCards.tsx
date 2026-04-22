@@ -7,6 +7,7 @@ import {
   getTopCategory,
 } from "../utils/helperFunctions/transactionMetrics";
 import { formatCurrency } from "../utils/currency";
+import useThemeContext from "../Hooks/useThemeContext";
 
 interface HeaderCardsPropsType {
   setModalState: (val: "income") => void;
@@ -84,6 +85,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
       spendingProgress,
     };
   }, [transactions, userIncome]);
+  const { isDark } = useThemeContext();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -99,7 +101,8 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           </h2>
           <button
             onClick={() => setModalState("income")}
-            className="px-1 lg:px-2 mx-2 font-sm lg:font-semibold w-30 bg-blue-900 h-10 lg:h-12 rounded-xl active:scale-95 cursor-pointer"
+            className={`px-1 lg:px-2 mx-2 font-sm lg:font-semibold w-30 h-10 lg:h-11 rounded-xl 
+              active:scale-95 cursor-pointer ${isDark ? "bg-blue-700 text-white" : "bg-slate-300 text-blue-800"}`}
           >
             Add Income
           </button>

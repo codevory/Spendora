@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { getUserOriginsList } from "../Hooks/useUserData";
+import { getUserOriginList } from "../utils/currency";
 import { setUserCountry } from "../store/features/userSelections";
 
 interface UserProfileProps {
@@ -30,21 +30,21 @@ const UserProfile = ({
   }, [status]);
 
   const userOriginDetails = useAppSelector((state) => state.origin.userOrigin);
-  const userOrigins = getUserOriginsList()
-  const [userKey, setUserKey] = useState(userOriginDetails.key)
+  const userOrigins = getUserOriginList();
+  const [userKey, setUserKey] = useState(userOriginDetails.key);
 
   useEffect(() => {
     setUserKey(userOriginDetails.key);
   }, [userOriginDetails.key]);
 
-     function onSubmitForm(event: React.SubmitEvent<HTMLFormElement>){
-        event.preventDefault();
-        const selectedOne = userOrigins.find((u) => u.key === userKey)
+  function onSubmitForm(event: React.SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const selectedOne = userOrigins.find((u) => u.key === userKey);
 
-        if (selectedOne) {
-          dispatch(setUserCountry(selectedOne));
-        }
+    if (selectedOne) {
+      dispatch(setUserCountry(selectedOne));
     }
+  }
 
   return (
     <div className="card glass p-5 shadow-lg">
@@ -72,10 +72,16 @@ const UserProfile = ({
 
       <div className="mt-5 flex flex-col gap-4">
         <form onSubmit={onSubmitForm} className="form flex items-center gap-3">
-          <select value={userKey} onChange={(e) => setUserKey(e.target.value)} className="outline-none bg-slate-800">
-            {
-              userOrigins.map((u) => <option key={u.key} value={u.key}>{u.key}</option>)
-            }
+          <select
+            value={userKey}
+            onChange={(e) => setUserKey(e.target.value)}
+            className="outline-none bg-slate-800"
+          >
+            {userOrigins.map((u) => (
+              <option key={u.key} value={u.key}>
+                {u.key}
+              </option>
+            ))}
           </select>
           <span>{userOriginDetails.currencySymbol}</span>
           <button className="form-button">Change</button>
@@ -94,7 +100,7 @@ const UserProfile = ({
             to="/signin"
             className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
           >
-            Login  /  Regiser
+            Login / Regiser
           </Link>
         )}
         <button

@@ -1,20 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import transactionReducer from "./features/transaction";
 import incomeTransactionReducer from "./features/incomeTransaction";
-import userAuthReducer from './features/userAuthenication'
+import userAuthReducer from "./features/userAuthenication";
 import {
   useDispatch,
   useSelector,
   type TypedUseSelectorHook,
 } from "react-redux";
-import  userOriginReducer  from "./features/userSelections";
+import userOriginReducer from "./features/userSelections";
 
 const Store = configureStore({
   reducer: {
     transaction: transactionReducer,
     incomeTransaction: incomeTransactionReducer,
     userData: userAuthReducer,
-    origin:userOriginReducer
+    origin: userOriginReducer,
   },
 });
 

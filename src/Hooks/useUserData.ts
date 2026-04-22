@@ -1,6 +1,7 @@
 import type { ChartData } from "chart.js";
 import { useAppSelector } from "../store/store";
 import type { IncomeType, TransactionType } from "../types/transactionType";
+import { getUserOriginList } from "../utils/currency";
 
 interface MonthlyDataTypes {
   trans: TransactionType[];
@@ -13,12 +14,15 @@ export interface UserOriginItem {
   currencySymbol: string;
 }
 
+const now = new Date();
+const start = 1;
+const targetDate = (month: number) => new Date(now.getFullYear(), month, 1);
+
 export const useUserData = () => {
   const trans = useAppSelector((state) => state.transaction.transactions);
   const incomeTrans = useAppSelector(
     (state) => state.incomeTransaction.incomeTransactions,
   );
-  const now = new Date();
   const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
   const currMonthData = getMonthlyData({
     trans,
@@ -133,16 +137,14 @@ export const useUserData = () => {
     ],
   };
 
-  const userOriginsList = getUserOriginsList();
+  const userOriginsList = getUserOriginList();
 
   return { pieData, barData, lineData, analysisData, userOriginsList };
 };
 
 function getMonthlyData({ trans, month }: MonthlyDataTypes) {
-  const now = new Date();
-  const targetDate = new Date(now.getFullYear(), month, 1);
-  const targetMonth = targetDate.getMonth();
-  const targetYear = targetDate.getFullYear();
+  const targetMonth = targetDate(month).getMonth();
+  const targetYear = targetDate(month).getFullYear();
 
   return trans
     .filter((t) => {
@@ -162,10 +164,7 @@ function getMonthlyData({ trans, month }: MonthlyDataTypes) {
 }
 
 function getMonthlyExpense({ trans, month }: MonthlyDataTypes) {
-  const now = new Date();
-  const targetDate = new Date(now.getFullYear(), month, 1);
-  const start = 1;
-  const end = targetDate.getFullYear();
+  const end = targetDate(month).getFullYear();
   return trans
     .filter((t) => {
       const date = new Date(t.date);
@@ -187,10 +186,7 @@ interface MonthlyIncomeType {
   transactions: IncomeType[];
 }
 function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
-  const now = new Date();
-  const targetDate = new Date(now.getFullYear(), now.getMonth(), 1);
-  const start = 1;
-  const end = targetDate.getFullYear();
+  const end = targetDate(now.getMonth()).getFullYear();
   return transactions
     .filter((t) => {
       const date = new Date(t.date);
@@ -207,21 +203,4 @@ function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
       }
       return acc;
     }, {});
-}
-
-export function getUserOriginsList(){
-  const userOriginsList: UserOriginItem[] | undefined = [
-    { key: "IN", country: "India", currencySymbol: "₹" },
-    { key: "US", country: "United States", currencySymbol: "$" },
-    { key: "GB", country: "United Kingdom", currencySymbol: "£" },
-    { key: "DE", country: "Germany", currencySymbol: "€" },
-    { key: "JP", country: "Japan", currencySymbol: "¥" },
-    { key: "CA", country: "Canada", currencySymbol: "$" },
-    { key: "AU", country: "Australia", currencySymbol: "$" },
-    { key: "SG", country: "Singapore", currencySymbol: "$" },
-    { key: "AE", country: "United Arab Emirates", currencySymbol: "د.إ" },
-    { key: "ZA", country: "South Africa", currencySymbol: "R" },
-  ];
-
-  return userOriginsList;
 }

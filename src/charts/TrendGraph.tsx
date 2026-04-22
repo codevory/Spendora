@@ -31,7 +31,7 @@ interface TrendGraphPropsType {
   data: ChartData<"line">;
 }
 const TrendGraph = ({ data }: TrendGraphPropsType) => {
-  const { isDark } = useThemeContext()
+  const { isDark } = useThemeContext();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const options = {
     responsive: true,
@@ -45,21 +45,21 @@ const TrendGraph = ({ data }: TrendGraphPropsType) => {
         position: "bottom" as const,
         labels: {
           usePointStyle: true,
-          pointStyle: 'star' as const,
-          color: isDark ? '#cbd5e1' : '#334155',
+          pointStyle: "star" as const,
+          color: isDark ? "#cbd5e1" : "#334155",
           padding: 15,
           boxWidth: 10,
         },
       },
       tooltip: {
         backgroundColor: isDark
-              ? "rgba(15, 23, 42, 0.96)"
-              : "rgba(248, 250, 252, 0.98)",
-            titleColor: isDark ? "#f8fafc" : "#0f172a",
-            bodyColor: isDark ? "#e2e8f0" : "#334155",
-            borderColor: isDark
-              ? "rgba(148, 163, 184, 0.25)"
-              : "rgba(148, 163, 184, 0.4)",
+          ? "rgba(15, 23, 42, 0.96)"
+          : "rgba(248, 250, 252, 0.98)",
+        titleColor: isDark ? "#f8fafc" : "#0f172a",
+        bodyColor: isDark ? "#e2e8f0" : "#334155",
+        borderColor: isDark
+          ? "rgba(148, 163, 184, 0.25)"
+          : "rgba(148, 163, 184, 0.4)",
         borderWidth: 1,
         padding: 12,
         displayColors: false,
@@ -75,7 +75,7 @@ const TrendGraph = ({ data }: TrendGraphPropsType) => {
           color: "rgba(148, 163, 184, 0.12)",
         },
         ticks: {
-          color: isDark ? "#94a3b8" : 'slate',
+          color: isDark ? "#94a3b8" : "slate",
           font: {
             size: 11,
           },
@@ -87,13 +87,12 @@ const TrendGraph = ({ data }: TrendGraphPropsType) => {
           color: "rgba(148, 163, 184, 0.12)",
         },
         ticks: {
-          color: isDark ? "#94a3b8" : 'slate',
+          color: isDark ? "#94a3b8" : "slate",
           callback: (value) => formatCurrency(Number(value), currencyKey),
         },
       },
     },
   } satisfies ChartOptions<"line">;
-
 
   return (
     <div className="chart trend-graph min-h-80 rounded-2xl border border-slate-700 bg-slate-900/50 p-3 md:p-4">

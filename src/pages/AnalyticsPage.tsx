@@ -1,15 +1,19 @@
-import DistributionGraph from "../charts/DistributionGraph";
-import TrendGraph from "../charts/TrendGraph";
+import GraphSkeleton from "../components/GraphSkeleton";
 import Layout from "../components/Layout";
 import MonthlyInsights from "../components/MonthlyInsights";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
+import React, { Suspense } from "react";
 
 interface AnalyticsPropsType {
   onToggle: () => void;
   isOpen: boolean;
 }
 const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
+  const DistributionGraph = React.lazy(
+    () => import("../charts/DistributionGraph"),
+  );
+  const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
   const { analysisData } = useUserData();
   return (
     <div className="bg-main">
@@ -39,7 +43,9 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
                 </p>
               </div>
               <div className="overflow-x-auto">
-                <TrendGraph data={analysisData} />
+                <Suspense fallback={<GraphSkeleton />}>
+                  <TrendGraph data={analysisData} />
+                </Suspense>
               </div>
             </div>
 
@@ -59,7 +65,9 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
                 </p>
               </div>
               <div className="flex items-center justify-center overflow-x-auto">
-                <DistributionGraph />
+                <Suspense fallback={<GraphSkeleton />}>
+                  <DistributionGraph />
+                </Suspense>
               </div>
             </div>
 

@@ -8,7 +8,7 @@ type IncomeFormPropsType = {
   setModalState: (val: "closed") => void;
 };
 const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
-  const [amount, setAmount] = useState<number | ''>('');
+  const [amount, setAmount] = useState<number | "">("");
   const [incomeSource, setIncomeSource] = useState<string>("");
   const [incomeDate, setIncomeDate] = useState<string>("");
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
@@ -20,7 +20,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
 
   const onSubmit = handleAddIncomeTransaction;
   return (
-    <div className="form-card card mx-auto  min-h-70 ">
+    <div className="form-card min-h-70">
       <form
         onSubmit={(e) =>
           onSubmit({
@@ -30,21 +30,24 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             success: success,
             incomeDate: incomeDate,
             incomeSource: incomeSource,
-            amount: amount === '' ? 0 : convertToBaseAmount(amount, currencyKey),
+            amount:
+              amount === "" ? 0 : convertToBaseAmount(amount, currencyKey),
             failed: failed,
           })
         }
         className="flex flex-col gap-5"
       >
         <div className="flex flex-col gap-1 relative">
-          <label className="text-muted block mb-1 text-sm">amount ({currencyMeta.currencySymbol})</label>
+          <label className="text-muted block mb-1 text-sm">
+            amount ({currencyMeta.currencySymbol})
+          </label>
           <input
             className="bg-transparent w-full outline-none input"
             type="number"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
             required
-           />
+          />
         </div>
 
         <div className="flex flex-col gap-1 relative">
@@ -57,8 +60,10 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           />
         </div>
 
-        <div className="input-field">
-          <label className="text-muted block mb-1 text-sm">income received</label>
+        <div className="flex flex-col gap-1 relative">
+          <label className="text-muted block mb-1 text-sm">
+            income received
+          </label>
           <input
             className="bg-transparent w-full outline-none input"
             type="date"

@@ -18,25 +18,23 @@ const DashBoardLayout = ({ onToggle, isOpen }: DashboardPropsType) => {
   return (
     <div className="relative">
       <Layout onToggle={onToggle} isOpen={isOpen}>
+        {modalState !== "closed" &&
+          createPortal(
+            <ModalBox
+              form={
+                modalState === "income" ? (
+                  <AddIncomeForm setModalState={setModalState} />
+                ) : (
+                  <AddNewCategoryForm setModalState={setModalState} />
+                )
+              }
+              onClose={() => setModalState("closed")}
+            />,
+            document.body,
+          )}
         <>
-          {modalState !== "closed" &&
-            createPortal(
-              <ModalBox
-                form={
-                  modalState === "income" ? (
-                    <AddIncomeForm setModalState={setModalState} />
-                  ) : (
-                    <AddNewCategoryForm setModalState={setModalState} />
-                  )
-                }
-                onClose={() => setModalState("closed")}
-              />,
-              document.body,
-            )}
-        </>
-        <div className="">
           <MainContent setModalState={setModalState} />
-        </div>
+        </>
       </Layout>
     </div>
   );

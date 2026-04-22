@@ -38,7 +38,7 @@ const useLocalstorage = () => {
     localStorage.getItem("userCategories"),
   );
   const userOriginDetails = getStoredUserOrigin();
- 
+
   return { data, userIncomeData, userCategories, userOriginDetails };
 };
 

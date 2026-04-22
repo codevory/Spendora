@@ -17,16 +17,18 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
       query === undefined ? data : data.filter((txn) => txn.category === query);
 
     const normalized = filtered.map((t) => {
-      return { amount : t.amount,
-        category : t.category,
-        date : t.date,
-        type : t.type ?? "expense",
-        transactionId : t.transactionId,
-        name : t.name,
-        timeStamp : new Date(t.date).getTime()}
-      })
+      return {
+        amount: t.amount,
+        category: t.category,
+        date: t.date,
+        type: t.type ?? "expense",
+        transactionId: t.transactionId,
+        name: t.name,
+        timeStamp: new Date(t.date).getTime(),
+      };
+    });
 
-      return normalized.sort((a,b) => b.timeStamp - a.timeStamp)
+    return normalized.sort((a, b) => b.timeStamp - a.timeStamp);
   }, [query, data]);
 
   const noData = (

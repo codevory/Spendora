@@ -94,16 +94,26 @@ export const transactionSlice = createSlice({
       );
 
       localStorage.setItem("userCategories", JSON.stringify(state.categories));
-      localStorage.setItem("userTransactions", JSON.stringify(state.transactions));
+      localStorage.setItem(
+        "userTransactions",
+        JSON.stringify(state.transactions),
+      );
     },
-    updateCategory: (state,action:PayloadAction<CategoryPropsType>) => {
-      const selected = state.categories.findIndex((c) => c.id === action.payload.id)
+    updateCategory: (state, action: PayloadAction<CategoryPropsType>) => {
+      const selected = state.categories.findIndex(
+        (c) => c.id === action.payload.id,
+      );
       const nextCategoryName = action.payload.name.trim();
 
-      if(selected !== -1 && nextCategoryName !== ''){
-        const previousCategoryName = state.categories[selected].name.trim().toLowerCase();
+      if (selected !== -1 && nextCategoryName !== "") {
+        const previousCategoryName = state.categories[selected].name
+          .trim()
+          .toLowerCase();
 
-        state.categories[selected] = { ...action.payload, name: nextCategoryName };
+        state.categories[selected] = {
+          ...action.payload,
+          name: nextCategoryName,
+        };
 
         // Cascade rename: update every transaction linked by category name.
         state.transactions = state.transactions.map((t) =>
@@ -112,15 +122,20 @@ export const transactionSlice = createSlice({
             : t,
         );
 
-        localStorage.setItem("userCategories", JSON.stringify(state.categories));
-        localStorage.setItem("userTransactions", JSON.stringify(state.transactions));
-      }
-      else{
-        throw new Error("Failed to update category from store")
+        localStorage.setItem(
+          "userCategories",
+          JSON.stringify(state.categories),
+        );
+        localStorage.setItem(
+          "userTransactions",
+          JSON.stringify(state.transactions),
+        );
+      } else {
+        throw new Error("Failed to update category from store");
       }
     },
-  }})
-
+  },
+});
 
 export default transactionSlice.reducer;
 export const {
@@ -131,5 +146,5 @@ export const {
   updateTransaction,
   addNewCategory,
   deleteCategory,
-  updateCategory
+  updateCategory,
 } = transactionSlice.actions;

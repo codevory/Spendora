@@ -50,31 +50,34 @@ const RecentTransactions = () => {
         Recent Transactions
       </h2>
 
-      {sortedTransactions
-        .map((item) => {
-          return (
-            <div
-              key={item.transactionId}
-              className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"
-            >
-              <div>
-                <p className="font-medium recent-transaction-name">{item.name}</p>
-                <p className="text-sm text-muted">
-                  {dateFormatter.format(new Date(item.date))} •{" "}
-                  {getDayName(item.date)}
-                </p>
-              </div>
-
-              <div
-                className={`${item.type === "expense" ? "recent-transaction-amount-expense" : "recent-transaction-amount-income"}`}
-              >
-                <span className="font-semibold flex items-center">
-                  {`${item.type === "expense" ? "-" : "+"}`}{formatCurrency(Number(item.amount.toString().replace("-",'')), currencyKey)}
-                </span>
-              </div>
+      {sortedTransactions.map((item) => {
+        return (
+          <div
+            key={item.transactionId}
+            className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"
+          >
+            <div>
+              <p className="font-medium recent-transaction-name">{item.name}</p>
+              <p className="text-sm text-muted">
+                {dateFormatter.format(new Date(item.date))} •{" "}
+                {getDayName(item.date)}
+              </p>
             </div>
-          );
-        })}
+
+            <div
+              className={`${item.type === "expense" ? "recent-transaction-amount-expense" : "recent-transaction-amount-income"}`}
+            >
+              <span className="font-semibold flex items-center">
+                {`${item.type === "expense" ? "-" : "+"}`}
+                {formatCurrency(
+                  Number(item.amount.toString().replace("-", "")),
+                  currencyKey,
+                )}
+              </span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

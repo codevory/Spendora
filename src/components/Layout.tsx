@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import SidebarMenu from "./SidebarMenu";
 import MobileMenu from "./MobileMenu";
 
-
 interface LayoutProps {
   children: ReactNode;
   isOpen: boolean;
@@ -32,15 +31,13 @@ const Layout = ({ children, onToggle, isOpen }: LayoutProps) => {
       </div>
       <div className="flex ">
         <div
-          className={`${isOpen ? "w-[14%] transform-content" : "w-[6%] transform-content -transate-x-20"} sidebar`}
+          className={`${isOpen ? "w-[14%] transform-content" : "w-[6%] transform-content -translate-x-20"} sidebar`}
         >
           <SidebarMenu isOpen={isOpen} />
         </div>
         <div className="max-w-dvw w-full layout">{children}</div>
       </div>
-      {isMobile ? (
-          <MobileMenu />
-      ) : null}
+      {isMobile ? <MobileMenu /> : null}
     </div>
   );
 };

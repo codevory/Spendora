@@ -109,8 +109,8 @@ const MonthlyInsights = () => {
                 {insights.topCategory.name}
               </p>
               <p className="text-xs text-slate-400">
-                {formatCurrency(insights.topCategory.amount ?? 0, currencyKey)} (
-                {insights.topCategory.sharePercent.toFixed(1)}% of total)
+                {formatCurrency(insights.topCategory.amount ?? 0, currencyKey)}{" "}
+                ({insights.topCategory.sharePercent.toFixed(1)}% of total)
               </p>
             </>
           ) : (
@@ -128,7 +128,10 @@ const MonthlyInsights = () => {
                 {insights.biggestExpense.name}
               </p>
               <p className="text-xs text-slate-400">
-                {formatCurrency(insights.biggestExpense.amount ?? 0, currencyKey)}{" "}
+                {formatCurrency(
+                  insights.biggestExpense.amount ?? 0,
+                  currencyKey,
+                )}{" "}
                 on{" "}
                 {new Date(insights.biggestExpense.date).toLocaleDateString(
                   "en-US",
