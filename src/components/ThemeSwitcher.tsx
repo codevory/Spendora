@@ -1,4 +1,5 @@
 import useThemeContext from "../Hooks/useThemeContext";
+import { NavIcon } from "./icons/UseIcon";
 const ThemeSwitcher = () => {
   const { isDark, toggleTheme } = useThemeContext();
 
@@ -9,17 +10,20 @@ const ThemeSwitcher = () => {
       aria-checked={!isDark}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
       onClick={toggleTheme}
-      className={`glass flex h-8 w-17 items-center rounded-full px-1 transition-colors active:scale-95 ${isDark ? "justify-end bg-slate-800/70" : "justify-start bg-slate-200/90"}`}
+      style={{
+    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer'
+  }}
+      className={`h-6 w-12 items-center transition-all `}
     >
-      <span
-        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs transition-all `}
-      >
         {isDark ? (
-          <img src="/sun.svg" width={24} height={24} />
+         <NavIcon name="moon" isDarkMode={isDark} />
         ) : (
-          <img src="/moon-dark.svg" width={24} height={24} />
+          <NavIcon name="sun" isDarkMode={isDark}  />
         )}
-      </span>
+  
     </button>
   );
 };

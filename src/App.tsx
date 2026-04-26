@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 import EmptyState from "./components/EmptyState";
 import SkeletalLoader from "./components/SkeletonLoader";
 
@@ -87,9 +87,9 @@ function App() {
               />
             }
           />
-          <Route path="/skeletal" element={<SkeletalLoader />} />
           <Route path="*" element={<EmptyState content="No page found" />} />
         </Routes>
+        <Outlet />
       </Suspense>
       <Toaster />
     </>

@@ -13,6 +13,7 @@ import AddNewCategoryForm from "./AddCategoryForm";
 import Loader from "./Loader";
 import { handleRenameCategory } from "../utils/helperFunctions/hanldeFormActions";
 import useThemeContext from "../Hooks/useThemeContext";
+import { NavIcon } from "./icons/UseIcon";
 interface DisplayCategoriesPropsType {
   data: TransactionType[];
 }
@@ -63,12 +64,7 @@ const DisplayAvailableCategories = ({ data }: DisplayCategoriesPropsType) => {
                       className="active:scale-95 cursor-pointer"
                     >
                       {
-                        <img
-                          color="red"
-                          src={`${isDark ? "/pencil-light.svg" : "/pencil-dark.svg"}`}
-                          width={18}
-                          height={20}
-                        />
+                     <NavIcon name="pencil" isDarkMode={isDark}  size={25}/>
                       }
                     </button>
                   </div>

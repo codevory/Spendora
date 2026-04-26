@@ -96,7 +96,7 @@ const UserProfile = ({
             Logout
           </button>
         ) : (
-          <Link
+          <Link prefetch="intent"
             to="/signin"
             className="h-10 rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 flex items-center justify-center active:scale-95"
           >

@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import Navbar from "./Navbar";
 import SidebarMenu from "./SidebarMenu";
 import MobileMenu from "./MobileMenu";

@@ -1,40 +1,36 @@
 import { NavLink } from "react-router-dom";
 import useThemeContext from "../Hooks/useThemeContext";
+import { NavIcon } from "./icons/UseIcon";
 
 const mobileNavItems = [
   {
     to: "/",
     label: "Home",
-    srcLight: "/home-light.svg",
-    srcDark: "/home-dark.svg",
+    name:"home",
     alt: "home",
   },
   {
     to: "/analytics",
     label: "Analytics",
-    srcLight: "/analytics-light.svg",
-    srcDark: "/analytics-dark.svg",
+    name:"analytics",
     alt: "analytics",
   },
   {
     to: "/transactions",
     label: "Txns",
-    srcLight: "/transaction-light.svg",
-    srcDark: "/transaction-dark.svg",
+    name:"transactions",
     alt: "transaction",
   },
   {
     to: "/categories",
     label: "Categories",
-    srcLight: "/category-light.svg",
-    srcDark: "/category-dark.svg",
+    name:"categoriesTag",
     alt: "category",
   },
   {
     to: "/me",
     label: "Profile",
-    srcLight: "/profile-circle-light.svg",
-    srcDark: "/profile-circle-dark.svg",
+    name:"profile",
     alt: "profile",
   },
 ] as const;
@@ -46,18 +42,14 @@ const MobileMenu = () => {
       {mobileNavItems.map((item) => {
         return (
           <NavLink
+          prefetch="intent"
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
               `mobile-menu-items ${isActive ? "mobile-menu-items-active" : ""}`
             }
           >
-            <img
-              src={`${isDark ? item.srcLight : item.srcDark}`}
-              alt={item.alt}
-              width={22}
-              height={22}
-            />
+           <NavIcon name={item.name} isDarkMode={isDark} size={24} />
             <span className="text-[10px] font-semibold">{item.label}</span>
           </NavLink>
         );

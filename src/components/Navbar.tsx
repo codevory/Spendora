@@ -13,6 +13,7 @@ import {
 } from "../store/features/userAuthenication";
 import DisplayUserOrigin from "./DisplayUserOrigin";
 import useThemeContext from "../Hooks/useThemeContext";
+import { NavIcon } from "./icons/UseIcon";
 interface NavbarPropsType {
   onToggle: () => void;
 }
@@ -82,10 +83,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
               className="navbar-menu-btn hidden h-10 w-10 items-center justify-center rounded-xl border border-slate-600/70 bg-slate-950/60 text-slate-100 transition hover:bg-slate-800 active:scale-95 md:flex"
               aria-label="Toggle sidebar"
             >
-              <img
-                src={`${isDark ? "/menu-light.svg" : "/menu-dark.svg"}`}
-                alt="menu"
-              />
+              <NavIcon name="menu-toggle" isDarkMode={isDark} />
             </button>
 
             <div className="min-w-0">
