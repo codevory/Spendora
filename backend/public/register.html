@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta
+			name="description"
+			content="Create a Spendora account and start tracking your finances in a cleaner dashboard."
+		/>
+		<title>Spendora | Register</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="page-shell">
+			<header class="site-header">
+				<a class="brand" href="index.html" aria-label="Spendora home">
+					<span class="brand-mark">S</span>
+					<span class="brand-copy">
+						<strong>Spendora</strong>
+						<span>Track money with clarity</span>
+					</span>
+				</a>
+				<nav class="top-nav" aria-label="Primary">
+					<a class="nav-link" href="index.html">Home</a>
+					<a class="nav-link" href="login.html">Sign in</a>
+				</nav>
+			</header>
+
+			<main class="auth-layout">
+				<aside class="auth-aside">
+					<p class="eyebrow">Get started</p>
+					<h1>Build a clearer view of your finances.</h1>
+					<p>
+						Create your account to start recording transactions, comparing
+						categories, and using analytics that make spending easier to read.
+					</p>
+
+					<ul class="auth-list" aria-label="Benefits">
+						<li>Centralize income and expense tracking from day one.</li>
+						<li>Review reports and charts without switching apps.</li>
+						<li>Keep your account profile and preferences organized.</li>
+					</ul>
+				</aside>
+
+				<section class="auth-card" aria-labelledby="register-title">
+					<p class="eyebrow">Create account</p>
+					<h2 id="register-title">Join Spendora</h2>
+					<p class="auth-lead">
+						Fill out your details and get set up in a few moments. You can
+						always refine preferences later from the account page.
+					</p>
+
+					<form class="auth-form" action="#" id="signup-form" method="post">
+							<div class="field">
+								<label for="full-name">Full name</label>
+								<input id="full-name" name="firstName" type="text" placeholder="Ariana Dajio" autocomplete="given-name" required />
+							</div>
+
+						<div class="field">
+							<label for="register-email">Email address</label>
+							<input id="register-email" name="email" type="email" placeholder="name@company.com" autocomplete="email" required />
+						</div>
+
+                        <div class="field">
+								<label for="userName">Username</label>
+								<input id="userName" name="userName" type="text" placeholder="Ariana" autocomplete="username" required />
+							</div>
+
+						<div class="field-row">
+							<div class="field">
+								<label for="register-password">Password</label>
+								<input id="register-password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required />
+							</div>
+							<div class="field">
+								<label for="currency">Preferred currency</label>
+								<select id="currency" name="currency">
+									<option value="usd">USD - United States Dollar</option>
+									<option value="eur">EUR - Euro</option>
+									<option value="gbp">GBP - British Pound</option>
+									<option value="inr">INR - Indian Rupee</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="auth-help">
+							<span>Already have an account?</span>
+							<a href="login.html">Sign in instead</a>
+						</div>
+                             <p class="error-message" id="register-form-error-message" class="error"></p>
+						<div class="auth-actions">
+							<button class="button" type="submit">Create account</button>
+							<a class="button-secondary" href="index.html">Back to home</a>
+						</div>
+					</form>
+
+					<div class="mini-panel" style="margin-top: 1.25rem;">
+						<p class="eyebrow">Why it helps</p>
+						<p class="support-copy">
+							Once your account is ready, you can separate spending by category and keep monthly trends easy to compare.
+						</p>
+					</div>
+				</section>
+			</main>
+		</div>
+	</body>
+    <script src="./script.js"></script>
+</html>
