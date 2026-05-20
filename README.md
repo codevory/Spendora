@@ -3,20 +3,23 @@
 Spendora is a personal finance tracker that helps users manage expenses, income, and categories with a modern analytics-first dashboard.
 
 ## 🚀 Massive Achievements (Lighthouse)
-Optimized performance through rigorous asset optimization and architectural refactoring, 
+
+Optimized performance through rigorous asset optimization and architectural refactoring,
+
 ### Spendora achieves:
 
-* Desktop Performance: 100/100 🟢 (increased from 66)
-* Mobile Performance: 91/100 🟢 (Increased from 38)
-* Total Blocking Time (TBT): 0ms
-* Cumulative Layout Shift (CLS): 0
-* JavaScript Bundle: Lean 222 KiB transfer size.
+- Desktop Performance: 100/100 🟢 (increased from 66)
+- Mobile Performance: 96/100 🟢 (Increased from 34)
+- Total Blocking Time (TBT): 0ms
+- Cumulative Layout Shift (CLS): 0
+- JavaScript Bundle: Lean 222 KiB transfer size.
 
 ### Key Optimizations Made:
-* SVG Spriting: Refactored 30+ individual icon requests into a single, high-performance SVG sprite sheet using the <symbol> pattern.
-* Asset Modernization: Converted legacy, complex vector logos (295KB) into optimized WebP formats, reducing the main logo weight by over 90%.
-* Resource Hints: Implemented preconnect and dns-prefetch for Firebase and Google API domains to accelerate handshake speeds.
-* Zero-CLS Strategy: Enforced explicit aspect ratios and dimensions on all images and icons to eliminate layout shifts during load.
+
+- SVG Spriting: Refactored 30+ individual icon requests into a single, high-performance SVG sprite sheet using the <symbol> pattern.
+- Asset Modernization: Converted legacy, complex vector logos (295KB) into optimized WebP formats, reducing the main logo weight by over 90%.
+- Resource Hints: Implemented preconnect and dns-prefetch for Firebase and Google API domains to accelerate handshake speeds.
+- Zero-CLS Strategy: Enforced explicit aspect ratios and dimensions on all images and icons to eliminate layout shifts during load.
 
 ## Features
 
