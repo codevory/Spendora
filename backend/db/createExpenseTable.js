@@ -5,14 +5,15 @@ export async function createExpenseTable() {
   try {
     await db.exec(`CREATE TABLE IF NOT EXISTS userExpense (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            amount INTEGER NOT NULL,
-            paid_to TEXT NOT NULL,
-            paid_on DATE NOT NULL,
-            category TEXT NOT NULL,
-            transaction_id TEXT NOT NULL,
+            user_id INTEGER,
+            amount REAL,
+            paid_to TEXT,
+            paid_on TEXT,
+            category_id INTEGER NOT NULL,
+            transaction_id TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (category_id) REFERENCES expenseCategories(id)
             )`);
     console.log("expenseTable created in Db successfully🎉");
   } catch (err) {

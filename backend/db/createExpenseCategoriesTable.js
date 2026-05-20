@@ -4,7 +4,7 @@ async function createTable() {
   const db = await getDBConnection();
   try {
     await db.exec(`CREATE TABLE IF NOT EXISTS expenseCategories(
-             id INTEGER NOT NULL,
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
              user_id INTEGER NOT NULL,
              name TEXT NOT NULL,
              FOREIGN KEY (user_id) REFERENCES users(id)
