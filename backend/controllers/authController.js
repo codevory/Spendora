@@ -18,17 +18,19 @@ export async function registerUser(req, res) {
         "Username must be 1–20 characters, using letters, numbers, _ or -.",
     });
   }
-  const existingUserName = await db.get(
-    "SELECT username FROM users WHERE username = ?",
+  const usernameResult = await db.query(
+    "SELECT username FROM users WHERE username = $1",
     [username.trim()],
   );
+  const existingUserName = usernameResult.rows[0];
   if (existingUserName) {
     return res.status(400).json({ error: "username already taken!" });
   }
-  const existingEmail = await db.get(
-    `SELECT email FROM users WHERE email = ?`,
-    [email.trim()],
-  );
+
+  let emailResult = await db.query(`SELECT email FROM users WHERE email = $1`, [
+    email.trim(),
+  ]);
+  const existingEmail = emailResult.rows[0];
   if (existingEmail) {
     return res.status(400).json({ error: "Email already in use!" });
   }
@@ -39,17 +41,17 @@ export async function registerUser(req, res) {
   password = await bcrypt.hash(password, 10);
 
   try {
-    const result = await db.run(
-      "INSERT INTO users (name,email,username,password,currency) VALUES(?,?,?,?,?)",
+    const result = await db.query(
+      "INSERT INTO users (name,email,username,password,currency) VALUES($1,$2,$3,$4,$5) RETURNING id",
       [fullName, email, username, password, currency],
     );
-    req.session.userId = result.lastID;
+
+    req.session.userId = result.rows[0].id;
     console.log("user registered successfully🎉");
-    res.status(201).json({ message: "Registration Successfull" });
+
+    return res.status(201).json({ message: "Registration Successfull" });
   } catch (err) {
     console.error("Error : ", err.message);
-  } finally {
-    await db.close();
   }
 }
 
@@ -61,34 +63,38 @@ export async function loginUser(req, res) {
     return res.status(400).json({ error: "All fields are required" });
   }
   email = email.trim();
+
   try {
     if (!validator.isEmail(email)) {
       return res.status(400).json({ error: "Invalid email format" });
     }
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
 
+    const userResult = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    const user = userResult.rows[0];
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return res.status(400).json({ error: "Invalid password or email" });
+      return res.status(400).json({ error: "Invalid email or password" });
     }
 
     req.session.userId = user.id;
     console.log("login successfull");
-    res.status(201).json({ Authenticated: true });
+
+    return res.status(200).json({ Authenticated: true });
   } catch (err) {
-    console.error("Error : ", err.message);
-  } finally {
-    await db.close();
+    console.error("Error during login : ", err.message);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
 export function logoutUser(req, res) {
   console.log("trying to logout user");
   req.session.destroy(() => {
-    res.status(201).json({ message: "User logged out successfully🎉" });
+    res.status(200).json({ message: "User logged out successfully🎉" });
   });
 }

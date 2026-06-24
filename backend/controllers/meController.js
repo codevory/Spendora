@@ -6,9 +6,12 @@ export async function getCurrentUser(req, res) {
   }
   const db = await getDBConnection();
   try {
-    const user = await db.get("SELECT * FROM users WHERE id = ?", [
+    const userResult = await db.query("SELECT * FROM users WHERE id = $1", [
       req.session.userId,
     ]);
+
+    const user = userResult.rows[0];
+
     const data = {
       fullName: user.name,
       email: user.email,
@@ -16,8 +19,10 @@ export async function getCurrentUser(req, res) {
       currency: user.currency,
       created_at: user.created_at,
     };
+
     return res.status(200).json(data);
   } catch (error) {
-    console.error("error : ", error.message);
+    console.error("error getting userData : ", error.message);
+    return res.status(500).json({ error: "internal server error" });
   }
 }
