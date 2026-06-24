@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
+import pgSession from "connect-pg-simple";
+import { getDBConnection } from "./db/getBDConnection.js";
 import { meRouter } from "./routes/meRouter.js";
 import { authRouter } from "./routes/auth.js";
 import path from "node:path";
@@ -12,6 +14,11 @@ dotenv.config();
 const secret = process.env.SPIRAL_SESSION_SECRET;
 const app = express();
 const PORT = 2122;
+
+//initialize the postgres store constructor
+const PostgresStore = pgSession(session);
+const dbPool = await getDBConnection();
+
 app.use(
   cors({
     origin: ["http://localhost:5173", "http://localhost:2122"],
@@ -23,6 +30,10 @@ app.use(
 app.use(express.json());
 app.use(
   session({
+    store: new PostgresStore({
+      pool: dbPool,
+      tableName: "session",
+    }),
     secret: secret,
     resave: false,
     saveUninitialized: false,
@@ -30,6 +41,7 @@ app.use(
       httpOnly: true,
       secure: false,
       sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     },
   }),
 );
