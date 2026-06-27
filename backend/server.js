@@ -9,11 +9,16 @@ import { authRouter } from "./routes/auth.js";
 import path from "node:path";
 import { transactionRouter } from "./routes/transactionRouter.js";
 import { dataRoute } from "./routes/dataRoute.js";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const secret = process.env.SPIRAL_SESSION_SECRET;
 const app = express();
-const PORT = 2122;
+const PORT = process.env.PORT || 2122;
+const isProduction = process.env.NODE_ENV === "production";
 
 //initialize the postgres store constructor
 const PostgresStore = pgSession(session);
@@ -43,18 +48,23 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     },
   }),
 );
-const publicFolder = path.join("../frontend/dist");
-app.use(express.static("public"));
+const publicFolder = path.join(__dirname, "../frontend/dist");
+
+app.use(express.static(publicFolder));
 app.use("/api/auth/me", meRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/data", dataRoute);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(publicFolder, "index.html"));
+});
 app.listen(PORT, () => {
   try {
     console.log(`listening at http://localhost:${PORT}`);
