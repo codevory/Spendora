@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { Backend_Url } from "../../store/features/transaction";
 
 const success = (message: string) => toast.success(message);
 const fail = (message: string) => toast.error(message);
@@ -32,7 +33,7 @@ export async function handleSignupWithEmailPassword({
   e.preventDefault();
   try {
     setErrorMessage("")
-   const resp = await fetch("/api/auth/register",{
+   const resp = await fetch(`${Backend_Url}/api/auth/register`,{
     method:"POST",
     headers:{
       "Content-Type":"application/json"

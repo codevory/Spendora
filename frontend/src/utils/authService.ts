@@ -6,6 +6,7 @@ import {
   setUserData,
   setError,
 } from "../store/features/userAuthenication";
+import { Backend_Url } from "../store/features/transaction";
 
 interface HandleAuthProps {
   dispatch: AppDispatch;
@@ -82,7 +83,7 @@ export async function handleLogout({
   navigate,
 }: HandleAuthProps) {
 
-    const resp = fetch("/api/auth/logout")
+    const resp = fetch(`${Backend_Url}/api/auth/logout`)
     const response = (await resp).json()
     response
     .then(() => {

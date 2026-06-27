@@ -7,7 +7,7 @@ import type {
   IncomeTransactionTypes,
 } from "../../types/transactionType";
 
-
+export const Backend_Url = import.meta.env.VITE_API_BASE_URL
 interface TransactionState {
   categories: CategoryPropsTypeDB[];
   expenseTransactions: expenseTranscationTypes[];
@@ -22,9 +22,9 @@ export const fetchInitialData = createAsyncThunk(
   async (_, { rejectWithValue }) => {
    try {
     const [transRes,incomeRes,catRes] = await Promise.all([
-      fetch("/api/transaction/expenses"),
-      fetch("/api/transaction/income"),
-      fetch("/api/data/categories"),
+      fetch(`${Backend_Url}/api/transaction/expenses`),
+      fetch(`${Backend_Url}/api/transaction/income`),
+      fetch(`${Backend_Url}/api/data/categories`),
     ]);
 
     if(!transRes.ok || !catRes.ok || !incomeRes.ok) throw new Error("Failed to fetch initial FUll-stck data")
@@ -43,7 +43,7 @@ export const addCategoryThunk = createAsyncThunk(
   "transaction/addCategory",
   async (name:string,{ rejectWithValue }) => {
     try {
-      const result = await fetch("/api/data/addNewCategory",{
+      const result = await fetch(`${Backend_Url}/api/data/addNewCategory`,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({name})
@@ -64,7 +64,7 @@ export const renameCategory = createAsyncThunk(
   "transaction/renameCategory",
   async (category:CategoryPropsTypeDB,{ rejectWithValue }) => {
    try {
-    const result = await fetch("/api/data/renameCategory",{
+    const result = await fetch(`${Backend_Url}/api/data/renameCategory`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json"
@@ -86,7 +86,7 @@ export const deleteCategoryThunk = createAsyncThunk(
   "transaction/delete",
   async (category:CategoryPropsType,{ rejectWithValue }) => {
     try {
-      const result = await fetch("/api/data/deleteCategory",{
+      const result = await fetch(`${Backend_Url}/api/data/deleteCategory`,{
         method:"DELETE",
         headers:{
           "Content-Type":"application/json"
@@ -109,7 +109,7 @@ export const addExpense = createAsyncThunk(
   "transaction/addExpense",
   async (transactionData:expenseTranscationTypes, {rejectWithValue}) => {
     try {
-      const result = await fetch("/api/transaction/addExpense",{
+      const result = await fetch(`${Backend_Url}/api/transaction/addExpense`,{
         method:"POST",
         headers:{
           "Content-Type":"application/json"
@@ -132,7 +132,7 @@ export const addIncomeThunk = createAsyncThunk(
   "transaction/addIncome",
   async (incomeData:IncomeTransactionTypes,{ rejectWithValue }) => {
     try {
-      const result = await fetch("/api/transaction/addIncome", {
+      const result = await fetch(`${Backend_Url}/api/transaction/addIncome`, {
         method:"POST",
         headers:{
           "Content-Type":"application/json"

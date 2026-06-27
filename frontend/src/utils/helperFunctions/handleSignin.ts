@@ -1,6 +1,7 @@
 import { getFirebaseServices } from "../../backend/firebaseLazy";
 import toast from "react-hot-toast";
 import { collection, getDocs } from "firebase/firestore/lite";
+import { Backend_Url } from "../../store/features/transaction";
 
 interface hanldeSigninWithPasswordProps {
   setIsLoading: (val: boolean) => void;
@@ -12,6 +13,7 @@ interface hanldeSigninWithPasswordProps {
   e: React.SubmitEvent<HTMLFormElement>;
   navigate: (val: string) => void;
 }
+
 
 const success = (message: string) => toast.success(message);
 const fail = (message: string) => toast.error(message);
@@ -30,7 +32,7 @@ export async function handleSigninWithPassword({
   e.preventDefault();
  
   try {
-    const res = await fetch("/api/auth/login",{
+    const res = await fetch(`${Backend_Url}/api/auth/login`,{
       method:"POST",
       headers:{
         "Content-Type":"application/json"

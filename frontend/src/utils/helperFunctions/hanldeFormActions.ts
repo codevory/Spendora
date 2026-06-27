@@ -12,7 +12,8 @@ import {
   addExpense,
   renameCategory,
   deleteCategoryThunk,
-  addIncomeThunk
+  addIncomeThunk,
+  Backend_Url
 } from "../../store/features/transaction";
 import { useDebounce } from "../../Hooks/useDebounce";
 
@@ -207,7 +208,7 @@ export function getCategories(){
 
   async function getCat() {
     try {
-     const result = await fetch("/api/data/categories")
+     const result = await fetch(`${Backend_Url}/api/data/categories`)
      const res = await result.json()
      if(result.ok){
      const data:CategoryPropsTypeDB[] = res.data
@@ -273,7 +274,7 @@ export async function getUserExpenseTransactions({setData}:userExpenseTxns){
 
   async function getExpense(){
     try {
-    const result = await fetch("api/transaction/expenses")
+    const result = await fetch(`${Backend_Url}api/transaction/expenses`)
     let res = await result.json();
      res = res.data;
     setData(res)
