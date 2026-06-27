@@ -29,6 +29,6 @@ stats.html
 # .gitignore
 *.env
 .env.local
-.env.production
+.env
 node_modules/
 dist/
