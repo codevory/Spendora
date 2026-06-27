@@ -33,8 +33,8 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
   const error = user.error;
 
   const accountStats = useMemo(() => {
-    const totalExpense = transactions.reduce((acc, txn) => acc + txn.amount, 0);
-    const totalIncome = incomes.reduce((acc, txn) => acc + txn.amount, 0);
+    const totalExpense = transactions.reduce((acc, txn) => acc + Number(txn.amount), 0);
+    const totalIncome = incomes.reduce((acc, txn) => acc + Number(txn.amount), 0);
     const balance = totalIncome - totalExpense;
 
     return {

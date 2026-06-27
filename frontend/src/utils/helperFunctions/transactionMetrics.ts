@@ -22,13 +22,13 @@ export function getMonthlyIncome<T extends TransactionIncomeLike>(
 ) {
   return transactions
     .filter((transaction) => isInMonth(transaction.date, month, year))
-    .reduce((total, transaction) => total + transaction.amount, 0);
+    .reduce((total, transaction) => total + Number(transaction.amount), 0);
 }
 
 export function getMonthlyExpense<T extends TransactionExpenseLike>(transactions:T[],month:number,year:number){
  return transactions
     .filter((transaction) => isInMonth(transaction.date, month, year))
-    .reduce((total, transaction) => total + transaction.amount, 0);
+    .reduce((total, transaction) => total + Number(transaction.amount), 0);
 }
 
 export function getMonthOverMonthChange<T extends expenseTranscationTypes>(
@@ -54,10 +54,11 @@ export function getMonthOverMonthChange<T extends expenseTranscationTypes>(
 }
 
 export function getTopCategory(transactions: expenseTranscationTypes[]) {
+  console.log("txns from topCat_ : ",transactions)
   const categoryTotals = transactions.reduce<Record<string, number>>(
     (accumulator, transaction) => {
-      accumulator[transaction.categoryId] =
-        (accumulator[transaction.categoryId] ?? 0) + transaction.amount;
+      accumulator[transaction.categoryName ?? "uncategorized"] =
+        (accumulator[transaction.categoryName ?? "uncategorized"] ?? 0) + Number(transaction.amount);
       return accumulator;
     },
     {},
@@ -86,7 +87,7 @@ export function getLargestTransactionInRange<T extends expenseTranscationTypes>(
       return date >= startDate && date <= endDate;
     })
     .reduce<T | null>((largest, transaction) => {
-      if (!largest || transaction.amount > largest.amount) {
+      if (!largest || Number(transaction.amount) > largest.amount) {
         return transaction;
       }
 

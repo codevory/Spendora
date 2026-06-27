@@ -20,14 +20,17 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   const OverviewGraph = React.lazy(() => import("../charts/OverviewGraph"));
 
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
+
   const dispatch = useAppDispatch()
-  useEffect(() => {
-   dispatch( fetchInitialData())
+  useEffect(() => { 
+    dispatch( fetchInitialData())
   },[])
+
   const transactions = useAppSelector(
     (state) => state.transaction.expenseTransactions,
   );
-  console.log(transactions)
+
+
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const { lineData } = useUserData();
   const weeklySnapshot = useMemo(() => {
@@ -41,10 +44,10 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
       return txnDate >= start && txnDate <= now;
     });
 
-    const totalSpent = weekTxns.reduce((acc, txn) => acc + txn.amount, 0);
+    const totalSpent = weekTxns.reduce((acc, txn) => acc + Number(txn.amount), 0);
     const topCategoryMap = weekTxns.reduce<Record<string, number>>(
       (acc, txn) => {
-        acc[txn.categoryId] = (acc[txn.categoryId] || 0) + txn.amount;
+        acc[txn.categoryName ?? "uncategorized"] = (acc[txn.categoryName ?? "uncategorized"] || 0) + Number(txn.amount);
         return acc;
       },
       {},

@@ -81,14 +81,14 @@ export const insightData = ({
         ? {
             name: topCategoryEntry.category,
             amount: topCategoryEntry.amount,
-            sharePercent: (topCategoryEntry.amount / totalExpense) * 100,
+            sharePercent: (Number(topCategoryEntry.amount) / totalExpense) * 100,
           }
         : null;
 
     const biggestTxn = currentMonthTxns.reduce<
       (typeof currentMonthTxns)[number] | null
     >((max, txn) => {
-      if (!max || txn.amount > max.amount) {
+      if (!max || Number(txn.amount) > Number(max.amount)) {
         return txn;
       }
       return max;
@@ -97,7 +97,7 @@ export const insightData = ({
     const biggestExpense = biggestTxn
       ? {
           name: biggestTxn.paidTo,
-          amount: biggestTxn.amount,
+          amount: Number(biggestTxn.amount),
           date: biggestTxn.date,
         }
       : null;

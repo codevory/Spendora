@@ -20,7 +20,8 @@ const RecentTransactions = () => {
   const sortedTransactions = useMemo(() => {
     const normalizedIncomeData = userIncomeTxns.map((txn) => {
       return {
-        amount: txn.amount,
+        id:txn.id ?? txn.transactionId,
+        amount: Number(txn.amount),
         transactionId: txn.transactionId,
         name: txn.source,
         date: txn.date,
@@ -31,7 +32,8 @@ const RecentTransactions = () => {
 
     const normalizedExpenseData = userExpenseTxns.map((txn) => {
       return {
-        amount: txn.amount,
+        id:txn.id ?? txn.transactionId,
+        amount: Number(txn.amount),
         transactionId: txn.transactionId,
         name: txn.paidTo,
         date: txn.date,
@@ -51,12 +53,12 @@ const RecentTransactions = () => {
       </h2>
 
       {sortedTransactions.map((item) => {
+        console.log('key : ',item)
         return (
-          <div
-            key={item.transactionId}
+          <div key={item.id.toString() + item.transactionId}
             className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"
           >
-            <div>
+            <div >
               <p className="font-medium recent-transaction-name">{item.name}</p>
               <p className="text-sm text-muted">
                 {dateFormatter.format(new Date(item.date))} •{" "}
@@ -65,12 +67,11 @@ const RecentTransactions = () => {
             </div>
 
             <div
-              className={`${item.type === "expense" ? "recent-transaction-amount-expense" : "recent-transaction-amount-income"}`}
-            >
+              className={`${item.type === "expense" ? "recent-transaction-amount-expense" : "recent-transaction-amount-income"}`}>
               <span className="font-semibold flex items-center">
                 {`${item.type === "expense" ? "-" : "+"}`}
                 {formatCurrency(
-                  Number(item.amount.toString().replace("-", "")),
+                  Number(item.amount),
                   currencyKey,
                 )}
               </span>

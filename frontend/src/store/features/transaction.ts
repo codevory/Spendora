@@ -186,6 +186,7 @@ export const transactionSlice = createSlice({
   })
   .addCase(addCategoryThunk.fulfilled, (state,action:PayloadAction <CategoryPropsTypeDB>) => {
    state.status = "success"
+   console.log(action.payload)
    state.categories.push(action.payload)
   })
   .addCase(addCategoryThunk.rejected, (state, action: any) => {

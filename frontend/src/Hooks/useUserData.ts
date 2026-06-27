@@ -20,12 +20,9 @@ const targetDate = (month: number) => new Date(now.getFullYear(), month, 1);
 
 export const useUserData = () => {
   const expenses = useAppSelector((state) => state.transaction.expenseTransactions);
-  const incomeTrans = useAppSelector(
-    (state) => state.transaction.incomeTransactions,
-  );
+  const incomeTrans = useAppSelector((state) => state.transaction.incomeTransactions);
 
-  console.log(expenses)
-  console.log(incomeTrans)
+
   const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
   const currMonthData = getMonthlyData({
    expenses,
@@ -37,6 +34,7 @@ export const useUserData = () => {
   });
   const currMonthIncome = getMonthlyIncome({ transactions: incomeTrans });
 
+  console.log(currMonthData)
   const currentLabels = Object.keys(currMonthData);
   const currentMonthAmounts = currentLabels.map(
     (label) => currMonthData[label] ?? 0,
@@ -71,6 +69,7 @@ export const useUserData = () => {
     (label) => prevMonthData[label] ?? 0,
   );
 
+  console.log("currentmonthamount : ",currentMonthAmounts,currentLabels)
   const pieData: ChartData<"pie"> = {
     labels: currentLabels,
     datasets: [
@@ -154,13 +153,13 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
       const date = new Date(t.date);
       return (
         date.getMonth() === targetMonth && date.getFullYear() === targetYear
-      );
+      ); 
     })
     .reduce<Record<string, number>>((acc, curr) => {
-      if (!acc[curr.categoryId]) {
-        acc[curr.categoryId] = (acc[curr.categoryId] ?? 0) + Number(curr.amount);
+      if (!acc[curr.categoryName ?? "uncategorized"]) {
+        acc[curr.categoryName ?? "uncategorized"] = (acc[curr.categoryName ?? "uncategorized"] ?? 0) + Number(curr.amount);
       } else {
-        acc[curr.categoryId] += Number(curr.amount);
+        acc[curr.categoryName ?? "uncategorized"] += Number(curr.amount);
       }
       return acc;
     }, {});
@@ -189,7 +188,6 @@ interface MonthlyIncomeType {
   transactions: IncomeTransactionTypes[];
 }
 function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
-  console.log(transactions)
   const end = targetDate(now.getMonth()).getFullYear();
   return transactions
     .filter((t) => {
@@ -201,6 +199,7 @@ function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
         month: "short",
       });
       if (!acc[month]) {
+        console.log(curr.amount,curr.source)
         acc[month] = (acc[month] ?? 0) + Number(curr.amount);
       } else {
         acc[month] += Number(curr.amount);
