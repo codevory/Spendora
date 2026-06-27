@@ -15,11 +15,11 @@ export async function getExpense(req, res) {
       `SELECT 
         e.id,
         e.amount,
-        e.paid_to AS paidTo,
+        e.paid_to AS "paidTo",
         e.paid_on AS date,
-        e.transaction_id AS transactionId,
-        c.name AS categoryName,
-        e.category_id AS categoryId
+        e.transaction_id AS "transactionId",
+        c.name AS "categoryName",
+        e.category_id AS "categoryId"
         FROM userexpense e
         LEFT JOIN expensecategories c ON e.category_id = c.id
         WHERE e.user_id = $1`,
@@ -77,7 +77,7 @@ export async function addIncome(req, res) {
 
   try {
     await db.query(
-      "INSERT INTO userincome (user_id,amount,source,transaction_id,recieved_on) VALUES($1,$2,$3,$4,$5)",
+      "INSERT INTO userincome (user_id,amount,source,transaction_id,received_on) VALUES($1,$2,$3,$4,$5)",
       [
         req.session.userId,
         incomeData.amount,
@@ -102,7 +102,7 @@ export async function getIncome(req, res) {
 
   try {
     const incomeResult = await db.query(
-      "SELECT amount,source,recieved_on as date,transaction_id as transactionId,created_at as createdAt FROM userincome WHERE user_id = $1",
+      'SELECT id,amount,source, received_on as date,transaction_id as transactionId,created_at as "createdAt" FROM userincome WHERE user_id = $1',
       [req.session.userId],
     );
 

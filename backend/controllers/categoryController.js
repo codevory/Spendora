@@ -20,16 +20,15 @@ export async function getCategories(req, res) {
 export async function addNewCategory(req, res) {
   const db = await getDBConnection();
 
-  let { newCategory } = req.body;
-  console.log(newCategory);
-  newCategory.name = newCategory.name.trim().toLowerCase();
+  let { name } = req.body;
+  console.log(name);
+  name = name.trim().toLowerCase();
 
   try {
     const categoryResult = await db.query(
       "SELECT * FROM expensecategories WHERE name = $1",
-      [newCategory.name],
+      [name],
     );
-
     const existingCategory = categoryResult.rows[0];
     if (existingCategory) {
       return res.status(409).json({ error: "category already exists!" });
@@ -37,10 +36,16 @@ export async function addNewCategory(req, res) {
 
     await db.query(
       "INSERT INTO expensecategories (user_id,name) VALUES($1,$2)",
-      [req.session.userId, newCategory.name],
+      [req.session.userId, name],
     );
 
-    res.status(201).json({ response: "category added successfully🎉" });
+    let category = await db.query(
+      "SELECT id,name FROM expensecategories WHERE user_id = $1 AND name = $2",
+      [req.session.userId, name],
+    );
+
+    category = category.rows[0];
+    res.status(201).json({ category });
   } catch (err) {
     console.error("Error adding category : ", err.message);
     return res.status(500).json({ error: `Failed to add new 😩Category` });
@@ -55,8 +60,13 @@ export async function renameCategory(req, res) {
       "UPDATE expensecategories SET name = $1 WHERE user_id = $2 AND id = $3",
       [category.name.toLowerCase().trim(), req.session.userId, category.id],
     );
+    let categories = await db.query(
+      "SELECT * FROM expensecategories WHERE user_id = $1",
+      [req.session.userId],
+    );
+    categories = categories.rows;
 
-    return res.status(201).json({ response: "Rename successfull" });
+    return res.status(201).json({ categories });
   } catch (err) {
     console.error("error renaming category : ", err.message);
     return res.status(500).json({
@@ -78,17 +88,17 @@ export async function deleteCategory(req, res) {
   const db = await getDBConnection();
 
   try {
-    const isValid = await db.get(
-      "SELECT id,name FROM expenseCategories WHERE id = ? AND user_id = ?",
+    const isValid = await db.query(
+      "SELECT (id,name) FROM expensecategories WHERE id = $1 AND user_id = $2",
       [category.id, req.session.userId],
     );
-    if (!isValid.id) {
+    if (!isValid) {
       return res.status(400).json({ error: "Category not found" });
     }
-    await db.run("DELETE FROM expenseCategories WHERE id = ? AND user_id = ?", [
-      category.id,
-      req.session.userId,
-    ]);
+    await db.query(
+      "DELETE FROM expensecategories WHERE id = $1 AND user_id = $2",
+      [category.id, req.session.userId],
+    );
 
     console.log("item ", category, "deleted successfully");
     return res.status(204).send();
