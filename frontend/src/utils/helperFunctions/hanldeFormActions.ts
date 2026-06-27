@@ -1,5 +1,5 @@
 import type { AppDispatch } from "../../store/store";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import type {
   CategoryPropsType,
@@ -14,6 +14,7 @@ import {
   deleteCategoryThunk,
   addIncomeThunk
 } from "../../store/features/transaction";
+import { useDebounce } from "../../Hooks/useDebounce";
 
 
 interface handleAddTransactionFormProps {
@@ -69,7 +70,7 @@ export async function handleAddExpenseTransaction({
   transaction,
 }: handleAddTransactionFormProps) {
   e.preventDefault();
-  if (amount !== "" && amount <= 0) {
+  if (typeof amount !== "number" || amount <= 0) {
     failed("kindly add valid amount");
     return;
   }
@@ -117,6 +118,7 @@ export async function handleAddIncomeTransaction({
   if (incomeDate === "" || incomeSource === "")
     return failed("Fill all required details");
   const incomeData: IncomeTransactionTypes = {
+    id:1,
     amount: amount !== "" ? amount : 0,
     source: incomeSource,
     date: incomeDate,
@@ -125,17 +127,20 @@ export async function handleAddIncomeTransaction({
     type: "income",
   };
   
-  dispatch(addIncomeThunk(incomeData))
-  .unwrap()
-  .then(() => {
-    success("income added successfully🎉")
-  })
-  .catch((err) => {
-    failed(err ?? "Failed to add Income")
-  })
-  .finally(() => {
-   setModalState("closed")
-  })
+  useDebounce({func:addTxn,delay:400})
+  function addTxn(){
+    dispatch(addIncomeThunk(incomeData))
+    .unwrap()
+    .then(() => {
+      success("income added successfully🎉")
+    })
+    .catch((err) => {
+      failed(err ?? "Failed to add Income")
+    })
+    .finally(() => {
+     setModalState("closed")
+    })
+  }
  
 }
 
@@ -147,24 +152,28 @@ export async function handleAddCategoryDB({
   dispatch,
   setCategory,
   setModalState,}:HandleCategoryFormProps){
+
  e.preventDefault();
   if (category.trim() === "") return failed("kindly type category name");
 
    const name = category.trim().toLowerCase();
 
-   dispatch(addCategoryThunk(name))
-   .unwrap() //.unwrap() allows us to listen to success/error inside the component
-   .then(() => {
-    success("category added successfully🎉")
-   })
-   .catch((err) => {
-    failed(err || "Failed to add Category😩")
-   })
-   .finally(() => {
-    setCategory("")
-    setModalState("closed")
-   })
+   function addCat(){
+     dispatch(addCategoryThunk(name))
+     .unwrap() //.unwrap() allows us to listen to success/error inside the component
+     .then(() => {
+       success("category added successfully🎉")
+      })
+      .catch((err) => {
+        failed(err || "Failed to add Category😩")
+      })
+      .finally(() => {
+        setCategory("")
+        setModalState("closed")
+      })
+   }
 
+   useDebounce({func:addCat,delay:400})
 }
 export function handleDeleteCategory({
   category,
@@ -177,21 +186,26 @@ export function handleDeleteCategory({
   if(!confirmDelete(category.name)){
     return failed("action cancelled")
   }
-  dispatch(deleteCategoryThunk(category))
-  .unwrap()
-  .then(() => {
-    success(`${category.name} deleted successfully🎉`)
-  })
-  .catch((err) => {
-    console.error(err)
-    failed(err || "Failed to delete ")
-  })
+
+  function deleteCat(){
+    dispatch(deleteCategoryThunk(category))
+    .unwrap()
+    .then(() => {
+      success(`${category.name} deleted successfully🎉`)
+    })
+    .catch((err) => {
+      console.error(err)
+      failed(err || "Failed to delete ")
+    })
+  }
+
+  useDebounce({func:deleteCat,delay:200})
 }
   
 export function getCategories(){
   const [categories,setCategories] = useState<CategoryPropsTypeDB[]>([])
 
-  useMemo(async () => {
+  async function getCat() {
     try {
      const result = await fetch("/api/data/categories")
      const res = await result.json()
@@ -206,7 +220,9 @@ export function getCategories(){
        console.error(err)
      }
   
-  },[setCategories])
+  }
+
+  useDebounce({func:getCat,delay:400})
   return categories
   }
 
@@ -254,6 +270,8 @@ interface userExpenseTxns {
   setData:(val:expenseTranscationTypes[]) => void;
 }
 export async function getUserExpenseTransactions({setData}:userExpenseTxns){
+
+  async function getExpense(){
     try {
     const result = await fetch("api/transaction/expenses")
     let res = await result.json();
@@ -264,4 +282,7 @@ export async function getUserExpenseTransactions({setData}:userExpenseTxns){
      console.error(err)
      setData([])
     }
+  }
+
+  useDebounce({func:getExpense,delay:400})
 }

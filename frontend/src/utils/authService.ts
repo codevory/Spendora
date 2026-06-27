@@ -48,16 +48,21 @@ export async function handleGoogleSignin({
 
     const { auth, provider } = await getServices();
     const result = await popupSignIn(auth, provider);
+
     const credentials = fromResult(result);
     console.log(credentials);
     successToast("🎉 signin successfull");
+    console.log(result)
     return result;
+
+
   } catch (err: any) {
     if (err instanceof Error) {
       console.error(err);
       const failToast = deps?.fail ?? fail;
       failToast(err.message);
     }
+    
     const email = err.customData?.email;
     const fromError =
       deps?.credentialFromError ?? GoogleAuthProvider.credentialFromError;
@@ -76,12 +81,25 @@ export async function handleLogout({
   setUserData,
   navigate,
 }: HandleAuthProps) {
-  const { signOut } = await import("firebase/auth");
-  const { auth } = await loadFirebaseServices();
-  await signOut(auth);
-  dispatch(setLoginStatus(false));
-  dispatch(setUserData(null));
-  navigate("/signin");
+
+    const resp = fetch("/api/auth/logout")
+    const response = (await resp).json()
+    response
+    .then(() => {
+      dispatch(setLoginStatus(false));
+      dispatch(setUserData(null));
+      success("logout successfull 🫤")
+      navigate("/signin");
+    })
+
+    .catch((err) => {
+      fail("Failed to logout, server error")
+      console.error(err)
+    })
+
+    .finally(() => {
+    return;
+    })
 }
 
 export async function handleDeleteAccount({

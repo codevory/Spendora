@@ -22,10 +22,11 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const failed = (message: string) => toast.error(message);
 
   const transaction: expenseTranscationTypes = {
+    id:1,
     paidTo: payee,
     date: date,
     amount: amount !== "" ? convertToBaseAmount(amount, currencyKey) : 0,
-    categoryId:Number(category),
+    categoryId: category === "select" ? 0 : Number(category),
     transactionId: "",
     createdAt: new Date(date).toString(),
     type: "expense",
@@ -106,7 +107,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
               }}
               className="input"
               required
-            >
+              >
               <option key={"select-key"} value={"select"}>
                 select
               </option>

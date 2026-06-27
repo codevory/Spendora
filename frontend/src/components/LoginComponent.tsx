@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { LockOutlineIcon, UserOutlineIcon } from "./icons/LocalIcons";
+import toast from "react-hot-toast";
 
 interface LoginComponentPropsType {
   email: string;
@@ -15,7 +16,6 @@ const LoginComponent = ({
   password,
   setPassword,
   handleFormSubmit,
-  handleGoogleSign,
 }: LoginComponentPropsType) => {
   return (
     <div className="auth-card ">
@@ -77,10 +77,12 @@ const LoginComponent = ({
       <div className="flex w-full flex-col gap-3">
         <div className="flex flex-col gap-2">
           <button
-            onClick={handleGoogleSign}
+            onClick={() => {
+              toast.error("coming soon")
+            }}
             className="auth-social-button bg-linear-to-br from-blue-600 to-red-500 from-25% to-55%"
           >
-            continue with Google
+            Other auth methods | Coming soon 
           </button>
         </div>
       </div>

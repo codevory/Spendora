@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import './registerForm.css'
+import toast from "react-hot-toast";
 
 interface SignupomponentPropsType {
   fullName:string;
@@ -21,7 +22,6 @@ interface SignupomponentPropsType {
 
 const SignupComponent = ({
   errorMessage,
-  handleSignupGoogle,
   username,
   setUsername,
   password,
@@ -79,10 +79,10 @@ const SignupComponent = ({
       <div className="flex w-full flex-col gap-2">
         <div className="flex flex-col gap-2">
           <button
-            onClick={handleSignupGoogle}
+            onClick={() => toast.error("other auth methods coming soon")}
             className="auth-social-button bg-linear-to-br from-blue-600 to-red-500 from-25% to-55%"
           >
-            continue with Google
+           other auth Methods | coming soon
           </button>
         </div>
       </div>

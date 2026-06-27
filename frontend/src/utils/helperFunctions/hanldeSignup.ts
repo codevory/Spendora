@@ -26,8 +26,6 @@ export async function handleSignupWithEmailPassword({
   email,
   password,
   setIsLoading,
-  setPassword,
-  setUsername,
   setErrorMessage
 }: handleSignupProps) {
   setIsLoading(true);
@@ -59,8 +57,6 @@ export async function handleSignupWithEmailPassword({
     fail("Failed to Register,kindly try again")
     setIsLoading(false);
   } finally{
-      setPassword("");
-      setUsername("");
       setIsLoading(false)
     };
 }
