@@ -18,7 +18,8 @@ dotenv.config();
 const secret = process.env.SPIRAL_SESSION_SECRET;
 const app = express();
 const PORT = process.env.PORT || 2122;
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction =
+  process.env.NODE_ENV === "production" || process.env.RENDER === "true";
 
 //initialize the postgres store constructor
 const PostgresStore = pgSession(session);
@@ -30,14 +31,13 @@ app.use(
       "http://localhost:5173",
       "http://localhost:2122",
       "http://localhost:3000",
-      "https://spendora-khaki.vercel.app/",
+      "https://spendora-khaki.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-app.use(express.json());
 app.use(
   session({
     store: new PostgresStore({
@@ -55,20 +55,23 @@ app.use(
     },
   }),
 );
-const publicFolder = path.join(__dirname, "../frontend/dist");
 
-app.use(express.static(publicFolder));
+app.use(express.json());
+// const publicFolder = path.join(__dirname, "../frontend/dist");
+
+// app.use(express.static(publicFolder));
 app.use("/api/auth/me", meRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/data", dataRoute);
 
-app.get("/{*splat}", (req, res) => {
-  res.sendFile(path.join(publicFolder, "index.html"));
-});
+// app.get("/{*splat}", (req, res) => {
+//   res.sendFile(path.join(publicFolder, "index.html"));
+// });
+
 app.listen(PORT, () => {
   try {
-    console.log(`listening at http://localhost:${PORT}`);
+    console.log(`app live at Base_Ur:${PORT}`);
   } catch (err) {
     console.error("Error listening to port ", err.message);
   }
