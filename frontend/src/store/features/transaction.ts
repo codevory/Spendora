@@ -24,9 +24,21 @@ export const fetchInitialData = createAsyncThunk(
   async (_, { rejectWithValue }) => {
    try {
     const [transRes,incomeRes,catRes] = await Promise.all([
-      fetch(`${Backend_Url}/api/transaction/expenses`),
-      fetch(`${Backend_Url}/api/transaction/income`),
-      fetch(`${Backend_Url}/api/data/categories`),
+      fetch(`${Backend_Url}/api/transaction/expenses`,{
+        method:"GET",
+        credentials:'include',
+        headers:{"Content-Type":'application/json'}
+        }),
+      fetch(`${Backend_Url}/api/transaction/income`,{
+        method:"GET",
+        credentials:'include',
+        headers:{"Content-Type":"application/json"}
+      }),
+      fetch(`${Backend_Url}/api/data/categories`,{
+        method:"GET",
+        credentials:"include",
+        headers:{"Content:Type":'application/json'}
+      }),
     ]);
 
     if(!transRes.ok || !catRes.ok || !incomeRes.ok) throw new Error("Failed to fetch initial FUll-stck data")
@@ -47,6 +59,7 @@ export const addCategoryThunk = createAsyncThunk(
     try {
       const result = await fetch(`${Backend_Url}/api/data/addNewCategory`,{
         method:"POST",
+        credentials:"include",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({name})
       });
@@ -68,6 +81,7 @@ export const renameCategory = createAsyncThunk(
    try {
     const result = await fetch(`${Backend_Url}/api/data/renameCategory`,{
       method:"POST",
+      credentials:'include',
       headers:{
         "Content-Type":"application/json"
       },
@@ -90,6 +104,7 @@ export const deleteCategoryThunk = createAsyncThunk(
     try {
       const result = await fetch(`${Backend_Url}/api/data/deleteCategory`,{
         method:"DELETE",
+        credentials:'include',
         headers:{
           "Content-Type":"application/json"
         },
@@ -113,6 +128,7 @@ export const addExpense = createAsyncThunk(
     try {
       const result = await fetch(`${Backend_Url}/api/transaction/addExpense`,{
         method:"POST",
+        credentials:'include',
         headers:{
           "Content-Type":"application/json"
         },
@@ -136,6 +152,7 @@ export const addIncomeThunk = createAsyncThunk(
     try {
       const result = await fetch(`${Backend_Url}/api/transaction/addIncome`, {
         method:"POST",
+        credentials:'include',
         headers:{
           "Content-Type":"application/json"
         },

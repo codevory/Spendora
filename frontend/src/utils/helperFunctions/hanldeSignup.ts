@@ -34,6 +34,7 @@ export async function handleSignupWithEmailPassword({
     setErrorMessage("")
    const resp = await fetch(`${Backend_Url}/api/auth/register`,{
     method:"POST",
+    credentials:'include',
     headers:{
       "Content-Type":"application/json"
     },

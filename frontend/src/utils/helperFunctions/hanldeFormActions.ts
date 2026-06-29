@@ -208,7 +208,9 @@ export function getCategories(){
 
   async function getCat() {
     try {
-     const result = await fetch(`${Backend_Url}/api/data/categories`)
+     const result = await fetch(`${Backend_Url}/api/data/categories`,{
+      credentials:'include'
+     })
      const res = await result.json()
      if(result.ok){
      const data:CategoryPropsTypeDB[] = res.data
@@ -275,7 +277,9 @@ export async function getUserExpenseTransactions({setData}:userExpenseTxns){
 
   async function getExpense(){
     try {
-    const result = await fetch(`${Backend_Url}/api/transaction/expenses`)
+    const result = await fetch(`${Backend_Url}/api/transaction/expenses`,{
+      credentials:'include'
+    })
     let res = await result.json();
      res = res.data;
     setData(res)

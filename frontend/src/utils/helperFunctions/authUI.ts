@@ -2,7 +2,10 @@ import { Backend_Url } from "../../store/features/transaction";
 
 export async function checkAuth() {
     try {
-      const res = await fetch(`${Backend_Url}/api/auth/me`)
+      const res = await fetch(`${Backend_Url}/api/auth/me`,{
+        method:"GET",
+        credentials:'include'
+      })
       if(!res.ok){
           console.error("unexpected response",res.status)
           return "Guest"

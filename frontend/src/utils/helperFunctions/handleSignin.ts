@@ -34,6 +34,7 @@ export async function handleSigninWithPassword({
   try {
     const res = await fetch(`${Backend_Url}/api/auth/login`,{
       method:"POST",
+      credentials:'include',
       headers:{
         "Content-Type":"application/json"
       },
