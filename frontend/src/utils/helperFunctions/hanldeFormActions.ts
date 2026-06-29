@@ -1,5 +1,4 @@
 import type { AppDispatch } from "../../store/store";
-import { useState } from "react";
 
 import type {
   CategoryPropsType,
@@ -15,7 +14,6 @@ import {
   addIncomeThunk,
   Backend_Url
 } from "../../store/features/transaction";
-import { useDebounce } from "../../Hooks/useDebounce";
 
 
 interface handleAddTransactionFormProps {
@@ -127,8 +125,7 @@ export async function handleAddIncomeTransaction({
     createdAt: Date.now(),
     type: "income",
   };
-  
-  useDebounce({func:addTxn,delay:400})
+
   function addTxn(){
     dispatch(addIncomeThunk(incomeData))
     .unwrap()
@@ -142,7 +139,8 @@ export async function handleAddIncomeTransaction({
      setModalState("closed")
     })
   }
- 
+
+  addTxn();
 }
 
 export async function handleAddCategoryDB({  
@@ -174,7 +172,7 @@ export async function handleAddCategoryDB({
       })
    }
 
-   useDebounce({func:addCat,delay:400})
+    addCat();
 }
 export function handleDeleteCategory({
   category,
@@ -200,11 +198,11 @@ export function handleDeleteCategory({
     })
   }
 
-  useDebounce({func:deleteCat,delay:200})
+  deleteCat();
 }
   
-export function getCategories(){
-  const [categories,setCategories] = useState<CategoryPropsTypeDB[]>([])
+export async function getCategories(): Promise<CategoryPropsTypeDB[]> {
+  let categories: CategoryPropsTypeDB[] = [];
 
   async function getCat() {
     try {
@@ -214,7 +212,7 @@ export function getCategories(){
      const res = await result.json()
      if(result.ok){
      const data:CategoryPropsTypeDB[] = res.data
-     setCategories(data)
+    categories = data
      }
      } catch (err) {
        if(err instanceof Error){
@@ -224,8 +222,7 @@ export function getCategories(){
      }
   
   }
-
-  useDebounce({func:getCat,delay:400})
+    await getCat();
   return categories
   }
 
@@ -290,5 +287,5 @@ export async function getUserExpenseTransactions({setData}:userExpenseTxns){
     }
   }
 
-  useDebounce({func:getExpense,delay:400})
+  await getExpense();
 }
