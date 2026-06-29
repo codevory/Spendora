@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "source": "/api/:path*",
+      "destination": "https://spendora-backend-4ado.onrender.com/api/:path*"
+    },
+    {
+      "source":"/((?!api/).*)",
+      "destination":"/index.html"
     }
   ]
 }
