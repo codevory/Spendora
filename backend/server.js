@@ -17,6 +17,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const secret = process.env.SPIRAL_SESSION_SECRET;
 const app = express();
+app.enable("trust proxy");
 const PORT = process.env.PORT || 2122;
 const isProduction =
   process.env.NODE_ENV === "production" || process.env.RENDER === "true";
