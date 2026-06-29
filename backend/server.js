@@ -63,7 +63,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/data", dataRoute);
 
-app.get("*", (req, res) => {
+app.get("/{*splat}", (req, res) => {
   res.sendFile(path.join(publicFolder, "index.html"));
 });
 app.listen(PORT, () => {
