@@ -5,6 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base:'/',
   plugins: [tailwindcss(),react(),
   visualizer({
   open: true,
@@ -26,7 +27,10 @@ export default defineConfig({
   },
   server:{
     proxy:{
-      '/api':'http://localhost:2122'
+      '/api':{
+        target:'http://localhost:2122',
+        changeOrigin:true
+      }
     }
   }
 })

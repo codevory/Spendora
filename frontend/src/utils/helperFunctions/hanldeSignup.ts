@@ -22,7 +22,6 @@ export async function handleSignupWithEmailPassword({
   e,
   fullName,
   username,
-  navigate,
   currency,
   email,
   password,
@@ -52,7 +51,6 @@ export async function handleSignupWithEmailPassword({
       setIsLoading(false);
     }
     setIsLoading(false);
-    navigate("/signin")
   } catch (err) {
     console.error(err)
     fail("Failed to Register,kindly try again")

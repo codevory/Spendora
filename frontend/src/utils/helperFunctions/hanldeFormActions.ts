@@ -238,6 +238,7 @@ export interface HandleRenameCategoryProps {
   dispatch: AppDispatch;
   setModalState: (val: "income" | "category" | "closed") => void;
 }
+
 export async function handleRenameCategory({
   e,
   category,
@@ -274,7 +275,7 @@ export async function getUserExpenseTransactions({setData}:userExpenseTxns){
 
   async function getExpense(){
     try {
-    const result = await fetch(`${Backend_Url}api/transaction/expenses`)
+    const result = await fetch(`${Backend_Url}/api/transaction/expenses`)
     let res = await result.json();
      res = res.data;
     setData(res)

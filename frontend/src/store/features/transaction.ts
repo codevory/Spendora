@@ -7,7 +7,9 @@ import type {
   IncomeTransactionTypes,
 } from "../../types/transactionType";
 
-export const Backend_Url = import.meta.env.VITE_API_BASE_URL
+ const isProduction = import.meta.env.PROD
+ export const Backend_Url = isProduction ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/,'') : ''
+
 interface TransactionState {
   categories: CategoryPropsTypeDB[];
   expenseTransactions: expenseTranscationTypes[];
