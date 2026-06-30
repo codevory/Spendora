@@ -5,13 +5,13 @@ import { Backend_Url } from "../../store/features/transaction";
 
 interface hanldeSigninWithPasswordProps {
   setIsLoading: (val: boolean) => void;
-  setEmail: (val: string) => void;
   setPassword: (val: string) => void;
   email: string;
   password: string;
   setIsLoged: (val: boolean) => void;
   e: React.SubmitEvent<HTMLFormElement>;
   navigate: (val: string) => void;
+  setIsSubmitting:(val:boolean) => void
 }
 
 
@@ -21,16 +21,17 @@ const fail = (message: string) => toast.error(message);
 export async function handleSigninWithPassword({
   e,
   navigate,
-  setEmail,
   setIsLoading,
   setPassword,
   email,
   password,
   setIsLoged,
+  setIsSubmitting
 }: hanldeSigninWithPasswordProps) {
   setIsLoading(true);
   e.preventDefault();
  
+  setIsSubmitting(true)
   try {
     const res = await fetch(`${Backend_Url}/api/auth/login`,{
       method:"POST",
@@ -62,8 +63,8 @@ export async function handleSigninWithPassword({
     console.error("Failed to login",err) 
     setIsLoading(false)
   }finally{
-    setEmail("")
     setPassword("")
+    setIsSubmitting(false)
   }
 }
 

@@ -22,6 +22,8 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
   const [category, setCategory] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryPropsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
+
   console.log(isLoading)
   
   const dispatch = useAppDispatch();
@@ -116,9 +118,11 @@ console.log(incomeTransactions)
               form={
                 <AddNewCategoryForm
                   setModalState={() => setModalState("closed")}
-                  buttonContent="Save"
+                  buttonContent={isSubmitting ? "Saving.." : "Save"}
                   formHeading="Rename Category"
                   categoryState={category}
+                  setIsSubmitting={setIsSubmitting}
+                  isSubmitting={isSubmitting}
                   handleCategoryState={setCategory}
                   handleFormSubmit={(e, categoryName) =>
                     handleRenameCategory({
@@ -130,6 +134,7 @@ console.log(incomeTransactions)
                       success: success,
                       fail: fail,
                       setModalState: setModalState,
+                      setIsSubmitting:setIsSubmitting
                     })
                   }
                 />

@@ -12,10 +12,13 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const [amount, setAmount] = useState<number | "">("");
   const [date, setDate] = useState<string>("");
   const [payee, setPayee] = useState<string>("");
-  const [category, setCategory] = useState<string>("select");
+  const [categoryId, setCategoryId] = useState<string>("select");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const categories = useAppSelector((state) => state.transaction.categories);
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const currencyMeta = getCurrencyMeta(currencyKey);
+  const selectedCategoryName =
+    categories.find((cat) => String(cat.id) === categoryId)?.name ?? "";
 
   const dispatch = useAppDispatch();
   const Success = () => toast.success("Expense Added Successfully");
@@ -26,8 +29,8 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
     paidTo: payee,
     date: date,
     amount: amount !== "" ? convertToBaseAmount(amount, currencyKey) : 0,
-    categoryId: category === "select" ? 0 : Number(category),
-    categoryName:category,
+    categoryId: categoryId === "select" ? 0 : Number(categoryId),
+    categoryName: selectedCategoryName,
     transactionId: "",
     createdAt: new Date(date).toString(),
     type: "expense",
@@ -42,12 +45,13 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
               e: e,
               setAmount: setAmount,
               setPayee: setPayee,
-              category: category,
+              category: categoryId,
               success: Success,
               failed: failed,
               amount: amount,
               dispatch: dispatch,
               transaction: transaction,
+              setIsSubmitting: setIsSubmitting,
             })
           }
           className="flex flex-col gap-5"
@@ -99,9 +103,9 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
           <div>
             <label className="text-sm text-muted mb-1 block">Category</label>
             <select
-              value={category}
+              value={categoryId}
               onChange={(e) => {
-                setCategory(e.target.value);
+                setCategoryId(e.target.value);
                 if (e.target.value.trim() === "add new") {
                   setModalState("category");
                 }
@@ -124,8 +128,12 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
           </div>
 
           {/* Button */}
-          <button type="submit" className="btn-primary w-full active:scale-95">
-            Add Expense
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary w-full active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isSubmitting ? "Adding..." : "Add Expense"}
           </button>
         </form>
       </div>

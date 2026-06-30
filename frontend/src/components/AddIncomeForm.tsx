@@ -11,6 +11,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
   const [amount, setAmount] = useState<number | "">("");
   const [incomeSource, setIncomeSource] = useState<string>("");
   const [incomeDate, setIncomeDate] = useState<string>("");
+  const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const currencyMeta = getCurrencyMeta(currencyKey);
 
@@ -29,6 +30,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             setModalState: setModalState,
             success: success,
             incomeDate: incomeDate,
+            setIsSubmitting:setIsSubmitting,
             incomeSource: incomeSource,
             amount:
               amount === "" ? 0 : convertToBaseAmount(amount, currencyKey),
@@ -72,8 +74,8 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           />
         </div>
 
-        <button type="submit" className="btn-primary w-full active:scale-95">
-          Add
+        <button disabled={isSubmitting} type="submit" className="btn-primary w-full active:scale-95">
+          {isSubmitting ? "Adding.." : "Add"}
         </button>
       </form>
     </div>

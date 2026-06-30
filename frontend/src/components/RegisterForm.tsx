@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import './registerForm.css'
 import toast from "react-hot-toast";
 
-interface SignupomponentPropsType {
+interface SignupFormPropsType {
   fullName:string;
   setFullName:(val:string) => void;
   username: string;
@@ -18,6 +18,7 @@ interface SignupomponentPropsType {
   isLoading: boolean;
   handleSignupGoogle: () => void;
   errorMessage:string;
+  isSubmitting:boolean
 }
 
 const SignupComponent = ({
@@ -33,7 +34,9 @@ const SignupComponent = ({
   currency,
   setCurrency,
   handleFormSubmit,
-}: SignupomponentPropsType) => {
+  isSubmitting
+}: SignupFormPropsType) => {
+  
   return (
     <div className="auth-card ">
 					<form className="auth-form" id="signup-form" method="post" onSubmit={(e) => handleFormSubmit(e)}>
@@ -73,7 +76,7 @@ const SignupComponent = ({
               <Link to={'/signin'}>Sign in instead</Link>
 						</div>
               <p className="error-message" id="register-form-error-message">{errorMessage}</p>
-                <button type="submit"  className="button register-btn">Register</button>
+                <button disabled={isSubmitting} type="submit"  className="button register-btn">{isSubmitting ? "Signing up.." : "Signup"}</button>
 					</form>
 
       <div className="flex w-full flex-col gap-2">

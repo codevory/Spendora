@@ -15,7 +15,7 @@ import {
 } from "../../store/features/transaction";
 
 
-interface handleAddTransactionFormProps {
+interface handleAddExpenseTransactionProps {
   amount: number | "";
   category: string;
   dispatch: AppDispatch;
@@ -25,10 +25,12 @@ interface handleAddTransactionFormProps {
   failed: (val: string) => string;
   setAmount: (val: number | "") => void;
   setPayee: (val: string) => void;
+  setIsSubmitting: (val: boolean) => void;
+
 }
 
 type commonTypes = Pick<
-  handleAddTransactionFormProps,
+  handleAddExpenseTransactionProps,
   "e" | "failed" | "dispatch"
 >;
 interface handleAddIncomeTransactionProps extends commonTypes {
@@ -37,6 +39,7 @@ interface handleAddIncomeTransactionProps extends commonTypes {
   incomeDate: string;
   success: (val: string) => string;
   setModalState: (val: "closed") => void;
+  setIsSubmitting:(val:boolean) => void;
 }
 
 type categoryFormCommontypes = Pick<
@@ -46,6 +49,7 @@ type categoryFormCommontypes = Pick<
 interface HandleCategoryFormProps extends categoryFormCommontypes {
   category: string;
   setCategory: (val: string) => void;
+  setIsSubmitting:(val:boolean) => void
 }
 
 type DeleteCategoryCommonProps = Pick<
@@ -60,13 +64,14 @@ export async function handleAddExpenseTransaction({
   e,
   setAmount,
   setPayee,
+  setIsSubmitting,
   success,
   failed,
   amount,
   category,
   dispatch,
   transaction,
-}: handleAddTransactionFormProps) {
+}: handleAddExpenseTransactionProps) {
   e.preventDefault();
   if (typeof amount !== "number" || amount <= 0) {
     failed("kindly add valid amount");
@@ -74,8 +79,8 @@ export async function handleAddExpenseTransaction({
   }
   if (
     category === undefined ||
-    category.trim() === "add new" ||
-    category.trim() === "select" ||
+    category.trim().toLowerCase() === "add new" ||
+    category.trim().toLowerCase() === "select" ||
     category.trim() === ""
   ) {
     return failed("Kindly select category");
@@ -87,18 +92,21 @@ export async function handleAddExpenseTransaction({
     transactionId: tId,
   };
 
-dispatch(addExpense(transactionData))
+  setIsSubmitting(true);
+
+  dispatch(addExpense(transactionData))
     .unwrap()
     .then(() => {
-     success()
+      success();
     })
     .catch((err) => {
-     failed(err || "Failed to add Expense")
+      failed(err || "Failed to add Expense");
     })
     .finally(() => {
-     setAmount(10)
-     setPayee("")
-    })
+      setAmount(1);
+      setPayee("");
+      setIsSubmitting(false);
+    });
 }
 
 export async function handleAddIncomeTransaction({
@@ -110,6 +118,7 @@ export async function handleAddIncomeTransaction({
   incomeSource,
   success,
   setModalState,
+  setIsSubmitting
 }: handleAddIncomeTransactionProps) {
   e.preventDefault();
   if (amount !== "" && amount < 0) return failed("Not valid income amount");
@@ -125,6 +134,7 @@ export async function handleAddIncomeTransaction({
     type: "income",
   };
 
+    setIsSubmitting(true)
     dispatch(addIncomeThunk(incomeData))
     .unwrap()
     .then(() => {
@@ -134,7 +144,8 @@ export async function handleAddIncomeTransaction({
       failed(err ?? "Failed to add Income")
     })
     .finally(() => {
-     setModalState("closed")
+      setIsSubmitting(false)
+      setModalState("closed")
     })
   }
 
@@ -146,6 +157,7 @@ export async function handleAddCategoryDB({
   failed,
   dispatch,
   setCategory,
+  setIsSubmitting,
   setModalState,}:HandleCategoryFormProps){
 
  e.preventDefault();
@@ -153,6 +165,7 @@ export async function handleAddCategoryDB({
 
    const name = category.trim().toLowerCase();
 
+     setIsSubmitting(true)
      dispatch(addCategoryThunk(name))
      .unwrap() //.unwrap() allows us to listen to success/error inside the component
      .then(() => {
@@ -163,6 +176,7 @@ export async function handleAddCategoryDB({
       })
       .finally(() => {
         setCategory("")
+        setIsSubmitting(false)
         setModalState("closed")
       })
 
@@ -231,6 +245,7 @@ export interface HandleRenameCategoryProps {
   setIsLoading: (val: boolean) => void;
   dispatch: AppDispatch;
   setModalState: (val: "income" | "category" | "closed") => void;
+  setIsSubmitting:(val:boolean) => void
 }
 
 export async function handleRenameCategory({
@@ -241,6 +256,7 @@ export async function handleRenameCategory({
   fail,
   setIsLoading,
   dispatch,
+  setIsSubmitting,
   setModalState,
 }: HandleRenameCategoryProps) {
   const categoryToRename = {
@@ -248,6 +264,8 @@ export async function handleRenameCategory({
     id:category.id
   }
   e.preventDefault();
+
+  setIsSubmitting(true)
   dispatch(renameCategory(categoryToRename))
   .unwrap()
   .then(() => {
@@ -258,6 +276,7 @@ export async function handleRenameCategory({
   })
   .finally(() => {
    setIsLoading(false)
+   setIsSubmitting(false)
    setModalState("closed")
   })
 }

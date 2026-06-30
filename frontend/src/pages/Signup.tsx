@@ -19,6 +19,8 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
   const [currency,setCurrency] = useState("inr")
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage,setErrorMessage] = useState<string>('')
+  const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
+
   const navigate = useNavigate();
   return (
     <Layout isOpen={isOpen} onToggle={onToggle}>
@@ -36,6 +38,7 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
             email={email}
             setEmail={setEmail}
             currency={currency}
+            isSubmitting={isSubmitting}
             setCurrency={setCurrency}
             handleFormSubmit={(e) =>
               handleSignupWithEmailPassword({
@@ -49,7 +52,8 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
                 navigate: navigate,
                 fullName:fullName,
                 currency:currency,
-                setErrorMessage:setErrorMessage
+                setErrorMessage:setErrorMessage,
+                setIsSubmitting:setIsSubmitting
               })
             }
             isLoading={isLoading}

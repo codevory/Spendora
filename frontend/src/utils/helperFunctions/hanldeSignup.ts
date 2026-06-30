@@ -16,6 +16,7 @@ interface handleSignupProps {
   fullName:string;
   currency:string;
   setErrorMessage:(val:string) => void;
+  setIsSubmitting:(val:boolean) => void
 }
 
 export async function handleSignupWithEmailPassword({
@@ -26,11 +27,13 @@ export async function handleSignupWithEmailPassword({
   email,
   password,
   setIsLoading,
-  setErrorMessage
+  setErrorMessage,
+  setIsSubmitting
 }: handleSignupProps) {
   setIsLoading(true);
   e.preventDefault();
   try {
+    setIsSubmitting(true)
     setErrorMessage("")
    const resp = await fetch(`${Backend_Url}/api/auth/register`,{
     method:"POST",
@@ -58,6 +61,7 @@ export async function handleSignupWithEmailPassword({
     setIsLoading(false);
   } finally{
       setIsLoading(false)
+      setIsSubmitting(false)
     };
 }
 

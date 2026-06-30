@@ -19,6 +19,8 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
   const [email, setEmail] = useState<string>("");
   const [isLoged, setIsLoged] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -38,6 +40,7 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
         <div className="auth-shell">
           <LoginComponent
             email={email}
+            isSubmitting={isSubmitting}
             password={password}
             setEmail={setEmail}
             setPassword={setPassword}
@@ -46,11 +49,11 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
                 navigate: navigate,
                 email: email,
                 e: e,
-                setEmail: setEmail,
                 setIsLoading: setIsLoading,
                 setIsLoged: setIsLoged,
                 setPassword: setPassword,
                 password: password,
+                setIsSubmitting:setIsSubmitting
               })
             }
             handleGoogleSign={() =>

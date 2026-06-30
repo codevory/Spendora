@@ -9,6 +9,7 @@ interface LoginComponentPropsType {
   setPassword: (val: string) => void;
   handleFormSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   handleGoogleSign: () => void;
+  isSubmitting:boolean
 }
 const LoginComponent = ({
   email,
@@ -16,7 +17,9 @@ const LoginComponent = ({
   password,
   setPassword,
   handleFormSubmit,
+  isSubmitting
 }: LoginComponentPropsType) => {
+
   return (
     <div className="auth-card ">
       <form onSubmit={handleFormSubmit} className="flex w-full flex-col gap-4">
@@ -64,8 +67,8 @@ const LoginComponent = ({
             </div>
           </div>
         </div>
-        <button className="btn-primary" type="submit">
-          Signin
+        <button disabled={isSubmitting} className="btn-primary" type="submit">
+          {isSubmitting ? "Signing in.." : "Sign in"}
         </button>
         <div className="flex justify-end mb-3">
           <Link to="/signup" className="auth-link">

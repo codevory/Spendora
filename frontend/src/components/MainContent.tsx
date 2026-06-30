@@ -98,13 +98,13 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               <div className="flex h-auto flex-wrap justify-start gap-2 p-0 lg:justify-end">
                 <button
                   onClick={() => setActiveGraph("bar")}
-                  className={`${activeGraph === "bar" ? "active-graphTab" : ""} graph-buttons h-9 w-28 rounded-lg text-sm`}
+                  className={`${activeGraph === "bar" ? "active-graphTab" : ""} graph-buttons h-9 w-25 rounded-lg text-sm`}
                 >
                   Overview
                 </button>
                 <button
                   onClick={() => setActiveGraph("pie")}
-                  className={`${activeGraph === "pie" ? "active-graphTab" : ""} graph-buttons h-9 w-28 rounded-lg text-sm`}
+                  className={`${activeGraph === "pie" ? "active-graphTab" : ""} graph-buttons h-9 w-25 rounded-lg text-sm`}
                 >
                   Distribution
                 </button>

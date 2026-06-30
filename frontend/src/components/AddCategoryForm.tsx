@@ -13,6 +13,8 @@ type CategoryFormProps = {
     e: React.SubmitEvent<HTMLFormElement>,
     categoryName: string,
   ) => void;
+  setIsSubmitting: (val: boolean) => void;
+  isSubmitting: boolean;
 };
 
 const AddNewCategoryForm = ({
@@ -22,6 +24,8 @@ const AddNewCategoryForm = ({
   categoryState,
   handleCategoryState,
   handleFormSubmit,
+  setIsSubmitting,
+  isSubmitting
 }: CategoryFormProps) => {
   const [category, setCategory] = useState<string>("");
 
@@ -54,6 +58,7 @@ const AddNewCategoryForm = ({
             setCategory: setCategory,
             setModalState: setModalState,
             category: categoryValue,
+            setIsSubmitting: setIsSubmitting
           });
         }}
         className="form flex flex-col gap-2 "
@@ -78,8 +83,9 @@ const AddNewCategoryForm = ({
         <button
           className="btn-primary w-20 h-11 font-semibold active:scale-95"
           type="submit"
+          disabled={isSubmitting}
         >
-          {buttonContent ?? "Add"}
+          {isSubmitting ? "Adding.." : buttonContent ?? "Add"}
         </button>
       </form>
     </div>

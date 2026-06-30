@@ -156,7 +156,7 @@ export const addExpense = createAsyncThunk(
       const res = await result.json()
       if(!result.ok) throw new Error(res.error || "Failed to add Expense")
 
-      return (res.transactionData || {transactionData})
+      return (res.transactionData )
     } catch (error:any) {
       return rejectWithValue(error.message || "Failed to add Expense")
     }

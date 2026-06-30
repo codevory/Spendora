@@ -14,10 +14,10 @@ interface DashboardPropsType {
   isLoggedin: boolean;
 }
 const DashBoardLayout = ({ onToggle, isOpen }: DashboardPropsType) => {
-  const [modalState, setModalState] = useState<
-    "income" | "category" | "closed"
-  >("closed");
+  const [modalState, setModalState] = useState<"income" | "category" | "closed">("closed");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
    const dispatch = useAppDispatch()
+   
    useEffect(() => {
       dispatch(fetchInitialData())
     },[])
@@ -32,7 +32,11 @@ const DashBoardLayout = ({ onToggle, isOpen }: DashboardPropsType) => {
                 modalState === "income" ? (
                   <AddIncomeForm setModalState={setModalState} />
                 ) : (
-                  <AddNewCategoryForm setModalState={setModalState} />
+                  <AddNewCategoryForm
+                    setModalState={setModalState}
+                    isSubmitting={isSubmitting}
+                    setIsSubmitting={setIsSubmitting}
+                  />
                 )
               }
               onClose={() => setModalState("closed")}
