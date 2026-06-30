@@ -85,7 +85,7 @@ const AddNewCategoryForm = ({
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Adding.." : buttonContent ?? "Add"}
+          {isSubmitting ? buttonContent ?? "Add" : "Add"}
         </button>
       </form>
     </div>
