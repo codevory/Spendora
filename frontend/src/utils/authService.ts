@@ -80,6 +80,7 @@ export async function handleLogout({
   dispatch,
   setLoginStatus,
   setUserData,
+  navigate
 }: HandleAuthProps) {
 
   try{
@@ -96,6 +97,7 @@ export async function handleLogout({
       dispatch(setLoginStatus(false));
       dispatch(setUserData(null));
       success("logout successfull 🫤")
+      navigate("/signin")
   }
     catch(err) {
       fail("Failed to logout, server error")

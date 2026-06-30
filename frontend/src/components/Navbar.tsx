@@ -1,13 +1,9 @@
 import ThemeSwitcher from "./ThemeSwitcher";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileComponent from "./ProfileComponent";
-import { getFirebaseServices } from "../backend/firebaseLazy";
-import type { Auth } from "firebase/auth";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { getUserData } from "../backend/getUserData";
 import {
+  setError,
   setLoginStatus,
   setUserData,
 } from "../store/features/userAuthenication";
@@ -15,6 +11,8 @@ import DisplayUserOrigin from "./DisplayUserOrigin";
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
 import { checkAuth } from "../utils/helperFunctions/authUI";
+import { handleLogout } from "../utils/authService";
+import { useEffect, useMemo,useState } from "react";
 interface NavbarPropsType {
   onToggle: () => void;
 }
@@ -25,7 +23,6 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   const [displayName, setDisplayName] = useState<string>("Guest");
   const [photoURL, setPhotoURL] = useState<string>("/default-man.webp");
   const [hasSession, setHasSession] = useState<boolean>(false);
-  const [auth, setFirebaseAuth] = useState<Auth | null>(null);
   const isLoggedin = useAppSelector((state) => state.userData.isLoggedin);
   const { isDark } = useThemeContext();
 
@@ -36,60 +33,12 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   );
 
   useEffect(() => {
-    let unsubscribe: (() => void) | null = null;
+      ( async () => {
+      await getUser()
+    })
+    setPhotoURL("/default-man.webp")
+  },[isAuthenticated])
 
-    getFirebaseServices().then(({ auth: firebaseAuth }) => {
-      setFirebaseAuth(firebaseAuth);
-      unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
-        setHasSession(Boolean(user));
-        setDisplayName(
-          user?.displayName || user?.email?.split("@")[0] || "Guest",
-        );
-        setPhotoURL(user?.photoURL ?? "/default-man.webp");
-
-        if (user) {
-          void getUserData(dispatch);
-        } else {
-          getUser()
-        }
-      });
-    });
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
-
-
-  const handleLogout = async () => {
-    if (displayName === "Guest") return;
-
-    const requests = [
-      fetch("/api/auth/logout", {
-        method: "GET",
-        credentials: "include",
-      }).then((resp) => {
-        if (!resp.ok) {
-          throw new Error(`Logout request failed with status ${resp.status}`);
-        }
-      }),
-    ];
-
-    if (auth) {
-      requests.push(signOut(auth));
-    }
-
-    const results = await Promise.allSettled(requests);
-    results.forEach((result) => {
-      if (result.status === "rejected") {
-        console.error(result.reason);
-      }
-    });
-
-    setHasSession(false);
-    dispatch(setLoginStatus(false));
-    dispatch(setUserData(null));
-    navigate("/signin");
-  };
 
   async function getUser(){
     const user = await checkAuth()
@@ -152,7 +101,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
             {isAuthenticated ? (
               <button
                 type="button"
-                onClick={handleLogout}
+                onClick={() => handleLogout({dispatch:dispatch,setLoginStatus:setLoginStatus,setUserData:setUserData,setError:setError,navigate:navigate})}
                 className="navbar-action-btn h-9 rounded-lg border border-slate-600/70 bg-slate-900 px-3 text-xs font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95 sm:h-10 sm:px-4 sm:text-sm"
               >
                 Logout
