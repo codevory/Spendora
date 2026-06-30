@@ -21,34 +21,53 @@ interface TransactionState {
 export const fetchInitialData = createAsyncThunk(
   "transaction/fetchInitialData",
   async (_, { rejectWithValue }) => {
-   try {
-    const [transRes,incomeRes,catRes] = await Promise.all([
-      fetch(`${Backend_Url}/api/transaction/expenses`,{
-        method:"GET",
-        credentials:'include',
-        headers:{"Content-Type":'application/json'}
+    try {
+      const [transRes, incomeRes, catRes] = await Promise.allSettled([
+        fetch(`${Backend_Url}/api/transaction/expenses`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
         }),
-      fetch(`${Backend_Url}/api/transaction/income`,{
-        method:"GET",
-        credentials:'include',
-        headers:{"Content-Type":"application/json"}
-      }),
-      fetch(`${Backend_Url}/api/data/categories`,{
-        method:"GET",
-        credentials:"include",
-        headers:{"Content:Type":'application/json'}
-      }),
-    ]);
+        fetch(`${Backend_Url}/api/transaction/income`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        }),
+        fetch(`${Backend_Url}/api/data/categories`, {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        }),
+      ]);
 
-    if(!transRes.ok || !catRes.ok || !incomeRes.ok) throw new Error("Failed to fetch initial FUll-stck data")
-      const expensesJson = await transRes.json()
-    const incomeJson = await incomeRes.json()
-      const categoriesJson = await catRes.json()
+      const expenses =
+        transRes.status === "fulfilled" && transRes.value.ok
+          ? (await transRes.value.json()).expenses ?? []
+          : [];
+      const income =
+        incomeRes.status === "fulfilled" && incomeRes.value.ok
+          ? (await incomeRes.value.json()).data ?? []
+          : [];
+      const categories =
+        catRes.status === "fulfilled" && catRes.value.ok
+          ? (await catRes.value.json()).categories ?? []
+          : [];
 
-      return { expenses:expensesJson.expenses , categories: categoriesJson.categories ,income:incomeJson.data || incomeJson}
-   } catch (error:any) {
-     return rejectWithValue({message:error.message || "Failed to fetch data ",code:500})
-   }
+      if (transRes.status === "rejected" || incomeRes.status === "rejected" || catRes.status === "rejected") {
+        console.error("One or more initial data requests failed", {
+          expensesError: transRes.status === "rejected" ? transRes.reason : null,
+          incomeError: incomeRes.status === "rejected" ? incomeRes.reason : null,
+          categoriesError: catRes.status === "rejected" ? catRes.reason : null,
+        });
+      }
+
+      return { expenses, categories, income };
+    } catch (error: any) {
+      return rejectWithValue({
+        message: error.message || "Failed to fetch data ",
+        code: 500,
+      });
+    }
   }
 )
 

@@ -43,7 +43,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
       currentYear,
     );
     const monthlyIncomeChange = getMonthOverMonthChange(
-      transactions,
+      selectedState,
       currentMonth,
       currentYear,
     );

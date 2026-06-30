@@ -9,9 +9,9 @@ interface CategoriesPagePropsType {
 }
 const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
   const categoryCount = useAppSelector((state) => state.transaction.categories.length ?? 0);
-  let expenseTransactions = useAppSelector((state) => state.transaction.expenseTransactions)
+  const expenseTransactions = useAppSelector((state) => state.transaction.expenseTransactions)
 
-  const totalTransactions =  expenseTransactions.length !== undefined ? expenseTransactions.length : 0
+  const totalTransactions = expenseTransactions.length
 
 
 

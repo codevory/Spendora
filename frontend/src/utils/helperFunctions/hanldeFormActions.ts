@@ -1,4 +1,4 @@
-import { useAppSelector, type AppDispatch } from "../../store/store";
+import type { AppDispatch } from "../../store/store";
 
 import type {
   CategoryPropsType,
@@ -195,8 +195,6 @@ export function handleDeleteCategory({
 }
   
 export async function getCategories(): Promise<CategoryPropsType[]> {
-  let categories = useAppSelector((state) => state.transaction.categories)
-
     try {
      const result = await fetch(`${Backend_Url}/api/data/categories`,{
       credentials:'include'
@@ -207,7 +205,7 @@ export async function getCategories(): Promise<CategoryPropsType[]> {
      if(!result.ok){
       console.error("Failed to get categories")
      }
-      categories = res
+      const categories = res.categories ?? []
 
       console.log("got categories from api : ",categories) //log here
 
@@ -220,7 +218,7 @@ export async function getCategories(): Promise<CategoryPropsType[]> {
        console.error(err)
      }
   
-  return categories
+  return []
   }
 
 

@@ -24,7 +24,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
       [
         ...new Set(categoriesData.map((c) => c.name)),
       ] as expenseTranscationTypes["categoryName"][],
-    [data],
+    [categoriesData],
   );
 
   const filteredData = useMemo(() => {

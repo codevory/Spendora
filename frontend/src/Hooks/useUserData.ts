@@ -15,7 +15,6 @@ export interface UserOriginItem {
 }
 
 const now = new Date();
-const start = 1;
 const targetDate = (month: number) => new Date(now.getFullYear(), month, 1);
 
 export const useUserData = () => {
@@ -169,14 +168,12 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
 }
 
 function getMonthlyExpense({ expenses, month }: MonthlyDataTypes) {
-  const end = targetDate(month).getFullYear();
-
   console.log("expen -> getMonthlyExpense : ",expenses) //log here
 
   return expenses
     .filter((t) => {
       const date = new Date(t.date);
-      return date.getMonth() >= start && date.getFullYear() <= end;
+      return date.getMonth() === month && date.getFullYear() === targetDate(month).getFullYear();
     })
     .reduce<Record<string, number>>((acc, curr) => {
       const month = new Date(curr.date).toLocaleDateString("en-US", {
@@ -194,13 +191,11 @@ interface MonthlyIncomeType {
   transactions: IncomeTransactionTypes[];
 }
 function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
-  const end = targetDate(now.getMonth()).getFullYear();
-
   console.log("incomeTxn -> getMonthlyIncome :", transactions)
   return transactions
     .filter((t) => {
       const date = new Date(t.date);
-      return date.getMonth() >= start && date.getFullYear() <= end;
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
     })
     .reduce<Record<string, number>>((acc, curr) => {
       const month = new Date(curr.date).toLocaleDateString("en-US", {
