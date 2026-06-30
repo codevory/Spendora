@@ -33,16 +33,17 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   );
 
   useEffect(() => {
-      ( async () => {
-      await getUser()
-    })
-    setPhotoURL("/default-man.webp")
-  },[isAuthenticated])
+    (async () => {
+      await getUser();
+    })();
+
+    setPhotoURL("/default-man.webp");
+  }, [isAuthenticated]);
 
 
   async function getUser(){
     const user = await checkAuth()
-    if(user.username){
+    if(user?.username){
       dispatch(setUserData({name:user.fullName ?? user.username,email:user.email}))
       setHasSession(true)
       dispatch(setLoginStatus(true))
@@ -53,6 +54,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
       dispatch(setUserData(null))
       setHasSession(false)
       dispatch(setLoginStatus(false))
+      setDisplayName("Guest")
       console.log("not loggedin")
     }
    console.log(user)
