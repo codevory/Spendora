@@ -6,18 +6,21 @@ export async function checkAuth() {
         method:"GET",
         credentials:'include'
       })
+
       if(!res.ok){
           console.error("unexpected response",res.status)
-          return "Guest"
+          return null
         }
+
     const user = await res.json()
     if(user.isGuest){
-        return false;
+        return null;
     }
 
     return user
+
     } catch (error) {
         console.error("Auth check failed ",error)
-        return "Guest"
+        return null
     }
 }

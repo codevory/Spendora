@@ -2,6 +2,7 @@ import { getDBConnection } from "../db/getBDConnection.js";
 import validator from "validator";
 import { getOriginKey } from "../helpers/getOriginKey.js";
 import bcrypt from "bcryptjs";
+import { isProduction } from "../server.js";
 
 export async function registerUser(req, res) {
   const db = await getDBConnection();
@@ -94,7 +95,22 @@ export async function loginUser(req, res) {
 
 export function logoutUser(req, res) {
   console.log("trying to logout user");
-  req.session.destroy(() => {
-    res.status(200).json({ message: "User logged out successfully🎉" });
+
+  const cookieName = "connect.sid";
+
+  res.clearCookie(cookieName, {
+    path: "/",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+  });
+
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("session destruction error ", err);
+      return res
+        .status(500)
+        .json({ error: "Failed to destroy session on server" });
+    }
+    return res.status(200).json({ message: "User logged out successfully🎉" });
   });
 }

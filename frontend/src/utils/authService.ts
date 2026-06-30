@@ -80,27 +80,28 @@ export async function handleLogout({
   dispatch,
   setLoginStatus,
   setUserData,
-  navigate,
 }: HandleAuthProps) {
 
-    const resp = fetch(`${Backend_Url}/api/auth/logout`)
-    const response = (await resp).json()
-    response
-    .then(() => {
+  try{
+    const resp = fetch(`${Backend_Url}/api/auth/logout`,{
+      credentials:'include'
+    })
+    
+    if(!(await resp).ok){
+      fail("server responded with an error status")
+      throw new Error("server responded with an error status ")
+    }
+
+    (await resp).json()
       dispatch(setLoginStatus(false));
       dispatch(setUserData(null));
       success("logout successfull 🫤")
-      navigate("/signin");
-    })
-
-    .catch((err) => {
+  }
+    catch(err) {
       fail("Failed to logout, server error")
       console.error(err)
-    })
+    }
 
-    .finally(() => {
-    return;
-    })
 }
 
 export async function handleDeleteAccount({

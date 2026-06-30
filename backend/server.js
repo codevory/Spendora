@@ -19,7 +19,7 @@ const secret = process.env.SPIRAL_SESSION_SECRET;
 const app = express();
 app.enable("trust proxy");
 const PORT = process.env.PORT || 2122;
-const isProduction =
+export const isProduction =
   process.env.NODE_ENV === "production" || process.env.RENDER === "true";
 
 //initialize the postgres store constructor
