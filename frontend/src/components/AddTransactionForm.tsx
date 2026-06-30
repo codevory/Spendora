@@ -27,6 +27,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
     date: date,
     amount: amount !== "" ? convertToBaseAmount(amount, currencyKey) : 0,
     categoryId: category === "select" ? 0 : Number(category),
+    categoryName:category,
     transactionId: "",
     createdAt: new Date(date).toString(),
     type: "expense",
