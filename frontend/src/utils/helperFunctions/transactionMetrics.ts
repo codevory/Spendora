@@ -54,7 +54,9 @@ export function getMonthOverMonthChange<T extends expenseTranscationTypes>(
 }
 
 export function getTopCategory(transactions: expenseTranscationTypes[]) {
-  console.log("txns from topCat_ : ",transactions)
+  
+  console.log("txns from topCat_ : ",transactions) //log here
+
   const categoryTotals = transactions.reduce<Record<string, number>>(
     (accumulator, transaction) => {
       accumulator[transaction.categoryName ?? "uncategorized"] =

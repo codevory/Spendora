@@ -22,6 +22,8 @@ export const useUserData = () => {
   const expenses = useAppSelector((state) => state.transaction.expenseTransactions);
   const incomeTrans = useAppSelector((state) => state.transaction.incomeTransactions);
 
+console.log('expenses from userData :' ,expenses) //log here
+console.log('income from userData :',incomeTrans) //log here
 
   const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
   const currMonthData = getMonthlyData({
@@ -34,7 +36,6 @@ export const useUserData = () => {
   });
   const currMonthIncome = getMonthlyIncome({ transactions: incomeTrans });
 
-  console.log(currMonthData)
   const currentLabels = Object.keys(currMonthData);
   const currentMonthAmounts = currentLabels.map(
     (label) => currMonthData[label] ?? 0,
@@ -148,6 +149,8 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
   const targetMonth = targetDate(month).getMonth();
   const targetYear = targetDate(month).getFullYear();
 
+  console.log("expen -> getMonthlyData :",expenses) //log here
+
   return expenses
     .filter((t) => {
       const date = new Date(t.date);
@@ -167,6 +170,9 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
 
 function getMonthlyExpense({ expenses, month }: MonthlyDataTypes) {
   const end = targetDate(month).getFullYear();
+
+  console.log("expen -> getMonthlyExpense : ",expenses) //log here
+
   return expenses
     .filter((t) => {
       const date = new Date(t.date);
@@ -189,6 +195,8 @@ interface MonthlyIncomeType {
 }
 function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
   const end = targetDate(now.getMonth()).getFullYear();
+
+  console.log("incomeTxn -> getMonthlyIncome :", transactions)
   return transactions
     .filter((t) => {
       const date = new Date(t.date);

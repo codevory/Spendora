@@ -53,7 +53,7 @@ const RecentTransactions = () => {
       </h2>
 
       {sortedTransactions.map((item) => {
-        console.log('key : ',item)
+        
         return (
           <div key={item.id.toString() + item.transactionId}
             className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"

@@ -2,7 +2,6 @@ import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type {
   CategoryPropsType,
-  CategoryPropsTypeDB,
   expenseTranscationTypes,
   IncomeTransactionTypes,
 } from "../../types/transactionType";
@@ -11,7 +10,7 @@ import type {
  export const Backend_Url = isProduction ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/,'') : ''
 
 interface TransactionState {
-  categories: CategoryPropsTypeDB[];
+  categories: CategoryPropsType[];
   expenseTransactions: expenseTranscationTypes[];
   incomeTransactions: IncomeTransactionTypes[];
   status: "idle" | "pending" | "failed" | "success";
@@ -77,7 +76,7 @@ export const addCategoryThunk = createAsyncThunk(
 
 export const renameCategory = createAsyncThunk(
   "transaction/renameCategory",
-  async (category:CategoryPropsTypeDB,{ rejectWithValue }) => {
+  async (category:CategoryPropsType,{ rejectWithValue }) => {
    try {
     const result = await fetch(`${Backend_Url}/api/data/renameCategory`,{
       method:"POST",
@@ -203,7 +202,7 @@ export const transactionSlice = createSlice({
   .addCase(addCategoryThunk.pending, (state) => {
     state.status = "pending"
   })
-  .addCase(addCategoryThunk.fulfilled, (state,action:PayloadAction <CategoryPropsTypeDB>) => {
+  .addCase(addCategoryThunk.fulfilled, (state,action:PayloadAction <CategoryPropsType>) => {
    state.status = "success"
    console.log(action.payload)
    state.categories.push(action.payload)
@@ -217,7 +216,7 @@ export const transactionSlice = createSlice({
   .addCase(renameCategory.pending,(state) => {
     state.status = "pending"
   })
-  .addCase(renameCategory.fulfilled,(state,action:PayloadAction<CategoryPropsTypeDB[]>) => {
+  .addCase(renameCategory.fulfilled,(state,action:PayloadAction<CategoryPropsType[]>) => {
   state.status = "success"
   state.categories = action.payload
   })

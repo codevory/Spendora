@@ -52,7 +52,9 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
   if (!visibleData.length) {
     return <EmptyState content={noData} />;
   }
-  console.log(visibleData)
+
+  console.log('expenseTxn -> txnContent ',visibleData) //log here
+  
   return (
     <div className="transaction-container max-h-dvh overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900/70 p-3 shadow-lg">
       <div className="mb-3 flex items-center justify-between px-1">

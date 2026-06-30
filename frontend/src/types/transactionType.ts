@@ -5,9 +5,9 @@ export interface expenseTranscationTypes {
   paidTo: string;
   date: string;
   categoryId: number;       // Ties directly to your database foreign key
-  categoryName ? : string | "uncategorized";    // Joined from the categories table for easy rendering
+  categoryName : string ;    // Joined from the categories table for easy rendering
   transactionId: string;    // Your frontend generated tracking UUID
-  createdAt?: string;
+  createdAt: string;
   type:"expense"
 }
 
@@ -24,8 +24,4 @@ export interface IncomeTransactionTypes {
 export type CategoryPropsType  = {
   name: string;
   id : number
-}
-export interface CategoryPropsTypeDB {
-  name:string,
-  id:number
 }

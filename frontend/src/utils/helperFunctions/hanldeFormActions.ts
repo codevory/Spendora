@@ -1,8 +1,7 @@
-import type { AppDispatch } from "../../store/store";
+import { useAppSelector, type AppDispatch } from "../../store/store";
 
 import type {
   CategoryPropsType,
-  CategoryPropsTypeDB,
   expenseTranscationTypes,
   IncomeTransactionTypes,
 } from "../../types/transactionType";
@@ -126,7 +125,6 @@ export async function handleAddIncomeTransaction({
     type: "income",
   };
 
-  function addTxn(){
     dispatch(addIncomeThunk(incomeData))
     .unwrap()
     .then(() => {
@@ -140,8 +138,6 @@ export async function handleAddIncomeTransaction({
     })
   }
 
-  addTxn();
-}
 
 export async function handleAddCategoryDB({  
   e,
@@ -157,7 +153,6 @@ export async function handleAddCategoryDB({
 
    const name = category.trim().toLowerCase();
 
-   function addCat(){
      dispatch(addCategoryThunk(name))
      .unwrap() //.unwrap() allows us to listen to success/error inside the component
      .then(() => {
@@ -170,9 +165,7 @@ export async function handleAddCategoryDB({
         setCategory("")
         setModalState("closed")
       })
-   }
 
-    addCat();
 }
 export function handleDeleteCategory({
   category,
@@ -201,19 +194,25 @@ export function handleDeleteCategory({
   deleteCat();
 }
   
-export async function getCategories(): Promise<CategoryPropsTypeDB[]> {
-  let categories: CategoryPropsTypeDB[] = [];
+export async function getCategories(): Promise<CategoryPropsType[]> {
+  let categories = useAppSelector((state) => state.transaction.categories)
 
-  async function getCat() {
     try {
      const result = await fetch(`${Backend_Url}/api/data/categories`,{
       credentials:'include'
      })
+
      const res = await result.json()
-     if(result.ok){
-     const data:CategoryPropsTypeDB[] = res.data
-    categories = data
+
+     if(!result.ok){
+      console.error("Failed to get categories")
      }
+      categories = res
+
+      console.log("got categories from api : ",categories) //log here
+
+      return categories
+     
      } catch (err) {
        if(err instanceof Error){
          console.error(err.message)
@@ -221,8 +220,6 @@ export async function getCategories(): Promise<CategoryPropsTypeDB[]> {
        console.error(err)
      }
   
-  }
-    await getCat();
   return categories
   }
 
