@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import DisplayAvailableCategories from "../components/DisplayAvailableCategories.js";
 import Layout from "../components/Layout";
-import { useAppSelector } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { fetchInitialData } from "../store/features/transaction.js";
 
 
 interface CategoriesPagePropsType {
@@ -12,8 +14,11 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
   const expenseTransactions = useAppSelector((state) => state.transaction.expenseTransactions)
 
   const totalTransactions = expenseTransactions.length
+  const dispatch = useAppDispatch()
 
-
+   useEffect(() => {
+    dispatch(fetchInitialData())
+   },[])
 
   return (
     <Layout onToggle={onToggle} isOpen={isOpen}>

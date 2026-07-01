@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TransactionsContent from "../components/TransactionsContent";
 import ViewTransactionDetails from "../components/ViewTransactionDetails";
-import { useAppSelector } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import type { expenseTranscationTypes } from "../types/transactionType";
 import { useUserData } from "../Hooks/useUserData";
 import Layout from "../components/Layout";
 import TrendGraph from "../charts/TrendGraph";
+import { fetchInitialData } from "../store/features/transaction";
 
 interface TransactionLayoutProps {
   onToggle: () => void;
@@ -15,10 +16,17 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [query, setQuery] = useState<expenseTranscationTypes["categoryName"] | undefined>();
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
+  const dispatch = useAppDispatch()
+
   const data = useAppSelector((state) => state.transaction.expenseTransactions);
   const categoriesData = useAppSelector(
     (state) => state.transaction.categories,
   );
+
+  useEffect(() => {
+  dispatch(fetchInitialData())
+  },[])
+
   const categories = useMemo(
     () =>
       [

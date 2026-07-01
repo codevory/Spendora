@@ -3,7 +3,9 @@ import Layout from "../components/Layout";
 import MonthlyInsights from "../components/MonthlyInsights";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
+import { useAppDispatch } from "../store/store";
+import { fetchInitialData } from "../store/features/transaction";
 
 interface AnalyticsPropsType {
   onToggle: () => void;
@@ -15,6 +17,14 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
   );
   const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
   const { analysisData } = useUserData();
+
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+   dispatch(fetchInitialData())
+  },[])
+
+  
   return (
     <div className="bg-main">
       <Layout onToggle={onToggle} isOpen={isOpen}>
