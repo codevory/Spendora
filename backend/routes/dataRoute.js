@@ -6,10 +6,7 @@ import {
   renameCategory,
 } from "../controllers/categoryController.js";
 import { requireAuth } from "../middleware/requireAuth.js";
-import {
-  getDataRateLimiter,
-  postDataRateLimiter,
-} from "../helpers/rateLimiters.js";
+import { postDataRateLimiter } from "../helpers/rateLimiters.js";
 
 export const dataRoute = express.Router();
 dataRoute.get("/categories", requireAuth, getDataRateLimiter, getCategories);

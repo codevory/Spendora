@@ -9,7 +9,7 @@ import {
 import {
   getDataRateLimiter,
   postDataRateLimiter,
-} from "../helpers/rateLimiters.js";
+} from "../helpers/rateLimiters.ts";
 
 export const transactionRouter = express.Router();
 transactionRouter.get("/expenses", requireAuth, getDataRateLimiter, getExpense);
