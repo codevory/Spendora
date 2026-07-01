@@ -6,9 +6,23 @@ import {
   renameCategory,
 } from "../controllers/categoryController.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import {
+  getDataRateLimiter,
+  postDataRateLimiter,
+} from "../helpers/rateLimiters.js";
 
 export const dataRoute = express.Router();
-dataRoute.get("/categories", requireAuth, getCategories);
-dataRoute.post("/addNewCategory", requireAuth, addNewCategory);
-dataRoute.post("/renameCategory", requireAuth, renameCategory);
+dataRoute.get("/categories", requireAuth, getDataRateLimiter, getCategories);
+dataRoute.post(
+  "/addNewCategory",
+  requireAuth,
+  postDataRateLimiter,
+  addNewCategory,
+);
+dataRoute.post(
+  "/renameCategory",
+  requireAuth,
+  postDataRateLimiter,
+  renameCategory,
+);
 dataRoute.delete("/deleteCategory", requireAuth, deleteCategory);

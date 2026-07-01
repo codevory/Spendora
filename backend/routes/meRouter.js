@@ -1,6 +1,7 @@
 import express from "express";
 import { getCurrentUser } from "../controllers/meController.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import { getDataRateLimiter } from "../helpers/rateLimiters.js";
 
 export const meRouter = express.Router();
-meRouter.get("/", requireAuth, getCurrentUser);
+meRouter.get("/", requireAuth, getDataRateLimiter, getCurrentUser);
