@@ -5,7 +5,7 @@ import session from "express-session";
 import pgSession from "connect-pg-simple";
 import { getDBConnection } from "./db/getBDConnection.js";
 import { meRouter } from "./routes/meRouter.js";
-import { authRouter } from "./routes/auth.js";
+import { authRouter } from "./routes/auth.ts";
 import path from "node:path";
 import { transactionRouter } from "./routes/transactionRouter.js";
 import { dataRoute } from "./routes/dataRoute.js";
