@@ -7,10 +7,10 @@ import { createPortal } from "react-dom";
 import EmptyState from "./EmptyState";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import toast from "react-hot-toast";
-import {handleDeleteCategory } from "../utils/helperFunctions/hanldeFormActions";
+import {handleDeleteCategory } from "../utils/helperFunctions/handleFormActions";
 import ModalBox from "./ModalBox";
 import AddNewCategoryForm from "./AddCategoryForm";
-import { handleRenameCategory } from "../utils/helperFunctions/hanldeFormActions";
+import { handleRenameCategory } from "../utils/helperFunctions/handleFormActions";
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
 

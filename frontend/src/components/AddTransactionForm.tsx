@@ -2,7 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import type { expenseTranscationTypes, } from "../types/transactionType";
-import { handleAddExpenseTransaction } from "../utils/helperFunctions/hanldeFormActions";
+import { handleAddExpenseTransaction } from "../utils/helperFunctions/handleFormActions";
 import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
 
 interface AddTransactionFormPropsType {

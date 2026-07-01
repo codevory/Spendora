@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import toast from "react-hot-toast";
-import { handleAddIncomeTransaction } from "../utils/helperFunctions/hanldeFormActions";
+import { handleAddIncomeTransaction } from "../utils/helperFunctions/handleFormActions";
 import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
 
 type IncomeFormPropsType = {

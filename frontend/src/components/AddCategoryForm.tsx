@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { useAppDispatch } from "../store/store";
 import { useState } from "react";
-import { handleAddCategoryDB } from "../utils/helperFunctions/hanldeFormActions";
+import { handleAddCategoryDB } from "../utils/helperFunctions/handleFormActions";
 
 type CategoryFormProps = {
   setModalState: (val: "closed") => void;
