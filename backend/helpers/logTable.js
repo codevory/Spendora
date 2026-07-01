@@ -1,4 +1,4 @@
-import { getDBConnection } from "../db/getBDConnection";
+import { getDBConnection } from "../db/getBDConnection.js";
 
 export async function logTable(tableToLog) {
   const tableName = tableToLog || "users";
