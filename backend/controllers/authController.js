@@ -9,7 +9,13 @@ export async function registerUser(req, res) {
 
   let { fullName, email, username, password, currency } = req.body;
 
-  if (!fullName || !password || !email || !username || !currency) {
+  if (
+    !fullName.trim() ||
+    !password ||
+    !email.trim() ||
+    !username.trim() ||
+    !currency
+  ) {
     return res.status(400).json({ error: "All fields are required" });
   } else if (!validator.isEmail(email)) {
     return res.status(400).json({ error: "Invalid email format" });
@@ -23,6 +29,7 @@ export async function registerUser(req, res) {
     "SELECT username FROM users WHERE username = $1",
     [username.trim()],
   );
+
   const existingUserName = usernameResult.rows[0];
   if (existingUserName) {
     return res.status(400).json({ error: "username already taken!" });
@@ -31,10 +38,13 @@ export async function registerUser(req, res) {
   let emailResult = await db.query(`SELECT email FROM users WHERE email = $1`, [
     email.trim(),
   ]);
+
   const existingEmail = emailResult.rows[0];
+
   if (existingEmail) {
     return res.status(400).json({ error: "Email already in use!" });
   }
+
   fullName = fullName.trim();
   email = email.trim();
   username = username.trim();
@@ -48,7 +58,6 @@ export async function registerUser(req, res) {
     );
 
     req.session.userId = result.rows[0].id;
-    console.log("user registered successfully🎉");
 
     return res.status(201).json({ message: "Registration Successfull" });
   } catch (err) {
@@ -70,11 +79,14 @@ export async function loginUser(req, res) {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
-    const userResult = await db.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+    const userResult = await db.query(
+      "SELECT id,name AS 'fullName',email,username,password,currency,created_at FROM users WHERE email = $1",
+      [email],
+    );
+
     const user = userResult.rows[0];
-    if (!user) {
+
+    if (!user?.email) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
@@ -84,7 +96,6 @@ export async function loginUser(req, res) {
     }
 
     req.session.userId = user.id;
-    console.log("login successfull");
 
     return res.status(200).json({ user });
   } catch (err) {
