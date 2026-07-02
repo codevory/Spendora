@@ -46,7 +46,7 @@ export const fetchInitialData = createAsyncThunk(
           : [];
       const income =
         incomeRes.status === "fulfilled" && incomeRes.value.ok
-          ? (await incomeRes.value.json()).data ?? []
+          ? (await incomeRes.value.json()).income ?? []
           : [];
       const categories =
         catRes.status === "fulfilled" && catRes.value.ok
