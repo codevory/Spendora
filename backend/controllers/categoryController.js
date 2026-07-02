@@ -1,11 +1,10 @@
 import { getDBConnection } from "../db/getBDConnection.js";
-let getCategoryCount = 0;
+
 export async function getCategories(req, res) {
   const db = await getDBConnection();
-  getCategoryCount += 1;
   try {
     const categoriesResult = await db.query(
-      "SELECT * FROM expensecategories WHERE user_id = $1",
+      "SELECT id, name FROM expensecategories WHERE user_id = $1 ORDER BY id DESC",
       [req.session.userId],
     );
     const categories = categoriesResult.rows;
@@ -21,30 +20,27 @@ export async function addNewCategory(req, res) {
   const db = await getDBConnection();
 
   let { name } = req.body;
-  console.log(name);
+  if (typeof name !== "string" || name.trim() === "") {
+    return res.status(400).json({ error: "category name is required" });
+  }
   name = name.trim().toLowerCase();
 
   try {
     const categoryResult = await db.query(
-      "SELECT * FROM expensecategories WHERE name = $1",
-      [name],
+      "SELECT id, name FROM expensecategories WHERE user_id = $1 AND name = $2",
+      [req.session.userId, name],
     );
     const existingCategory = categoryResult.rows[0];
     if (existingCategory) {
       return res.status(409).json({ error: "category already exists!" });
     }
 
-    await db.query(
-      "INSERT INTO expensecategories (user_id,name) VALUES($1,$2)",
+    const createdCategory = await db.query(
+      "INSERT INTO expensecategories (user_id, name) VALUES($1, $2) RETURNING id, name",
       [req.session.userId, name],
     );
 
-    let category = await db.query(
-      "SELECT id,name FROM expensecategories WHERE user_id = $1 AND name = $2",
-      [req.session.userId, name],
-    );
-
-    category = category.rows[0];
+    const category = createdCategory.rows[0];
     res.status(201).json({ category });
   } catch (err) {
     console.error("Error adding category : ", err.message);
@@ -55,6 +51,9 @@ export async function addNewCategory(req, res) {
 export async function renameCategory(req, res) {
   const db = await getDBConnection();
   const { category } = req.body;
+  if (!category?.id || typeof category.name !== "string") {
+    return res.status(400).json({ error: "category id and name are required" });
+  }
   try {
     await db.query(
       "UPDATE expensecategories SET name = $1 WHERE user_id = $2 AND id = $3",
@@ -77,8 +76,7 @@ export async function renameCategory(req, res) {
 
 export async function deleteCategory(req, res) {
   let { category } = req.body;
-  category.name = category.name.trim();
-  if (!category.id) {
+  if (!category?.id) {
     return res.status(400).json({ error: "categoryId is required" });
   }
   category.id = parseInt(category.id);
@@ -89,10 +87,10 @@ export async function deleteCategory(req, res) {
 
   try {
     const isValid = await db.query(
-      "SELECT (id,name) FROM expensecategories WHERE id = $1 AND user_id = $2",
+      "SELECT id, name FROM expensecategories WHERE id = $1 AND user_id = $2",
       [category.id, req.session.userId],
     );
-    if (!isValid) {
+    if (isValid.rows.length === 0) {
       return res.status(400).json({ error: "Category not found" });
     }
     await db.query(
