@@ -80,7 +80,7 @@ export async function loginUser(req, res) {
     }
 
     const userResult = await db.query(
-      "SELECT id,name AS 'fullName',email,username,password,currency,created_at FROM users WHERE email = $1",
+      'SELECT id,name AS "fullName",email,username,password,currency,created_at FROM users WHERE email = $1',
       [email],
     );
 
