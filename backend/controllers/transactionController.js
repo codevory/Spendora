@@ -88,7 +88,7 @@ export async function addIncome(req, res) {
 
   try {
     const incomeCreated = await db.query(
-      'INSERT INTO userincome (user_id,amount,source,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount,source, recieved_on as date,transaction_id as "transactionId",created_at as "createdAt" ',
+      'INSERT INTO userincome (user_id,amount,source,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount,source, received_on as date,transaction_id as "transactionId",created_at as "createdAt" ',
       [
         req.session.userId,
         incomeData.amount,
