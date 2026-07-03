@@ -60,7 +60,7 @@ export async function addExpense(req, res) {
     e.transaction_id AS "transactionId",
     c.name AS "categoryName"
     FROM inserted_expense e
-    LEFT JOIN expensecategories c ON c.id = e.category_id AND c.user_id = $1
+    LEFT JOIN expensecategories c ON c.id = e.category_id AND c.user_id = $1 ;
    `;
 
     const expenseCreated = await db.query(query, [
