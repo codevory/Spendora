@@ -7,9 +7,8 @@ export async function getCategories(req, res) {
       "SELECT id, name FROM expensecategories WHERE user_id = $1 ORDER BY id DESC",
       [req.session.userId],
     );
-    const categories = categoriesResult.rows;
 
-    return res.status(200).json({ categories });
+    return res.status(200).json({ categories: categoriesResult.rows });
   } catch (err) {
     console.error("error getting categories : ", err.message);
     return res.status(500).json({ error: `internal server error ` });
@@ -40,8 +39,7 @@ export async function addNewCategory(req, res) {
       [req.session.userId, name],
     );
 
-    const category = createdCategory.rows[0];
-    res.status(201).json({ category });
+    res.status(201).json({ category: createdCategory.rows[0] });
   } catch (err) {
     console.error("Error adding category : ", err.message);
     return res.status(500).json({ error: `Failed to add new 😩Category` });
@@ -51,21 +49,24 @@ export async function addNewCategory(req, res) {
 export async function renameCategory(req, res) {
   const db = await getDBConnection();
   const { category } = req.body;
+
   if (!category?.id || typeof category.name !== "string") {
     return res.status(400).json({ error: "category id and name are required" });
   }
-  try {
-    await db.query(
-      "UPDATE expensecategories SET name = $1 WHERE user_id = $2 AND id = $3",
-      [category.name.toLowerCase().trim(), req.session.userId, category.id],
-    );
-    let categories = await db.query(
-      "SELECT * FROM expensecategories WHERE user_id = $1",
-      [req.session.userId],
-    );
-    categories = categories.rows;
 
-    return res.status(201).json({ categories });
+  try {
+    const category_renamed = await db.query(
+      "UPDATE expensecategories SET name = $1 WHERE user_id = $2 AND id = $3 RETURNING id,name",
+      [category.name.trim(), req.session.userId, parseInt(category.id)],
+    );
+
+    if (category_renamed.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "category not found or unauthorized access" });
+    }
+
+    return res.status(201).json({ category: category_renamed.rows[0] });
   } catch (err) {
     console.error("error renaming category : ", err.message);
     return res.status(500).json({

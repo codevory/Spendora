@@ -108,7 +108,7 @@ export const renameCategory = createAsyncThunk(
 
     const res = await result.json()
     if(!result.ok) throw new Error(res.error || "failed to rename category")
-    return res.categories
+    return res.category
    } catch (error:any) {
     return rejectWithValue(error.message)
    }
@@ -235,9 +235,15 @@ export const transactionSlice = createSlice({
   .addCase(renameCategory.pending,(state) => {
     state.status = "pending"
   })
-  .addCase(renameCategory.fulfilled,(state,action:PayloadAction<CategoryPropsType[]>) => {
+  .addCase(renameCategory.fulfilled,(state,action:PayloadAction<CategoryPropsType>) => {
   state.status = "success"
-  state.categories = action.payload
+  let updatedCategory = state.categories.find((c) => c.id === action.payload.id) ?? null
+
+  if(updatedCategory !== null){
+    updatedCategory.name = action.payload.name
+    state.categories.filter((c) => c.id !== action.payload.id)
+    state.categories.push(updatedCategory)
+  }
   })
   .addCase(renameCategory.rejected,(state,action:any) => {
     state.status = "failed"

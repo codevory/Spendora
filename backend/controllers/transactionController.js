@@ -46,27 +46,37 @@ export async function addExpense(req, res) {
   }
 
   try {
-    const expenseCreated = await db.query(
-      'INSERT INTO userexpense (user_id,amount, paid_to,paid_on,category_id,transaction_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,amount,paid_to AS "paidTo",transaction_id AS "transactionId", paid_on AS date,category_id AS "categoryId"',
-      [
-        req.session.userId,
-        transactionData.amount,
-        transactionData.paidTo,
-        transactionData.date,
-        transactionData.categoryId,
-        transactionData.transactionId,
-      ],
-    );
+    const query = `
+    WITH inserted_expense AS (
+    INSERT INTO userexpense (user_id,amount, paid_to,paid_on,category_id,transaction_id) VALUES($1,$2,$3,$4,$5,$6) 
+    RETURNING id,amount,paid_to ,transaction_id , paid_on,category_id,
+    )
+    SELECT 
+    e.id,
+    e.amount,
+    e.paid_to AS "paidTo",
+    e.paid_on AS date,
+    e.category_id AS "categoryId",
+    e.transaction_id AS "transactionId",
+    c.name AS "categoryName"
+    FROM inserted_expense e
+    LEFT JOIN expensecategories c ON c.id = e.category_id AND c.user_id = $1
+   `;
 
-    const category = await db.query(
-      "SELECT name AS categoryName FROM expenseCategories WHERE user_id = $1 AND id = $2",
-      [req.session.userId, parseInt(expenseCreated.rows[0].categoryId)],
-    );
+    const expenseCreated = await db.query(query, [
+      req.session.userId,
+      transactionData.amount,
+      transactionData.paidTo,
+      transactionData.date,
+      transactionData.categoryId,
+      transactionData.transactionId,
+    ]);
 
-    transactionData = expenseCreated.rows[0];
-    transactionData.categoryName = category.rows[0].categoryname ?? null;
+    if (expenseCreated.rows.length === 0) {
+      return res.status(400).json({ error: "Failed to create transaction " });
+    }
 
-    return res.status(201).json({ transactionData });
+    return res.status(201).json({ transactionData: expenseCreated.rows[0] });
   } catch (err) {
     console.error("Failed to add expense ", err.message);
     return res.status(500).json({ error: "Internal server error" });
