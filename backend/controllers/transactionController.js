@@ -64,7 +64,7 @@ export async function addExpense(req, res) {
     );
 
     transactionData = expenseCreated.rows[0];
-    transactionData.categoryName = category.rows[0].categoryame ?? null;
+    transactionData.categoryName = category.rows[0].categoryname ?? null;
 
     return res.status(201).json({ transactionData });
   } catch (err) {
