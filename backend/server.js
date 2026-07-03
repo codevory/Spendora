@@ -7,9 +7,10 @@ import { getDBConnection } from "./db/getBDConnection.js";
 import { meRouter } from "./routes/meRouter.js";
 import { authRouter } from "./routes/auth.ts";
 import path from "node:path";
-import { transactionRouter } from "./routes/transactionRouter.js";
+import { transactionRoute } from "./routes/transactionRoute.js";
 import { dataRoute } from "./routes/dataRoute.js";
 import { fileURLToPath } from "node:url";
+import { serverHealthRoute } from "./routes/serverHealthRoute.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,8 +64,9 @@ app.use(express.json());
 // app.use(express.static(publicFolder));
 app.use("/api/auth/me", meRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/transaction", transactionRouter);
+app.use("/api/transaction", transactionRoute);
 app.use("/api/data", dataRoute);
+app.use("/api/status", serverHealthRoute);
 
 // app.get("/{*splat}", (req, res) => {
 //   res.sendFile(path.join(publicFolder, "index.html"));
