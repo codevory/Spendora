@@ -58,13 +58,14 @@ export async function addExpense(req, res) {
       ],
     );
 
-    const categoryName = await db.query(
+    const category = await db.query(
       "SELECT name AS categoryName FROM expenseCategories WHERE user_id = $1 AND id = $2",
-      [req.session.userId, expenseCreated.rows[0].categoryId],
+      [req.session.userId, parseInt(expenseCreated.rows[0].categoryId)],
     );
 
+    console.log(category.rows[0]);
     transactionData = expenseCreated.rows[0];
-    transactionData.categoryName = categoryName.rows[0]?.categoryName ?? null;
+    transactionData.categoryName = category.rows[0].categoryName ?? null;
 
     return res.status(201).json({ transactionData });
   } catch (err) {

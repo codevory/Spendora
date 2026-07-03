@@ -11,16 +11,16 @@ import {
   postDataRateLimiter,
 } from "../helpers/rateLimiters.ts";
 
-export const transactionRouter = express.Router();
-transactionRouter.get("/expenses", requireAuth, getDataRateLimiter, getExpense);
-transactionRouter.get("/income", requireAuth, getDataRateLimiter, getIncome);
-transactionRouter.post(
+export const transactionRoute = express.Router();
+transactionRoute.get("/expenses", requireAuth, getDataRateLimiter, getExpense);
+transactionRoute.get("/income", requireAuth, getDataRateLimiter, getIncome);
+transactionRoute.post(
   "/addIncome",
   requireAuth,
   postDataRateLimiter,
   addIncome,
 );
-transactionRouter.post(
+transactionRoute.post(
   "/addExpense",
   requireAuth,
   postDataRateLimiter,
