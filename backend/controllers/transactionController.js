@@ -49,18 +49,18 @@ export async function addExpense(req, res) {
     const query = `
     WITH inserted_expense AS (
     INSERT INTO userexpense (user_id,amount, paid_to,paid_on,category_id,transaction_id) VALUES($1,$2,$3,$4,$5,$6) 
-    RETURNING id,amount,paid_to ,transaction_id , paid_on,category_id,
+    RETURNING id,amount,paid_to ,transaction_id , paid_on,category_id
     )
     SELECT 
     e.id,
     e.amount,
     e.paid_to AS "paidTo",
-    e.paid_on AS date,
+    e.paid_on AS "date",
     e.category_id AS "categoryId",
     e.transaction_id AS "transactionId",
     c.name AS "categoryName"
     FROM inserted_expense e
-    LEFT JOIN expensecategories c ON c.id = e.category_id AND c.user_id = $1 ;
+    LEFT JOIN expensecategories c ON c.id = e.category_id AND c.user_id = $1;
    `;
 
     const expenseCreated = await db.query(query, [
