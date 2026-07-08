@@ -15,13 +15,9 @@ import { transactionRoute } from "./routes/transactionRoute.js";
 import { dataRoute } from "./routes/dataRoute.js";
 import { fileURLToPath } from "node:url";
 import { serverHealthRoute } from "./routes/serverHealthRoute.js";
-import { paramRouter } from "./routes/paramRoute.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// export const environment = process.env.NODE_ENV || "development";
-// export const is_Production =
-//   process.env.NODE_ENV === "production" || process.env.RENDER === "true";
 
 dotenv.config({ path: `.env.${environment}` });
 const secret = process.env.SPIRAL_SESSION_SECRET;
@@ -73,7 +69,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRoute);
 app.use("/api/data", dataRoute);
 app.use("/api/status", serverHealthRoute);
-app.use("/api/test", paramRouter);
 
 // app.get("/{*splat}", (req, res) => {
 //   res.sendFile(path.join(publicFolder, "index.html"));

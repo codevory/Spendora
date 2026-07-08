@@ -28,7 +28,6 @@ stats.html
 
 # .gitignore
 *.env
-.env.local
-.env
+.env.development
 node_modules/
 dist/
