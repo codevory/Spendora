@@ -9,18 +9,14 @@ import {
 } from "../utils/helperFunctions/transactionMetrics";
 import { formatCurrency } from "../utils/currency";
 import useThemeContext from "../Hooks/useThemeContext";
+import { useUserData } from "../Hooks/useUserData";
 
 interface HeaderCardsPropsType {
   setModalState: (val: "income") => void;
 }
 
 const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
-  const selectedState = useAppSelector(
-    (state) => state.transaction.expenseTransactions,
-  );
-  const userIncome = useAppSelector(
-    (state) => state.transaction.incomeTransactions,
-  );
+  const { expenses: selectedState, incomeTrans: userIncome } = useUserData();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const transactions = Array.isArray(selectedState) ? selectedState : [];
 

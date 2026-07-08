@@ -1,12 +1,11 @@
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import AddTransactionForm from "../components/AddTransactionForm";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { useAppSelector } from "../store/store";
 import HeaderCards from "./HeaderCards";
 import { formatCurrency } from "../utils/currency";
 import GraphSkeleton from "./GraphSkeleton";
-import { fetchInitialData } from "../store/features/transaction";
 
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
@@ -21,18 +20,10 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
 
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
 
-  const dispatch = useAppDispatch()
-  useEffect(() => { 
-    dispatch( fetchInitialData())
-  },[])
-
-  const transactions = useAppSelector(
-    (state) => state.transaction.expenseTransactions,
-  );
+  const { expenses: transactions, lineData } = useUserData();
 
 
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
-  const { lineData } = useUserData();
   const weeklySnapshot = useMemo(() => {
     const now = new Date();
     const start = new Date(now);

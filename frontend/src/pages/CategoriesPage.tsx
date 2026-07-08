@@ -1,8 +1,6 @@
-import { useEffect } from "react";
 import DisplayAvailableCategories from "../components/DisplayAvailableCategories.js";
 import Layout from "../components/Layout";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchInitialData } from "../store/features/transaction.js";
+import { useGetCategoriesQuery, useGetExpenseTransactionsQuery } from "../store/features/transactionApi";
 
 
 interface CategoriesPagePropsType {
@@ -10,15 +8,12 @@ interface CategoriesPagePropsType {
   isOpen: boolean;
 }
 const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
-  const categoryCount = useAppSelector((state) => state.transaction.categories.length ?? 0);
-  const expenseTransactions = useAppSelector((state) => state.transaction.expenseTransactions)
+  const { data: categoryResponse } = useGetCategoriesQuery();
+  const { data: expenseResponse } = useGetExpenseTransactionsQuery();
 
-  const totalTransactions = expenseTransactions.length
-  const dispatch = useAppDispatch()
-
-   useEffect(() => {
-    dispatch(fetchInitialData())
-   },[])
+  const categoryCount = categoryResponse?.categories.length ?? 0;
+  const expenseTransactions = expenseResponse?.expenses ?? [];
+  const totalTransactions = expenseTransactions.length;
 
   return (
     <Layout onToggle={onToggle} isOpen={isOpen}>

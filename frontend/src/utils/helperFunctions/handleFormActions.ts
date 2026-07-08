@@ -1,37 +1,20 @@
-import type { AppDispatch } from "../../store/store";
-
 import type {
   CategoryPropsType,
+  AddCategoryTriggerFn,
+  AddIncomeTriggerFn,
+  DeleteCategoryTriggerFn,
   expenseTranscationTypes,
+  handleAddExpenseTransactionProps,
+  RenameCategoryTriggerFn,
   IncomeTransactionTypes,
 } from "../../types/transactionType";
 import {
-  addCategoryThunk,
-  addExpense,
-  renameCategory,
-  deleteCategoryThunk,
-  addIncomeThunk,
   Backend_Url
 } from "../../store/features/transaction";
 
-
-interface handleAddExpenseTransactionProps {
-  amount: number | "";
-  category: string;
-  dispatch: AppDispatch;
-  transaction: expenseTranscationTypes;
-  e: React.SubmitEvent<HTMLFormElement>;
-  success: () => void;
-  failed: (val: string) => string;
-  setAmount: (val: number | "") => void;
-  setPayee: (val: string) => void;
-  setIsSubmitting: (val: boolean) => void;
-
-}
-
 type commonTypes = Pick<
   handleAddExpenseTransactionProps,
-  "e" | "failed" | "dispatch"
+  "e" | "failed"
 >;
 interface handleAddIncomeTransactionProps extends commonTypes {
   incomeSource: string;
@@ -40,24 +23,27 @@ interface handleAddIncomeTransactionProps extends commonTypes {
   success: (val: string) => string;
   setModalState: (val: "closed") => void;
   setIsSubmitting:(val:boolean) => void;
+  addIncomeTxn: AddIncomeTriggerFn;
 }
 
 type categoryFormCommontypes = Pick<
   handleAddIncomeTransactionProps,
-  "dispatch" | "e" | "success" | "failed" | "setModalState"
+  "e" | "success" | "failed" | "setModalState"
 >;
 interface HandleCategoryFormProps extends categoryFormCommontypes {
   category: string;
   setCategory: (val: string) => void;
   setIsSubmitting:(val:boolean) => void
+  addCategoryTxn: AddCategoryTriggerFn;
 }
 
 type DeleteCategoryCommonProps = Pick<
   HandleCategoryFormProps,
-  "dispatch" | "success" | "failed"
+  "success" | "failed"
 >;
 interface HandleDeleteCategoryProps extends DeleteCategoryCommonProps {
   category: CategoryPropsType;
+  deleteCategoryTxn: DeleteCategoryTriggerFn;
 }
 
 let renameCategoryTimer: ReturnType<typeof setTimeout> | null = null;
@@ -71,8 +57,8 @@ export async function handleAddExpenseTransaction({
   failed,
   amount,
   category,
-  dispatch,
   transaction,
+  addTxn
 }: handleAddExpenseTransactionProps) {
   e.preventDefault();
   if (typeof amount !== "number" || amount <= 0) {
@@ -94,21 +80,42 @@ export async function handleAddExpenseTransaction({
     transactionId: tId,
   };
 
-  setIsSubmitting(true);
 
-  dispatch(addExpense(transactionData))
+  // setIsSubmitting(true);
+
+  // dispatch(addExpense(transactionData))
+  //   .unwrap()
+  //   .then(() => {
+  //     success();
+  //   })
+  //   .catch((err) => {
+  //     failed(err || "Failed to add Expense");
+  //   })
+  //   .finally(() => {
+  //     setAmount(1);
+  //     setPayee("");
+  //     setIsSubmitting(false);
+  //   });
+
+  try{
+    setIsSubmitting(true)
+    await addTxn({
+      transactionData
+    })
     .unwrap()
     .then(() => {
-      success();
+      success()
     })
-    .catch((err) => {
-      failed(err || "Failed to add Expense");
-    })
-    .finally(() => {
-      setAmount(1);
-      setPayee("");
-      setIsSubmitting(false);
-    });
+  }
+    catch(err){
+     failed("Failed to add Expense")
+     console.error(err)
+    }
+    finally{
+      setAmount(0)
+      setPayee("")
+      setIsSubmitting(false)
+    }
 }
 
 export async function handleAddIncomeTransaction({
@@ -116,11 +123,11 @@ export async function handleAddIncomeTransaction({
   failed,
   incomeDate,
   amount,
-  dispatch,
   incomeSource,
   success,
   setModalState,
-  setIsSubmitting
+  setIsSubmitting,
+  addIncomeTxn,
 }: handleAddIncomeTransactionProps) {
   e.preventDefault();
   if (amount !== "" && amount < 0) return failed("Not valid income amount");
@@ -137,7 +144,7 @@ export async function handleAddIncomeTransaction({
   };
 
     setIsSubmitting(true)
-    dispatch(addIncomeThunk(incomeData))
+    await addIncomeTxn({ incomeData })
     .unwrap()
     .then(() => {
       success("income added successfully🎉")
@@ -157,10 +164,11 @@ export async function handleAddCategoryDB({
   category,
   success,
   failed,
-  dispatch,
   setCategory,
   setIsSubmitting,
-  setModalState,}:HandleCategoryFormProps){
+  setModalState,
+  addCategoryTxn,
+}:HandleCategoryFormProps){
 
  e.preventDefault();
   if (category.trim() === "") return failed("kindly type category name");
@@ -168,7 +176,7 @@ export async function handleAddCategoryDB({
    const name = category.trim().toLowerCase();
 
      setIsSubmitting(true)
-     dispatch(addCategoryThunk(name))
+     await addCategoryTxn({ name })
      .unwrap() //.unwrap() allows us to listen to success/error inside the component
      .then(() => {
        success("category added successfully🎉")
@@ -185,7 +193,7 @@ export async function handleAddCategoryDB({
 }
 export function handleDeleteCategory({
   category,
-  dispatch,
+  deleteCategoryTxn,
   success,
   failed,
 }: HandleDeleteCategoryProps) {
@@ -196,7 +204,7 @@ export function handleDeleteCategory({
   }
 
   function deleteCat(){
-    dispatch(deleteCategoryThunk(category))
+    deleteCategoryTxn({ category })
     .unwrap()
     .then(() => {
       success(`${category.name} deleted successfully🎉`)
@@ -245,7 +253,7 @@ export interface HandleRenameCategoryProps {
   success: (val: string) => string;
   fail: (val: string) => string;
   setIsLoading: (val: boolean) => void;
-  dispatch: AppDispatch;
+  renameCategoryTxn: RenameCategoryTriggerFn;
   setModalState: (val: "income" | "category" | "closed") => void;
   setIsSubmitting:(val:boolean) => void
 }
@@ -257,7 +265,7 @@ export function handleRenameCategory({
   success,
   fail,
   setIsLoading,
-  dispatch,
+  renameCategoryTxn,
   setIsSubmitting,
   setModalState,
 }: HandleRenameCategoryProps) {
@@ -274,7 +282,7 @@ export function handleRenameCategory({
   setIsSubmitting(true);
 
   renameCategoryTimer = setTimeout(() => {
-    dispatch(renameCategory(categoryToRename))
+    renameCategoryTxn({ category: categoryToRename })
       .unwrap()
       .then(() => {
         success("renamed successfully🎉");

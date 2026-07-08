@@ -5,7 +5,6 @@ import type {
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import EmptyState from "./EmptyState";
-import { useAppDispatch, useAppSelector } from "../store/store";
 import toast from "react-hot-toast";
 import {handleDeleteCategory } from "../utils/helperFunctions/handleFormActions";
 import ModalBox from "./ModalBox";
@@ -13,6 +12,7 @@ import AddNewCategoryForm from "./AddCategoryForm";
 import { handleRenameCategory } from "../utils/helperFunctions/handleFormActions";
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
+import { useDeleteCategoryMutation, useGetCategoriesQuery, useRenameCategoryMutation } from "../store/features/transactionApi";
 
 type expenseDataType = {
   data:expenseTranscationTypes[]
@@ -26,24 +26,18 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
 
   console.log(isLoading)
   
-  const dispatch = useAppDispatch();
-  const { expenseTransactions, categories,incomeTransactions } = useAppSelector((state) => state.transaction)
-  console.log(expenseTransactions)
-  const status = useAppSelector((state) => state.transaction.status)
+  const { data: categoryResponse } = useGetCategoriesQuery();
+  const categories = categoryResponse?.categories ?? [];
+  const [deleteCategoryTxn] = useDeleteCategoryMutation();
+  const [renameCategoryTxn] = useRenameCategoryMutation();
 
   const success = (mesg: string) => toast.success(mesg);
   const fail = (msg: string) => toast.error(msg);
-console.log(status)
-
-
   const { isDark } = useThemeContext();
   const onDelete = handleDeleteCategory;
 
   
   if (!data || !categories) return <EmptyState content={"No data available"} />;
-console.log(categories.length)
-console.log(data)
-console.log(incomeTransactions)
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -96,7 +90,7 @@ console.log(incomeTransactions)
                       category: cat,
                       success: success,
                       failed: fail,
-                      dispatch: dispatch,
+                      deleteCategoryTxn,
                     })
                   }
                 >
@@ -129,12 +123,13 @@ console.log(incomeTransactions)
                       e,
                       category: selectedCategory,
                       nextCategoryName: categoryName,
-                      dispatch: dispatch,
                       setIsLoading: setIsLoading,
                       success: success,
                       fail: fail,
                       setModalState: setModalState,
                       setIsSubmitting:setIsSubmitting
+                      ,
+                      renameCategoryTxn,
                     })
                   }
                 />

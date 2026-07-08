@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import transactionReducer from "./features/transaction";
 import userAuthReducer from "./features/userAuthenication";
 import {
   useDispatch,
@@ -7,13 +6,17 @@ import {
   type TypedUseSelectorHook,
 } from "react-redux";
 import userOriginReducer from "./features/userSelections";
+import { transactionApi } from "./features/transactionApi";
 
 const Store = configureStore({
   reducer: {
-    transaction: transactionReducer,
     userData: userAuthReducer,
     origin: userOriginReducer,
+    [transactionApi.reducerPath]: transactionApi.reducer,
   },
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(transactionApi.middleware),
 });
 
 export default Store;

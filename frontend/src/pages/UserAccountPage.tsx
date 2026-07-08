@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import UserProfile from "../components/UserProfile";
 import Layout from "../components/Layout";
 import { useAppDispatch, useAppSelector } from "../store/store";
@@ -11,7 +11,7 @@ import {
 } from "../store/features/userAuthenication";
 import { handleDeleteAccount, handleLogout } from "../utils/authService";
 import { formatCurrency } from "../utils/currency";
-import { fetchInitialData } from "../store/features/transaction";
+import { useUserData } from "../Hooks/useUserData";
 
 interface UserAccountPropsType {
   onToggle: () => void;
@@ -21,21 +21,12 @@ interface UserAccountPropsType {
 const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const transactions = useAppSelector(
-    (state) => state.transaction.expenseTransactions,
-  );
-  const incomes = useAppSelector(
-    (state) => state.transaction.incomeTransactions,
-  );
+  const { expenses: transactions, incomeTrans: incomes } = useUserData();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const user = useAppSelector((state) => state.userData);
   const isLoading = user.isLoading;
   const data = user.userData;
   const error = user.error;
-
-  useEffect(() => {
-    dispatch(fetchInitialData())
-  },[])
 
   const accountStats = useMemo(() => {
     const totalExpense = transactions.reduce((acc, txn) => acc + Number(txn.amount), 0);
