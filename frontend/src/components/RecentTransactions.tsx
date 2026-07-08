@@ -74,7 +74,7 @@ const RecentTransactions = () => {
               <p className="font-medium recent-transaction-name">{item.name}</p>
               <p className="text-sm text-muted">
                 {dateFormatter.format(new Date(item.date))} •{" "}
-                {getDayName(item.dateTimestamp.toString())}
+                {getDayName(item.date.toString())}
               </p>
             </div>
 
