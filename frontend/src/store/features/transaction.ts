@@ -6,7 +6,7 @@ import type {
   IncomeTransactionTypes,
   RecentTransactionsType,
 } from "../../types/transactionType";
-import type { GetTransactionsResponse } from "@shared/types/index.ts";
+import type { GetTransactionsResponse } from "../../types/recentTransactions";
 
  const isProduction = import.meta.env.PROD
  export const Backend_Url = isProduction ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/,'') : 'http://localhost:2122'
