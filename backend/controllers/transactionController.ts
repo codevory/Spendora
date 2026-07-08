@@ -1,6 +1,51 @@
 import { getDBConnection } from "../db/getBDConnection.js";
+import type { Request, Response } from "express";
 
-export async function getExpense(req, res) {
+type TransactionItem = {
+  amount: number;
+  paidTo: string;
+  date: string;
+  categoryId: string | number;
+  transactionId: string;
+};
+
+type ExpenseRequestBody = {
+  transactionData: TransactionItem;
+};
+
+type IncomeItem = {
+  amount: number;
+  source: string;
+  date: string;
+  transactionId: string;
+};
+
+type IncomeRequestBody = {
+  incomeData: IncomeItem;
+};
+
+type TransactionQuery = {
+  page?: string
+  size?: string
+  skip?: string
+};
+
+type SessionUser = {
+  userId: string;
+  userRole?: string;
+  email?: string;
+};
+
+type RequestWithSession<
+  Params = unknown,
+  ResBody = unknown,
+  ReqBody = unknown,
+  ReqQuery = unknown,
+> = Request<Params, ResBody, ReqBody, ReqQuery> & {
+  session: SessionUser;
+};
+
+export async function getExpense(req: RequestWithSession, res: Response) {
   const db = await getDBConnection();
 
   try {
@@ -21,12 +66,16 @@ export async function getExpense(req, res) {
 
     return res.status(200).json({ expenses: expensesResult.rows });
   } catch (err) {
-    console.error("Error getting expense : ", err.message);
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Error getting expense : ", error.message);
     return res.status(500).json({ error: "Internal server Error" });
   }
 }
 
-export async function addExpense(req, res) {
+export async function addExpense(
+  req: RequestWithSession<unknown, unknown, ExpenseRequestBody>,
+  res: Response,
+) {
   const db = await getDBConnection();
   let { transactionData } = req.body;
 
@@ -78,12 +127,16 @@ export async function addExpense(req, res) {
 
     return res.status(201).json({ transactionData: expenseCreated.rows[0] });
   } catch (err) {
-    console.error("Failed to add expense ", err.message);
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Failed to add expense ", error.message);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
 
-export async function addIncome(req, res) {
+export async function addIncome(
+  req: RequestWithSession<unknown, unknown, IncomeRequestBody>,
+  res: Response,
+) {
   let { incomeData } = req.body;
 
   if (!incomeData || typeof incomeData !== "object") {
@@ -112,14 +165,15 @@ export async function addIncome(req, res) {
 
     return res.status(201).json({ incomeData });
   } catch (err) {
-    console.error("Failed to add income : ", err.message);
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Failed to add income : ", error.message);
     return res
       .status(500)
-      .json({ error: `Failed to add income ${err.message}` });
+      .json({ error: `Failed to add income ${error.message}` });
   }
 }
 
-export async function getIncome(req, res) {
+export async function getIncome(req: RequestWithSession, res: Response) {
   const db = await getDBConnection();
 
   try {
@@ -130,7 +184,73 @@ export async function getIncome(req, res) {
 
     return res.status(200).json({ income: incomeResult.rows });
   } catch (err) {
-    console.error("Failed to get income : ", err.message);
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Failed to get income : ", error.message);
     return res.status(500).json({ error: ` Internal Server Error ` });
+  }
+}
+
+export async function getTransactions(
+  req: RequestWithSession<unknown, unknown, unknown, TransactionQuery>,
+  res: Response,
+) {
+  const db = await getDBConnection();
+  const { page, size, skip } = req.query;
+
+  let pageNum:number = page !== undefined ? parseInt(page) : 1;
+  let dataSize:number = size !== undefined ? parseInt(size) : 5;
+  let dataToSkip = skip !== undefined ? parseInt(skip) : pageNum === 1 ? 0 : (pageNum - 1) * dataSize;
+
+  console.log("page :", pageNum, "size :", dataSize, "skip : ", dataToSkip);
+  try {
+    const txnResult = await db.query(
+      `
+ (
+  SELECT
+ e.id,
+ e.amount,
+ 'expense' AS "type",
+ e.paid_to AS "entity",
+ e.paid_on AS "date",
+ e.transaction_id AS "transactionId",
+ e.category_id AS "categoryId",
+ c.name AS "categoryName",
+ e.created_at AS "createdAt"
+ FROM userexpense e
+ LEFT JOIN expensecategories c ON e.category_id = c.id
+ WHERE e.user_id = $1
+)
+UNION ALL
+(
+ SELECT
+ ui.id,
+ ui.amount,
+ 'income' AS "type",
+ ui.source AS "entity",
+ ui.received_on AS "date",
+ ui.transaction_id AS "transactionId",
+ NULL AS "categoryId",
+ NULL AS "categoryName",
+ ui.created_at AS "createdAt"
+ FROM userincome ui
+ WHERE ui.user_id = $1
+)
+ORDER BY "date" DESC
+ LIMIT $2
+ OFFSET $3
+ ;
+    `,
+      [req.session.userId, dataSize, dataToSkip],
+    );
+
+    return res.status(200).json({
+      page: page,
+      size: size,
+      transactions: txnResult.rows,
+    });
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error(error.message);
+    return res.status(500).json({ error: "Internal server error " });
   }
 }
