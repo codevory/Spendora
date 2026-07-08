@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
 import { getRecentTransactions } from "../store/features/transaction";
-import type { Transaction } from "@shared/types";
+import type { Transaction } from "@shared/types/index.ts";
 import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton.tsx";
 
 type DisplayTransaction = Transaction & {
