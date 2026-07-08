@@ -1,6 +1,14 @@
-import { useMemo } from "react";
-import { useAppSelector } from "../store/store";
+import { useEffect, useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
+import { getRecentTransactions } from "../store/features/transaction";
+import type { Transaction } from "../types/recentTransactions";
+import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton.tsx";
+
+type DisplayTransaction = Transaction & {
+  name: string;
+  dateTimestamp: number;
+};
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -8,61 +16,65 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
 });
 
+const PAGE_SIZE = 5;
+
 const RecentTransactions = () => {
-  const userExpenseTxns = useAppSelector(
-    (state) => state.transaction.expenseTransactions,
+  const [page, setPage] = useState<number>(1);
+  const dispatch = useAppDispatch();
+  const recentTxns = useAppSelector(
+    (state) => state.transaction.recentTransactions,
   );
-  const userIncomeTxns = useAppSelector(
-    (state) => state.transaction.incomeTransactions,
-  );
+  const status = useAppSelector((state) => state.transaction.status)
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
+  const canGoPrev = page > 1;
+  const canGoNext = recentTxns.length === PAGE_SIZE;
 
-  const sortedTransactions = useMemo(() => {
-    const normalizedIncomeData = userIncomeTxns.map((txn) => {
-      return {
-        id:txn.id ?? txn.transactionId,
-        amount: Number(txn.amount),
-        transactionId: txn.transactionId,
-        name: txn.source,
-        date: txn.date,
+  useEffect(() => {
+    dispatch(
+      getRecentTransactions({
+        page,
+        size: PAGE_SIZE,
+        skip: (page - 1) * PAGE_SIZE,
+      }),
+    ).unwrap()
+    .then(() => {
+    })
+  }, [dispatch, page]);
+
+  const sortedTransactions = useMemo<DisplayTransaction[]>(() => {
+    return [...recentTxns]
+    .map((txn) => ({
+        ...txn,
+        name: txn.entity,
         dateTimestamp: new Date(txn.date).getTime(),
-        type: txn.type ?? "income",
-      };
-    });
-
-    const normalizedExpenseData = userExpenseTxns.map((txn) => {
-      return {
-        id:txn.id ?? txn.transactionId,
-        amount: Number(txn.amount),
-        transactionId: txn.transactionId,
-        name: txn.paidTo,
-        date: txn.date,
-        dateTimestamp: new Date(txn.date).getTime(),
-        type: txn.type ?? "expense",
-      };
-    });
-
-    const combined = [...normalizedExpenseData, ...normalizedIncomeData];
-    return combined.sort((a, b) => b.dateTimestamp - a.dateTimestamp);
-  }, [userExpenseTxns, userIncomeTxns]);
+      }))
+      .sort((a, b) => b.dateTimestamp - a.dateTimestamp);
+  }, [recentTxns]);
+  
+  if(status === "pending"){
+    return <RecentTransactionsSkeleton />
+  }
 
   return (
-    <div className="card recent-transactions mt-6">
+    <div className=" card recent-transactions mt-1 relative max-h-150 overflow-hidden">
+
       <h2 className="recent-transactions-title text-lg font-semibold mb-4">
         Recent Transactions
       </h2>
 
+
+      <div className="max-h-110">
       {sortedTransactions.map((item) => {
         
         return (
           <div key={item.id.toString() + item.transactionId}
-            className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"
+          className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none"
           >
             <div >
               <p className="font-medium recent-transaction-name">{item.name}</p>
               <p className="text-sm text-muted">
                 {dateFormatter.format(new Date(item.date))} •{" "}
-                {getDayName(item.date)}
+                {getDayName(item.dateTimestamp.toString())}
               </p>
             </div>
 
@@ -79,6 +91,24 @@ const RecentTransactions = () => {
           </div>
         );
       })}
+    </div>
+       <div className="glass w-full  flex justify-between items-center absolute bottom-0 left-0  bg-amber-700 ">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={!canGoPrev}
+          className="primary-button w-16 h-10 rounded-lg bg-blue-900 disabled:opacity-50"
+        >
+          prev
+        </button>
+        <p>{page}</p>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={!canGoNext}
+          className="primary-button w-16 h-10 rounded-lg bg-blue-900 disabled:opacity-50"
+        >
+          next
+        </button>
+      </div>
     </div>
   );
 };

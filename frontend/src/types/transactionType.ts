@@ -25,3 +25,9 @@ export type CategoryPropsType  = {
   name: string;
   id : number
 }
+
+export type RecentTransactionsType = {
+  page ? : number,
+  size ? : number,
+  skip ? : number
+}

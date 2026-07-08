@@ -5,13 +5,20 @@ import {
   getExpense,
   addIncome,
   getIncome,
-} from "../controllers/transactionController.js";
+  getTransactions,
+} from "../controllers/transactionController.ts";
 import {
   getDataRateLimiter,
   postDataRateLimiter,
 } from "../helpers/rateLimiters.ts";
 
 export const transactionRoute = express.Router();
+transactionRoute.get(
+  "/transactions",
+  requireAuth,
+  getDataRateLimiter,
+  getTransactions,
+);
 transactionRoute.get("/expenses", requireAuth, getDataRateLimiter, getExpense);
 transactionRoute.get("/income", requireAuth, getDataRateLimiter, getIncome);
 transactionRoute.post(

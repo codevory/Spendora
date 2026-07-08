@@ -2,7 +2,7 @@ import { getDBConnection } from "../db/getBDConnection.js";
 import validator from "validator";
 import { getOriginKey } from "../helpers/getOriginKey.js";
 import bcrypt from "bcryptjs";
-import { isProduction } from "../server.js";
+import { is_Production } from "../db/getBDConnection.js";
 
 export async function registerUser(req, res) {
   const db = await getDBConnection();

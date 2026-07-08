@@ -4,15 +4,18 @@ import type {
   CategoryPropsType,
   expenseTranscationTypes,
   IncomeTransactionTypes,
+  RecentTransactionsType,
 } from "../../types/transactionType";
+import type { GetTransactionsResponse } from "../../types/recentTransactions";
 
  const isProduction = import.meta.env.PROD
- export const Backend_Url = isProduction ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/,'') : ''
+ export const Backend_Url = isProduction ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/,'') : 'http://localhost:2122'
 
 interface TransactionState {
   categories: CategoryPropsType[];
   expenseTransactions: expenseTranscationTypes[];
   incomeTransactions: IncomeTransactionTypes[];
+  recentTransactions:GetTransactionsResponse['transactions']
   status: "idle" | "pending" | "failed" | "success";
   error: { message: string; code: number } | null;
 }
@@ -67,6 +70,28 @@ export const fetchInitialData = createAsyncThunk(
         message: error.message || "Failed to fetch data ",
         code: 500,
       });
+    }
+  }
+)
+
+export const getRecentTransactions = createAsyncThunk(
+  "transaction/getRecentTransactions",
+
+  async (recentTransactionProps:RecentTransactionsType,{rejectWithValue}) => {
+    try {
+      const result = await fetch(`${Backend_Url}/api/transaction/transactions?
+        page=${recentTransactionProps.page}&size=${recentTransactionProps.size}&skip=${recentTransactionProps.skip}`,{
+          method:"GET",
+          credentials:"include",
+          headers:{
+            "Content-Type":"application/json"
+          }
+        })
+        const res = await result.json() 
+        if(!result.ok) throw new Error("Failed to get recent Transactions")
+        return res
+    } catch (error:any) {
+      return rejectWithValue(error.message)
     }
   }
 )
@@ -191,6 +216,7 @@ const initialState: TransactionState = {
   categories: [],
   expenseTransactions: [],
   incomeTransactions:[],
+  recentTransactions:[],
   status: "idle",
   error: null,
 };
@@ -215,6 +241,20 @@ export const transactionSlice = createSlice({
   .addCase(fetchInitialData.rejected, (state,action:any) => {
     state.status = "failed"
     state.error = action.payload
+  })
+
+  //handle getRecentTransactions
+  .addCase(getRecentTransactions.pending, (state) => {
+    state.status = "pending"
+  })
+  .addCase(getRecentTransactions.fulfilled,(state,action:PayloadAction<GetTransactionsResponse>) => {
+   state.status = "success"
+   console.log(action.payload)
+   state.recentTransactions = action.payload['transactions']
+  })
+  .addCase(getRecentTransactions.rejected,(state,action:any) => {
+    state.status = "failed"
+    state.error = {message:action.payload as string,code:500}
   })
 
   //handling addCategory

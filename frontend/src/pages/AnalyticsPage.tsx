@@ -59,7 +59,7 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
               </div>
             </div>
 
-            <div className="max-h-130 overflow-y-auto xl:col-span-2">
+            <div className="xl:col-span-2 rounded-b-2xl ">
               <RecentTransactions />
             </div>
           </section>

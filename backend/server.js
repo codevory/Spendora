@@ -3,7 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
-import { getDBConnection } from "./db/getBDConnection.js";
+import {
+  environment,
+  getDBConnection,
+  is_Production,
+} from "./db/getBDConnection.js";
 import { meRouter } from "./routes/meRouter.js";
 import { authRouter } from "./routes/auth.ts";
 import path from "node:path";
@@ -15,13 +19,11 @@ import { serverHealthRoute } from "./routes/serverHealthRoute.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
+dotenv.config({ path: `.env.${environment}` });
 const secret = process.env.SPIRAL_SESSION_SECRET;
 const app = express();
 app.set("trust proxy", 1);
 const PORT = process.env.PORT || 2122;
-export const isProduction =
-  process.env.NODE_ENV === "production" || process.env.RENDER === "true";
 
 //initialize the postgres store constructor
 const PostgresStore = pgSession(session);
@@ -51,8 +53,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      secure: is_Production,
+      sameSite: is_Production ? "none" : "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     },
   }),
