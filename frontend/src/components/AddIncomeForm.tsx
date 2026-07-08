@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { useAppSelector } from "../store/store";
 import toast from "react-hot-toast";
 import { handleAddIncomeTransaction } from "../utils/helperFunctions/handleFormActions";
 import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
+import { useAddIncomeTxnMutation } from "../store/features/transactionApi";
 
 type IncomeFormPropsType = {
   setModalState: (val: "closed") => void;
@@ -15,9 +16,9 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const currencyMeta = getCurrencyMeta(currencyKey);
 
-  const dispatch = useAppDispatch();
   const success = (message: string) => toast.success(message);
   const failed = (message: string) => toast.error(message);
+  const [addIncomeTxn] = useAddIncomeTxnMutation();
 
   const onSubmit = handleAddIncomeTransaction;
   return (
@@ -26,7 +27,6 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
         onSubmit={(e) =>
           onSubmit({
             e: e,
-            dispatch: dispatch,
             setModalState: setModalState,
             success: success,
             incomeDate: incomeDate,
@@ -35,6 +35,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             amount:
               amount === "" ? 0 : convertToBaseAmount(amount, currencyKey),
             failed: failed,
+            addIncomeTxn,
           })
         }
         className="flex flex-col gap-5"

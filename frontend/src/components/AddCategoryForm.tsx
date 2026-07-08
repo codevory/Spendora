@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
-import { useAppDispatch } from "../store/store";
 import { useState } from "react";
 import { handleAddCategoryDB } from "../utils/helperFunctions/handleFormActions";
+import { useAddCategoryMutation } from "../store/features/transactionApi";
 
 type CategoryFormProps = {
   setModalState: (val: "closed") => void;
@@ -29,12 +29,12 @@ const AddNewCategoryForm = ({
 }: CategoryFormProps) => {
   const [category, setCategory] = useState<string>("");
 
-  const dispatch = useAppDispatch();
   const success = (message: string) => toast.success(message);
   const failed = (message: string) => toast.error(message);
 
   const onSubmit = handleAddCategoryDB;
   const categoryValue = categoryState !== undefined ? categoryState : category;
+  const [addCategoryTxn] = useAddCategoryMutation();
 
   return (
     <div className="flex flex-col gap-2 text-slate-100">
@@ -52,13 +52,14 @@ const AddNewCategoryForm = ({
 
           onSubmit({
             e: e,
-            dispatch: dispatch,
             success: success,
             failed: failed,
             setCategory: setCategory,
             setModalState: setModalState,
             category: categoryValue,
             setIsSubmitting: setIsSubmitting
+            ,
+            addCategoryTxn,
           });
         }}
         className="form flex flex-col gap-2 "

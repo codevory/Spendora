@@ -1,14 +1,10 @@
-import { useAppSelector } from "../store/store";
 import { insightData } from "../utils/helperFunctions/insightData";
 import { formatCurrency } from "../utils/currency";
+import { useUserData } from "../Hooks/useUserData";
+import { useAppSelector } from "../store/store";
 
 const MonthlyInsights = () => {
-  const incomeTransactions = useAppSelector(
-    (state) => state.transaction.incomeTransactions,
-  );
-  const expenseTransactions = useAppSelector(
-    (state) => state.transaction.expenseTransactions,
-  );
+  const { incomeTrans: incomeTransactions, expenses: expenseTransactions } = useUserData();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
 
   const insights = insightData({

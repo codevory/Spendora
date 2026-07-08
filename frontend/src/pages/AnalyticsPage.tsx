@@ -3,9 +3,7 @@ import Layout from "../components/Layout";
 import MonthlyInsights from "../components/MonthlyInsights";
 import RecentTransactions from "../components/RecentTransactions";
 import { useUserData } from "../Hooks/useUserData";
-import React, { Suspense, useEffect } from "react";
-import { useAppDispatch } from "../store/store";
-import { fetchInitialData } from "../store/features/transaction";
+import React, { Suspense } from "react";
 
 interface AnalyticsPropsType {
   onToggle: () => void;
@@ -17,12 +15,6 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
   );
   const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
   const { analysisData } = useUserData();
-
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-   dispatch(fetchInitialData())
-  },[])
 
   
   return (

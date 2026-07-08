@@ -1,9 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { useAppSelector } from "../store/store";
 import type { expenseTranscationTypes, } from "../types/transactionType";
-import { handleAddExpenseTransaction } from "../utils/helperFunctions/handleFormActions";
 import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
+import { useAddExpenseTxnMutation, useGetCategoriesQuery } from "../store/features/transactionApi";
+import { handleAddExpenseTransaction } from "../utils/helperFunctions/handleFormActions";
 
 interface AddTransactionFormPropsType {
   setModalState: (val: "category") => void;
@@ -14,13 +15,13 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const [payee, setPayee] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string>("select");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const categories = useAppSelector((state) => state.transaction.categories);
+  const { data: categoryResponse } = useGetCategoriesQuery();
+  const categories = categoryResponse?.categories ?? [];
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const currencyMeta = getCurrencyMeta(currencyKey);
   const selectedCategoryName =
     categories.find((cat) => String(cat.id) === categoryId)?.name ?? "";
 
-  const dispatch = useAppDispatch();
   const Success = () => toast.success("Expense Added Successfully");
   const failed = (message: string) => toast.error(message);
 
@@ -35,6 +36,8 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
     createdAt: new Date(date).toString(),
     type: "expense",
   };
+  
+  const [ addTxn ] = useAddExpenseTxnMutation()
 
   return (
     <>
@@ -49,9 +52,9 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
               success: Success,
               failed: failed,
               amount: amount,
-              dispatch: dispatch,
               transaction: transaction,
               setIsSubmitting: setIsSubmitting,
+              addTxn:addTxn
             })
           }
           className="flex flex-col gap-5"

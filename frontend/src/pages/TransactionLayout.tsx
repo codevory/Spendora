@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import TransactionsContent from "../components/TransactionsContent";
 import ViewTransactionDetails from "../components/ViewTransactionDetails";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { useGetCategoriesQuery, useGetExpenseTransactionsQuery } from "../store/features/transactionApi";
 import type { expenseTranscationTypes } from "../types/transactionType";
 import { useUserData } from "../Hooks/useUserData";
 import Layout from "../components/Layout";
 import TrendGraph from "../charts/TrendGraph";
-import { fetchInitialData } from "../store/features/transaction";
 
 interface TransactionLayoutProps {
   onToggle: () => void;
@@ -16,16 +15,11 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [query, setQuery] = useState<expenseTranscationTypes["categoryName"] | undefined>();
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
-  const dispatch = useAppDispatch()
+  const { data: expenseResponse } = useGetExpenseTransactionsQuery();
+  const { data: categoryResponse } = useGetCategoriesQuery();
 
-  const data = useAppSelector((state) => state.transaction.expenseTransactions);
-  const categoriesData = useAppSelector(
-    (state) => state.transaction.categories,
-  );
-
-  useEffect(() => {
-  dispatch(fetchInitialData())
-  },[])
+  const data = expenseResponse?.expenses ?? [];
+  const categoriesData = categoryResponse?.categories ?? [];
 
   const categories = useMemo(
     () =>

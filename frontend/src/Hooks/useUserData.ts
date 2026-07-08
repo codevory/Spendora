@@ -1,7 +1,10 @@
 import type { ChartData } from "chart.js";
-import { useAppSelector } from "../store/store";
 import type { IncomeTransactionTypes, expenseTranscationTypes } from "../types/transactionType";
 import { getUserOriginList } from "../utils/currency";
+import {
+  useGetExpenseTransactionsQuery,
+  useGetIncomeTransactionsQuery,
+} from "../store/features/transactionApi";
 
 interface MonthlyDataTypes {
   expenses: expenseTranscationTypes[];
@@ -18,11 +21,11 @@ const now = new Date();
 const targetDate = (month: number) => new Date(now.getFullYear(), month, 1);
 
 export const useUserData = () => {
-  const expenses = useAppSelector((state) => state.transaction.expenseTransactions);
-  const incomeTrans = useAppSelector((state) => state.transaction.incomeTransactions);
+  const { data: expenseResponse } = useGetExpenseTransactionsQuery();
+  const { data: incomeResponse } = useGetIncomeTransactionsQuery();
 
-console.log('expenses from userData :' ,expenses) //log here
-console.log('income from userData :',incomeTrans) //log here
+  const expenses = expenseResponse?.expenses ?? [];
+  const incomeTrans = incomeResponse?.income ?? [];
 
   const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
   const currMonthData = getMonthlyData({
@@ -141,7 +144,15 @@ console.log('income from userData :',incomeTrans) //log here
 
   const userOriginsList = getUserOriginList();
 
-  return { pieData, barData, lineData, analysisData, userOriginsList };
+  return {
+    pieData,
+    barData,
+    lineData,
+    analysisData,
+    userOriginsList,
+    expenses,
+    incomeTrans,
+  };
 };
 
 function getMonthlyData({ expenses, month }: MonthlyDataTypes) {

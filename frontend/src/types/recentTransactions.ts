@@ -29,3 +29,8 @@ export interface GetTransactionsResponse {
   page: number;
   size: number;
 }
+export type RecentTransactionsType = {
+  page ? : number,
+  size ? : number,
+  skip ? : number
+}
