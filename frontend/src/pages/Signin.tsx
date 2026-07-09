@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { handleGoogleSignin } from "../utils/authService";
 import Loader from "../components/Loader";
 import { handleSigninWithPassword } from "../utils/helperFunctions/handleSignin";
 import LoginComponent from "../components/LoginComponent";
 import Layout from "../components/Layout";
-import { useAppDispatch } from "../store/store";
-import { getUserData } from "../backend/getUserData";
+import { useAppDispatch, useAppSelector } from "../store/store";
 
 interface SigninPropsType {
   isOpen: boolean;
@@ -17,22 +15,21 @@ export let isLoggedin = false;
 const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [isLoged, setIsLoged] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
+  const { isLoggedin} = useAppSelector((state) => state.userData)
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!isLoged) {
-      return;
+    if (isLoggedin) {
+      navigate("/")
     }
 
-    void getUserData(dispatch);
-  }, [dispatch, isLoged]);
+    return;
+  }, [dispatch, isLoggedin,1]);
 
-  isLoggedin = isLoged;
   return (
     <Layout isOpen={isOpen} onToggle={onToggle}>
       {isLoading && <Loader />}
@@ -46,19 +43,14 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
             setPassword={setPassword}
             handleFormSubmit={(e) =>
               handleSigninWithPassword({
-                navigate: navigate,
                 email: email,
                 e: e,
                 setIsLoading: setIsLoading,
-                setIsLoged: setIsLoged,
                 setPassword: setPassword,
                 password: password,
-                setIsSubmitting:setIsSubmitting
-              })
-            }
-            handleGoogleSign={() =>
-              handleGoogleSignin({
-                setIsLoading: setIsLoading,
+                setIsSubmitting:setIsSubmitting,
+                dispatch:dispatch,
+                navigate:navigate
               })
             }
           />

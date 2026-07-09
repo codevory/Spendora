@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
-import { handleGoogleSignin } from "../utils/authService";
 import { handleSignupWithEmailPassword } from "../utils/helperFunctions/hanldeSignup";
 import SignupComponent from "../components/RegisterForm";
 import Layout from "../components/Layout";
+import { useAppSelector } from "../store/store";
 
 interface SignupPropsType {
   isOpen: boolean;
@@ -21,7 +21,18 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
   const [errorMessage,setErrorMessage] = useState<string>('')
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
 
+  const { isLoggedin } = useAppSelector((state) => state.userData)
+
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if(isLoggedin){
+      navigate("/")
+    }
+
+  },[isLoggedin,1])
+
+
   return (
     <Layout isOpen={isOpen} onToggle={onToggle}>
       {isLoading && <Loader />}
@@ -57,11 +68,6 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
               })
             }
             isLoading={isLoading}
-            handleSignupGoogle={() =>
-              handleGoogleSignin({
-                setIsLoading: setIsLoading,
-              })
-            }
           />
         </div>
       </div>
