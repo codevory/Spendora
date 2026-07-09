@@ -28,7 +28,7 @@ export async function handleSignupWithEmailPassword({
   password,
   setIsLoading,
   setErrorMessage,
-  setIsSubmitting
+  setIsSubmitting,
 }: handleSignupProps) {
   setIsLoading(true);
   e.preventDefault();
@@ -48,6 +48,7 @@ export async function handleSignupWithEmailPassword({
       success("Registered successfully🎉")
       console.log(data)
       setIsLoading(false);
+      return data
     }
     else{
       setErrorMessage(data.error)

@@ -1,17 +1,17 @@
-import { getFirebaseServices } from "../../backend/firebaseLazy";
 import toast from "react-hot-toast";
-import { collection, getDocs } from "firebase/firestore/lite";
 import { Backend_Url } from "../../store/features/transaction";
+import type { Dispatch } from "@reduxjs/toolkit";
+import { setLoginStatus, setUserData} from "../../store/features/userAuthenication";
 
 interface hanldeSigninWithPasswordProps {
   setIsLoading: (val: boolean) => void;
   setPassword: (val: string) => void;
   email: string;
   password: string;
-  setIsLoged: (val: boolean) => void;
   e: React.SubmitEvent<HTMLFormElement>;
   navigate: (val: string) => void;
   setIsSubmitting:(val:boolean) => void
+  dispatch:Dispatch
 }
 
 
@@ -20,13 +20,12 @@ const fail = (message: string) => toast.error(message);
 
 export async function handleSigninWithPassword({
   e,
-  navigate,
   setIsLoading,
   setPassword,
   email,
   password,
-  setIsLoged,
-  setIsSubmitting
+  setIsSubmitting,
+  dispatch,
 }: hanldeSigninWithPasswordProps) {
   setIsLoading(true);
   e.preventDefault();
@@ -45,14 +44,12 @@ export async function handleSigninWithPassword({
     const user = await res.json()
     if(res.ok){
       success("Logged in successfully🎉")
-      setIsLoged(true)
+      dispatch(setLoginStatus(true))
+      dispatch(setUserData(user))
       setIsLoading(false)
-      console.log(user)
-      navigate("/")
-      return;
+      return user;
     }
     else{
-        setIsLoged(false)
         setIsLoading(false)
        return fail(user.error)
       }
@@ -66,12 +63,4 @@ export async function handleSigninWithPassword({
     setPassword("")
     setIsSubmitting(false)
   }
-}
-
-export async function querySnapshot() {
-  const { db } = await getFirebaseServices();
-  const res = await getDocs(collection(db, "users"));
-  res.forEach((doc) => {
-    console.log(doc.data());
-  });
 }
