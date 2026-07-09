@@ -8,7 +8,6 @@ interface LoginComponentPropsType {
   password: string;
   setPassword: (val: string) => void;
   handleFormSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
-  handleGoogleSign: () => void;
   isSubmitting:boolean
 }
 const LoginComponent = ({
