@@ -15,7 +15,9 @@ export const LandingPage = () => {
     async function getUser(){
       const user = await checkAuth()
 
-      if(user.ok){
+      if(user == null) return;
+
+      if(user?.ok){
         dispatch(setUserData(user))
         dispatch(setLoginStatus(user))
         navigate("/")
@@ -24,10 +26,7 @@ export const LandingPage = () => {
     }
     
     getUser()
- 
-
-    console.log("isLoggedin : ",isLoggedin)
-  },[isLoggedin])
+  },[])
 
 
   return (

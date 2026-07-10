@@ -28,25 +28,24 @@ interface handleAddIncomeTransactionProps extends commonTypes {
 
 type categoryFormCommontypes = Pick<
   handleAddIncomeTransactionProps,
-  "e" | "success" | "failed" | "setModalState"
->;
+  "e" | "success" | "failed" | "setModalState" | "setIsSubmitting" >;
 interface HandleCategoryFormProps extends categoryFormCommontypes {
   category: string;
   setCategory: (val: string) => void;
-  setIsSubmitting:(val:boolean) => void
   addCategoryTxn: AddCategoryTriggerFn;
 }
 
 type DeleteCategoryCommonProps = Pick<
   HandleCategoryFormProps,
-  "success" | "failed"
+  "success" | "failed" 
 >;
 interface HandleDeleteCategoryProps extends DeleteCategoryCommonProps {
   category: CategoryPropsType;
   deleteCategoryTxn: DeleteCategoryTriggerFn;
-}
+  setIsSubmitting: (val:boolean) => void;
+};
 
-let renameCategoryTimer: ReturnType<typeof setTimeout> | null = null;
+let Timer: ReturnType<typeof setTimeout> | null = null;
 
 export async function handleAddExpenseTransaction({
   e,
@@ -149,7 +148,7 @@ export async function handleAddIncomeTransaction({
     .then(() => {
       success("income added successfully🎉")
     })
-    .catch((err) => {
+    .catch((err:any) => {
       failed(err ?? "Failed to add Income")
     })
     .finally(() => {
@@ -175,20 +174,29 @@ export async function handleAddCategoryDB({
 
    const name = category.trim().toLowerCase();
 
+   if(Timer !== null){
+    clearTimeout(Timer)
+   }
+
      setIsSubmitting(true)
-     await addCategoryTxn({ name })
-     .unwrap() //.unwrap() allows us to listen to success/error inside the component
-     .then(() => {
-       success("category added successfully🎉")
-      })
-      .catch((err) => {
-        failed(err || "Failed to add Category😩")
-      })
-      .finally(() => {
-        setCategory("")
-        setIsSubmitting(false)
-        setModalState("closed")
-      })
+
+     Timer = setTimeout(async () => {
+       await addCategoryTxn({ name })
+       .unwrap() //.unwrap() allows us to listen to success/error inside the component
+       .then(() => {
+         success("category added successfully🎉")
+        })
+        .catch((err:any) => {
+          failed(err || "Failed to add Category😩")
+        })
+        .finally(() => {
+          setCategory("")
+          setIsSubmitting(false)
+          setModalState("closed")
+          Timer = null
+        })
+      
+     }, 900);
 
 }
 export function handleDeleteCategory({
@@ -196,26 +204,38 @@ export function handleDeleteCategory({
   deleteCategoryTxn,
   success,
   failed,
+  setIsSubmitting
+
 }: HandleDeleteCategoryProps) {
   const confirmDelete = (val: string) => window.confirm(`Transcactions added in ${val} category will be deleted`);
  
-  if(!confirmDelete(category.name)){
+    if(!confirmDelete(category.name)){
     return failed("action cancelled")
-  }
+    }
 
-  function deleteCat(){
-    deleteCategoryTxn({ category })
-    .unwrap()
-    .then(() => {
-      success(`${category.name} deleted successfully🎉`)
-    })
-    .catch((err) => {
-      console.error(err)
-      failed(err || "Failed to delete ")
-    })
-  }
+    if(Timer !== null){
+      clearTimeout(Timer)
+    }
 
-  deleteCat();
+    setIsSubmitting(true)
+
+ Timer = setTimeout(() => {
+   deleteCategoryTxn({ category })
+   .unwrap()
+   .then(() => {
+     success(`${category.name} deleted successfully🎉`)
+   })
+   .catch((err:any) => {
+     console.error(err)
+     failed(err || "Failed to delete ")
+   }).finally(() => {
+     setIsSubmitting(false)
+    Timer = null
+   })
+  
+ }, 900);
+
+
 }
   
 export async function getCategories(): Promise<CategoryPropsType[]> {
@@ -235,7 +255,7 @@ export async function getCategories(): Promise<CategoryPropsType[]> {
 
       return categories
      
-     } catch (err) {
+     } catch (err:any) {
        if(err instanceof Error){
          console.error(err.message)
        }
@@ -275,26 +295,26 @@ export function handleRenameCategory({
   }
   e.preventDefault();
 
-  if (renameCategoryTimer) {
-    clearTimeout(renameCategoryTimer);
+  if (Timer) {
+    clearTimeout(Timer);
   }
 
   setIsSubmitting(true);
 
-  renameCategoryTimer = setTimeout(() => {
+  Timer = setTimeout(() => {
     renameCategoryTxn({ category: categoryToRename })
       .unwrap()
       .then(() => {
         success("renamed successfully🎉");
       })
-      .catch((err) => {
+      .catch((err:any) => {
         fail(err || "Failed to rename");
       })
       .finally(() => {
         setIsLoading(false);
         setIsSubmitting(false);
         setModalState("closed");
-        renameCategoryTimer = null;
+        Timer = null;
       });
   }, 300);
 }

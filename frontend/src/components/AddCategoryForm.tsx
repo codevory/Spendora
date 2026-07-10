@@ -36,6 +36,7 @@ const AddNewCategoryForm = ({
   const categoryValue = categoryState !== undefined ? categoryState : category;
   const [addCategoryTxn] = useAddCategoryMutation();
 
+  const buttonText = buttonContent ?? "Create"
   return (
     <div className="flex flex-col gap-2 text-slate-100">
       <h2 className="text-lg font-semibold">
@@ -82,11 +83,11 @@ const AddNewCategoryForm = ({
         </div>
 
         <button
-          className="btn-primary w-20 h-11 font-semibold active:scale-95"
+          className="btn-primary w-26 h-11 font-medium active:scale-95"
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? buttonContent ?? "Add" : "Add"}
+          {isSubmitting ? buttonText.concat('ing..') : buttonText}
         </button>
       </form>
     </div>

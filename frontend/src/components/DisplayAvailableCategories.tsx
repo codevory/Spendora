@@ -13,6 +13,7 @@ import { handleRenameCategory } from "../utils/helperFunctions/handleFormActions
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
 import { useDeleteCategoryMutation, useGetCategoriesQuery, useRenameCategoryMutation } from "../store/features/transactionApi";
+import Loader from "./Loader";
 
 type expenseDataType = {
   data:expenseTranscationTypes[]
@@ -28,7 +29,7 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
   
   const { data: categoryResponse } = useGetCategoriesQuery();
   const categories = categoryResponse?.categories ?? [];
-  const [deleteCategoryTxn] = useDeleteCategoryMutation();
+  const [deleteCategoryTxn,{ isLoading:isLoadingCat }] = useDeleteCategoryMutation();
   const [renameCategoryTxn] = useRenameCategoryMutation();
 
   const success = (mesg: string) => toast.success(mesg);
@@ -36,6 +37,10 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
   const { isDark } = useThemeContext();
   const onDelete = handleDeleteCategory;
 
+  if(isLoadingCat || isSubmitting
+  ){
+    return <Loader />
+  }
   
   if (!data || !categories) return <EmptyState content={"No data available"} />;
   return (
@@ -91,6 +96,7 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
                       success: success,
                       failed: fail,
                       deleteCategoryTxn,
+                      setIsSubmitting:setIsSubmitting
                     })
                   }
                 >
@@ -112,7 +118,7 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
               form={
                 <AddNewCategoryForm
                   setModalState={() => setModalState("closed")}
-                  buttonContent={isSubmitting ? "Saving.." : "Save"}
+                  buttonContent={"Rename"}
                   formHeading="Rename Category"
                   categoryState={category}
                   setIsSubmitting={setIsSubmitting}
@@ -138,7 +144,6 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
             document.body,
           )
         : null}
-      {/* {isLoading ? <Loader /> : null} */}
     </div>
   );
 };
