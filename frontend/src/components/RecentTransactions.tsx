@@ -4,6 +4,7 @@ import { formatCurrency } from "../utils/currency";
 import { useGetRecentTransactionsQuery } from "../store/features/transactionApi.ts";
 import type { Transaction } from "../types/recentTransactions";
 import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton.tsx";
+import styles from "./component.module.css"
 
 type DisplayTransaction = Transaction & {
   name: string;
@@ -98,7 +99,7 @@ const RecentTransactions = () => {
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={!canGoPrev || isFetching}
-          className="primary-button w-16 h-10 rounded-lg bg-blue-900 disabled:opacity-50"
+          className={styles.paginationButton}
         >
           prev
         </button>
@@ -106,7 +107,7 @@ const RecentTransactions = () => {
         <button
           onClick={() => setPage((p) => p + 1)}
           disabled={!canGoNext || isFetching}
-          className="primary-button w-16 h-10 rounded-lg bg-blue-900 disabled:opacity-50"
+          className={styles.paginationButton}
         >
           next
         </button>
