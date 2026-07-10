@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
-import { handleSignupWithEmailPassword } from "../utils/helperFunctions/hanldeSignup";
+import { handleSignupWithEmailPassword } from "../utils/helperFunctions/handleSignup";
 import SignupComponent from "../components/RegisterForm";
 import Layout from "../components/Layout";
 import { useAppSelector } from "../store/store";

@@ -86,7 +86,7 @@ export async function loginUser(req, res) {
     const user = userResult.rows[0];
 
     if (!user?.email) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: "This account doesn't exists" });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
