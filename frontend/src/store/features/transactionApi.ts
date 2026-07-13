@@ -6,6 +6,7 @@ import type {
 import type {
   CategoryPropsType,
   IncomeTransactionTypes,
+  expenseTransactionParamsType,
   expenseTranscationTypes,
 } from "../../types/transactionType.ts";
 
@@ -33,12 +34,16 @@ type CategoryMutationResponse = {
   category: CategoryPropsType;
 };
 
+
+
 export const transactionApi = createApi({
   reducerPath: "transactionApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${Backend_Url}/api`,
     credentials: "include",
   }),
+
+  refetchOnFocus : true,
   tagTypes: ["Transactions", "Expenses", "Income", "Categories"],
   endpoints: (builder) => ({
     getRecentTransactions: builder.query<GetTransactionsResponse, RecentTransactionsType>({
@@ -76,7 +81,7 @@ export const transactionApi = createApi({
     }),
     getIncomeTransactions: builder.query<IncomeResponse, void>({
       query: () => ({
-        url: "/transaction/income",
+        url: "/transaction/incomes",
         method: "GET",
       }),
       providesTags: (result) =>
@@ -114,8 +119,7 @@ export const transactionApi = createApi({
       }),
       invalidatesTags: [
         { type: "Transactions", id: "LIST" },
-        { type: "Expenses", id: "LIST" },
-        { type: "Income", id: "LIST" },
+        { type: "Expenses", id: "LIST" }
       ],
     }),
     addIncomeTxn: builder.mutation<IncomeMutationResponse, { incomeData: IncomeTransactionTypes }>({
@@ -149,6 +153,8 @@ export const transactionApi = createApi({
           : [
               { type: "Categories" as const, id: "LIST" },
               { type: "Categories" as const, id: category.id },
+              {type: "Transactions" as const, id: "LIST"},
+              { type: "Expenses" as const, id: "LIST"}
             ],
     }),
     deleteCategory: builder.mutation<void, { category: CategoryPropsType }>({
@@ -157,14 +163,41 @@ export const transactionApi = createApi({
         method: "DELETE",
         body: { category },
       }),
-      invalidatesTags: [{ type: "Categories", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Categories", id: "LIST" },
+        { type: "Expenses", id: "LIST"},
+        { type: "Transactions", id: "LIST"}
+      ],
     }),
-  }),
+
+    logoutUser: builder.mutation<{message:string,code:number},void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "GET"
+      })
+    }),
+
+    getFilteredExpenseTransactions : builder.query<{expenses: expenseTranscationTypes[]},expenseTransactionParamsType>({
+      query: ({query,page,size,skip,from,to}) => ({
+        url: "transaction/expenses/filtered",
+        method: "GET",
+       params: {query,page,size,skip,from,to}
+      }),
+      providesTags: (result) => 
+        result 
+      ? [
+        { type: "Transactions" as const, id: "LIST"},
+        ...result.expenses.map((transaction) => ({
+          type: "Transactions" as const, id: transaction.transactionId
+        })),
+      ] : 
+      [{type : "Transactions" as const, id: "LIST"}]
+    })
+  })
 });
 
 export const {
   useGetRecentTransactionsQuery,
-  useGetExpenseTransactionsQuery,
   useGetIncomeTransactionsQuery,
   useGetCategoriesQuery,
   useAddExpenseTxnMutation,
@@ -172,4 +205,7 @@ export const {
   useAddCategoryMutation,
   useRenameCategoryMutation,
   useDeleteCategoryMutation,
+  useLogoutUserMutation,
+  useGetFilteredExpenseTransactionsQuery,
+  useGetExpenseTransactionsQuery
 } = transactionApi;

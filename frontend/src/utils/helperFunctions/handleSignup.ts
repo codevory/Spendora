@@ -28,12 +28,11 @@ export async function handleSignupWithEmailPassword({
   password,
   setIsLoading,
   setErrorMessage,
-  setIsSubmitting
+  setIsSubmitting,
 }: handleSignupProps) {
-  setIsLoading(true);
   e.preventDefault();
   try {
-    setIsSubmitting(true)
+    setIsLoading(true);
     setErrorMessage("")
    const resp = await fetch(`${Backend_Url}/api/auth/register`,{
     method:"POST",
@@ -48,16 +47,17 @@ export async function handleSignupWithEmailPassword({
       success("Registered successfully🎉")
       console.log(data)
       setIsLoading(false);
+      return data
     }
     else{
       setErrorMessage(data.error)
-      fail("failed to register,kindly try again")
+      fail(data.error as string)
       setIsLoading(false);
     }
     setIsLoading(false);
   } catch (err) {
     console.error(err)
-    fail("Failed to Register,kindly try again")
+    fail("Internal server error to Register")
     setIsLoading(false);
   } finally{
       setIsLoading(false)

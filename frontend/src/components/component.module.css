@@ -1,0 +1,23 @@
+/* transactions  */
+/* Custom class name representing your button component */
+.paginationButton {
+  width: 5rem; /* w-20 (80px) */
+  height: 2.5rem; /* h-10 (40px) */
+  border-radius: 0.75rem; /* rounded-xl (12px) */
+  background-color: #1e3a8a; /* bg-blue-900 */
+  font-weight: 500; /* font-medium */
+  cursor: pointer; /* cursor-pointer */
+  transition: transform 0.1s ease; /* Smooth scaling transition */
+}
+
+/* Active / Click state */
+.paginationButton:active {
+  transform: scale(0.95); /* active:scale-95 */
+}
+
+/* Disabled state utilities */
+.paginationButton:disabled {
+  opacity: 0.5; /* disabled:opacity-50 */
+  cursor: not-allowed; /* disabled:cursor-not-allowed */
+  transform: none; /* disabled:scale-none */
+}

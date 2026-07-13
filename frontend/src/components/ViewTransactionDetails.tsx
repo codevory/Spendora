@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import EmptyState from "./EmptyState";
-import { useMemo } from "react";
 import type { expenseTranscationTypes } from "../types/transactionType";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
@@ -28,15 +27,13 @@ const ViewTransactionDetails = ({
     (state) => state.origin.userOrigin.currencySymbol,
   );
 
-  if (data === undefined) {
+  if (data === undefined || data?.length === 0) {
     return <EmptyState content={"No data found"} />;
   }
 
-  const tnxFound = useMemo(() => {
-    return data.find((tnx) => tnx.transactionId === id);
-  }, [id]);
+  const txnFound = data.find((txn) => txn.transactionId === id)
 
-  if (!tnxFound) {
+  if (!txnFound) {
     return (
       <EmptyState
         content={
@@ -92,10 +89,10 @@ const ViewTransactionDetails = ({
               Focused record
             </p>
             <h2 className="mt-1 text-xl font-semibold text-slate-100">
-              {tnxFound.paidTo ?? "Not avail"}
+              {txnFound.entity ?? "not avail"}
             </h2>
             <p className="mt-1 text-sm text-slate-400">
-              Transaction ID: {tnxFound.transactionId}
+              Transaction ID: {txnFound.transactionId}
             </p>
           </div>
           <span className="rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-semibold text-indigo-300">
@@ -146,7 +143,7 @@ const ViewTransactionDetails = ({
               </div>
               <div>
                 <p className="text-2xl font-bold text-slate-100">
-                  {formatCurrency(tnxFound.amount, currencyKey)}
+                  {formatCurrency(txnFound.amount, currencyKey)}
                 </p>
                 <p className="text-sm text-slate-400">
                   Recorded spending entry
@@ -163,7 +160,7 @@ const ViewTransactionDetails = ({
             Category
           </p>
           <p className="mt-1 text-sm font-semibold text-slate-100">
-            {tnxFound.categoryName ?? tnxFound.categoryId ?? "Not Avail"}
+            {txnFound.categoryName ?? txnFound.categoryId ?? "Not Avail"}
           </p>
         </div>
         <div className="rounded-xl border border-slate-700 bg-slate-800/70 p-3">
@@ -171,7 +168,7 @@ const ViewTransactionDetails = ({
             Transaction date
           </p>
           <p className="mt-1 text-sm font-semibold text-slate-100">
-            {new Date(tnxFound.date).toLocaleDateString("en-US", {
+            {new Date(txnFound.date).toLocaleDateString("en-US", {
               day: "2-digit",
               month: "short",
               year: "numeric",

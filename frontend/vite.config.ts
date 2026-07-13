@@ -18,7 +18,7 @@ export default defineConfig({
       output:{
         manualChunks:{
           charts:["react-chartjs-2","chart.js"],
-          firebase:["firebase/app","firebase/auth","firebase/firestore","firebase/analytics"],
+          // firebase:["firebase/app","firebase/auth","firebase/firestore","firebase/analytics"],
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-utils': ['immer', '@reduxjs/toolkit', 'react-redux'],
         }

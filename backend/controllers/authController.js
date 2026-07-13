@@ -1,8 +1,7 @@
-import { getDBConnection } from "../db/getBDConnection.js";
+import { getDBConnection, is_Production } from "../db/getBDConnection.js";
 import validator from "validator";
 import { getOriginKey } from "../helpers/getOriginKey.js";
 import bcrypt from "bcryptjs";
-import { is_Production } from "../db/getBDConnection.js";
 
 export async function registerUser(req, res) {
   const db = await getDBConnection();
@@ -87,7 +86,7 @@ export async function loginUser(req, res) {
     const user = userResult.rows[0];
 
     if (!user?.email) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: "This account doesn't exists" });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
@@ -111,8 +110,8 @@ export function logoutUser(req, res) {
 
   res.clearCookie(cookieName, {
     path: "/",
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    secure: is_Production,
+    sameSite: is_Production ? "none" : "lax",
   });
 
   req.session.destroy((err) => {

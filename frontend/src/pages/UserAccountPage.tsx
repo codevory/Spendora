@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo,useState } from "react";
 import UserProfile from "../components/UserProfile";
 import Layout from "../components/Layout";
 import { useAppDispatch, useAppSelector } from "../store/store";
@@ -9,9 +9,10 @@ import {
   setLoginStatus,
   setUserData,
 } from "../store/features/userAuthenication";
-import { handleDeleteAccount, handleLogout } from "../utils/authService";
+import { handleDeleteAccount} from "../utils/authService";
 import { formatCurrency } from "../utils/currency";
 import { useUserData } from "../Hooks/useUserData";
+import { useLogoutUser } from "../Hooks/useLogout";
 
 interface UserAccountPropsType {
   onToggle: () => void;
@@ -19,14 +20,15 @@ interface UserAccountPropsType {
 }
 
 const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { expenses: transactions, incomeTrans: incomes } = useUserData();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const user = useAppSelector((state) => state.userData);
-  const isLoading = user.isLoading;
   const data = user.userData;
   const error = user.error;
+
 
   const accountStats = useMemo(() => {
     const totalExpense = transactions.reduce((acc, txn) => acc + Number(txn.amount), 0);
@@ -40,9 +42,14 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
       transactionCount: transactions.length,
     };
   }, [incomes, transactions]);
+  
 
   const onDelete = handleDeleteAccount;
-  const onLogout = handleLogout;
+  const { handleLogout, isLoading } = useLogoutUser(setIsSubmitting)
+
+  if(isSubmitting){
+    return <Loader />
+  }
 
   return (
     <Layout onToggle={onToggle} isOpen={isOpen}>
@@ -72,15 +79,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
               email={data?.email || "No email"}
               image={data?.image || "/default-man.webp"}
               age={data?.age}
-              onLogout={() =>
-                onLogout({
-                  dispatch: dispatch,
-                  setError: setError,
-                  setLoginStatus: setLoginStatus,
-                  setUserData: setUserData,
-                  navigate: navigate,
-                })
-              }
+              onLogout={ handleLogout }
               onDeleteAccount={() =>
                 onDelete({
                   dispatch: dispatch,
@@ -88,6 +87,7 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
                   setLoginStatus: setLoginStatus,
                   setUserData: setUserData,
                   navigate: navigate,
+                  
                 })
               }
             />

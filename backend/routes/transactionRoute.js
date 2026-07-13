@@ -6,6 +6,7 @@ import {
   addIncome,
   getIncome,
   getTransactions,
+  getFilteredExpense,
 } from "../controllers/transactionController.ts";
 import {
   getDataRateLimiter,
@@ -20,7 +21,7 @@ transactionRoute.get(
   getTransactions,
 );
 transactionRoute.get("/expenses", requireAuth, getDataRateLimiter, getExpense);
-transactionRoute.get("/income", requireAuth, getDataRateLimiter, getIncome);
+transactionRoute.get("/incomes", requireAuth, getDataRateLimiter, getIncome);
 transactionRoute.post(
   "/addIncome",
   requireAuth,
@@ -35,3 +36,10 @@ transactionRoute.post(
 );
 // transactionRouter.patch("/updateExpense/:id", requireAuth, handler);
 // incomeRouter.patch("/updateIncome/:id", requireAuth, handler);
+
+transactionRoute.get(
+  "/expenses/filtered",
+  requireAuth,
+  getDataRateLimiter,
+  getFilteredExpense,
+);

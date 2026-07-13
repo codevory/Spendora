@@ -1,36 +1,27 @@
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo} from "react";
 import type { expenseTranscationTypes } from "../types/transactionType";
 import EmptyState from "./EmptyState";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
+import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton";
 
 interface TransactionsContentPropsType {
   query?: expenseTranscationTypes['categoryName'];
   data: expenseTranscationTypes[];
+  isFetching:boolean 
+  isError:boolean 
 }
 
-const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
+const TransactionsContent = ({ query, data,isError,isFetching }: TransactionsContentPropsType) => {
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
+
+
   const visibleData = useMemo(() => {
-    const filtered =
-      query === undefined ? data : data.filter((txn) => txn.categoryName === query);
-
-    const normalized = filtered.map((t) => {
-      return {
-        amount: t.amount,
-        categoryId:t.categoryId,
-        category: t.categoryName,
-        date: t.date,
-        type: t.type ?? "expense",
-        transactionId: t.transactionId,
-        name: t.paidTo,
-        timeStamp: new Date(t.date).getTime(),
-      };
-    });
-
-    return normalized.sort((a, b) => b.timeStamp - a.timeStamp);
+    return data
   }, [query, data]);
+
+const Expenses = visibleData || []
 
   const noData = (
     <div className="card glass flex min-h-80 flex-col items-center justify-center gap-4 border border-slate-700 text-center">
@@ -49,19 +40,26 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
     </div>
   );
 
-  if (!visibleData.length) {
+  
+  if(isFetching){
+    return <RecentTransactionsSkeleton />
+  }
+  
+  if(isError){
+    return <p>An error occured</p>
+  }
+  
+  if (Expenses.length === 0) {
     return <EmptyState content={noData} />;
   }
-
-  console.log('expenseTxn -> txnContent ',visibleData) //log here
   
   return (
-    <div className="transaction-container max-h-dvh overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900/70 p-3 shadow-lg">
+    <div className="transaction-container overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900/70 p-3 shadow-lg">
       <div className="mb-3 flex items-center justify-between px-1">
         <div>
           <h3 className="text-lg font-semibold text-slate-100">Transactions</h3>
           <p className="text-xs text-slate-400">
-            Showing {visibleData.length} records
+            Showing {Expenses.length} records
           </p>
         </div>
         <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300">
@@ -76,7 +74,7 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
       </div>
 
       <div className="space-y-2 pt-3">
-        {visibleData.map((txn, idx) => (
+        {Expenses.map((txn, idx) => (
           <Link
             key={txn.transactionId}
             to={`/transactions/tnx-details/${txn.transactionId}`}
@@ -89,7 +87,7 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
 
               <div className="min-w-0">
                 <p className="truncate font-medium text-slate-100">
-                  {txn.name}
+                  {txn.entity}
                 </p>
                 <p className="truncate text-xs text-slate-400">
                   {txn.transactionId.slice(0,8)} • {" "}
@@ -105,7 +103,12 @@ const TransactionsContent = ({ query, data }: TransactionsContentPropsType) => {
             </div>
           </Link>
         ))}
+         <span className="card glass transaction-item mb-4"></span>
+        {Expenses.length === 0 && !isFetching && (
+          <p className="text-center text-muted py-6">No transactions found.</p>
+        )}
       </div>
+      <span className="transaction-item"> </span>
     </div>
   );
 };

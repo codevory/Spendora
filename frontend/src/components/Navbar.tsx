@@ -1,9 +1,8 @@
 import ThemeSwitcher from "./ThemeSwitcher";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ProfileComponent from "./ProfileComponent";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import {
-  setError,
   setLoginStatus,
   setUserData,
 } from "../store/features/userAuthenication";
@@ -11,14 +10,15 @@ import DisplayUserOrigin from "./DisplayUserOrigin";
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
 import { checkAuth } from "../utils/helperFunctions/authUI";
-import { handleLogout } from "../utils/authService";
 import { useEffect, useMemo,useState } from "react";
+import Loader from "./Loader";
+import { useLogoutUser } from "../Hooks/useLogout";
 interface NavbarPropsType {
   onToggle: () => void;
 }
 
 const Navbar = ({ onToggle }: NavbarPropsType) => {
-  const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const dispatch = useAppDispatch();
   const [displayName, setDisplayName] = useState<string>("Guest");
   const [photoURL, setPhotoURL] = useState<string>("/default-man.webp");
@@ -48,16 +48,19 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
       setHasSession(true)
       dispatch(setLoginStatus(true))
       setDisplayName(user.fullName ?? user.username)
-      console.log("logged in")
     }
     else{
       dispatch(setUserData(null))
       setHasSession(false)
       dispatch(setLoginStatus(false))
       setDisplayName("Guest")
-      console.log("not loggedin")
     }
-   console.log(user)
+  }
+
+  const { handleLogout } = useLogoutUser(setIsSubmitting)
+
+  if(isSubmitting){
+    return <Loader />
   }
 
   return (
@@ -103,7 +106,7 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
             {isAuthenticated ? (
               <button
                 type="button"
-                onClick={() => handleLogout({dispatch:dispatch,setLoginStatus:setLoginStatus,setUserData:setUserData,setError:setError,navigate:navigate})}
+                onClick={handleLogout}
                 className="navbar-action-btn h-9 rounded-lg border border-slate-600/70 bg-slate-900 px-3 text-xs font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95 sm:h-10 sm:px-4 sm:text-sm"
               >
                 Logout

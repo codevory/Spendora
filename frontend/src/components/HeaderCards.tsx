@@ -153,7 +153,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
         <div className="mt-3 text-xs text-slate-400">
           Largest this week:{" "}
           {metrics.largestExpenseThisWeek
-            ? `${metrics.largestExpenseThisWeek.paidTo} (${formatCurrency(metrics.largestExpenseThisWeek.amount, currencyKey)})`
+            ? `${metrics.largestExpenseThisWeek.entity} (${formatCurrency(metrics.largestExpenseThisWeek.amount, currencyKey)})`
             : "No weekly expense"}
         </div>
       </div>

@@ -16,7 +16,6 @@ interface SignupFormPropsType {
   setCurrency:(val:string) => void;
   handleFormSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   isLoading: boolean;
-  handleSignupGoogle: () => void;
   errorMessage:string;
   isSubmitting:boolean
 }

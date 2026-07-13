@@ -13,6 +13,8 @@ import { handleRenameCategory } from "../utils/helperFunctions/handleFormActions
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
 import { useDeleteCategoryMutation, useGetCategoriesQuery, useRenameCategoryMutation } from "../store/features/transactionApi";
+import Loader from "./Loader";
+import SkeletalLoader from "./SkeletonLoader";
 
 type expenseDataType = {
   data:expenseTranscationTypes[]
@@ -23,12 +25,10 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryPropsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
-
-  console.log(isLoading)
   
-  const { data: categoryResponse } = useGetCategoriesQuery();
+  const { data: categoryResponse,isFetching,isLoading:loadingResp } = useGetCategoriesQuery();
   const categories = categoryResponse?.categories ?? [];
-  const [deleteCategoryTxn] = useDeleteCategoryMutation();
+  const [deleteCategoryTxn,{ isLoading:isLoadingDelete }] = useDeleteCategoryMutation();
   const [renameCategoryTxn] = useRenameCategoryMutation();
 
   const success = (mesg: string) => toast.success(mesg);
@@ -36,13 +36,23 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
   const { isDark } = useThemeContext();
   const onDelete = handleDeleteCategory;
 
+  if(isLoadingDelete || isSubmitting || loadingResp || isLoading
+  ){
+    return <Loader />
+  }
+
+  if(isFetching ){
+    return <SkeletalLoader />
+  }
   
   if (!data || !categories) return <EmptyState content={"No data available"} />;
+
+
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {categories.map((cat) => {
-          const usageCount = data.filter(
+          const usageCount = data?.filter(
             (item) => item.categoryId === cat.id,
           ).length;
           return (
@@ -91,6 +101,7 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
                       success: success,
                       failed: fail,
                       deleteCategoryTxn,
+                      setIsSubmitting:setIsSubmitting
                     })
                   }
                 >
@@ -112,7 +123,7 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
               form={
                 <AddNewCategoryForm
                   setModalState={() => setModalState("closed")}
-                  buttonContent={isSubmitting ? "Saving.." : "Save"}
+                  buttonContent={"Rename"}
                   formHeading="Rename Category"
                   categoryState={category}
                   setIsSubmitting={setIsSubmitting}
@@ -138,7 +149,6 @@ const DisplayAvailableCategories = ({ data }:expenseDataType) => {
             document.body,
           )
         : null}
-      {/* {isLoading ? <Loader /> : null} */}
     </div>
   );
 };

@@ -96,7 +96,7 @@ export const insightData = ({
 
     const biggestExpense = biggestTxn
       ? {
-          name: biggestTxn.paidTo,
+          name: biggestTxn.entity,
           amount: Number(biggestTxn.amount),
           date: biggestTxn.date,
         }

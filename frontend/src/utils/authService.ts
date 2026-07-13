@@ -1,12 +1,9 @@
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import toast from "react-hot-toast";
 import type { AppDispatch } from "../store/store";
 import {
   setLoginStatus,
   setUserData,
   setError,
 } from "../store/features/userAuthenication";
-import { Backend_Url } from "../store/features/transaction";
 
 interface HandleAuthProps {
   dispatch: AppDispatch;
@@ -15,117 +12,18 @@ interface HandleAuthProps {
   setUserData: typeof setUserData;
   setError: typeof setError;
 }
-interface handleGoogleSigninProps {
-  setIsLoading: (val: boolean) => void;
-  deps?: {
-    getFirebaseServices?: () => Promise<any>;
-    signInWithPopup?: (...args: any[]) => Promise<any>;
-    credentialFromResult?: (...args: any[]) => any;
-    credentialFromError?: (...args: any[]) => any;
-    success?: (...args: any[]) => any;
-    fail?: (...args: any[]) => any;
-  };
-}
 
-const success = (message: string) => toast.success(message);
-const fail = (message: string) => toast.error(message);
-
-async function loadFirebaseServices() {
-  const { getFirebaseServices } = await import("../backend/firebaseLazy");
-  return getFirebaseServices();
-}
-
-export async function handleGoogleSignin({
-  setIsLoading,
-  deps,
-}: handleGoogleSigninProps) {
-  try {
-    setIsLoading(true);
-    const getServices = deps?.getFirebaseServices ?? loadFirebaseServices;
-    const popupSignIn = deps?.signInWithPopup ?? signInWithPopup;
-    const fromResult =
-      deps?.credentialFromResult ?? GoogleAuthProvider.credentialFromResult;
-    const successToast = deps?.success ?? success;
-
-    const { auth, provider } = await getServices();
-    const result = await popupSignIn(auth, provider);
-
-    const credentials = fromResult(result);
-    console.log(credentials);
-    successToast("🎉 signin successfull");
-    console.log(result)
-    return result;
-
-
-  } catch (err: any) {
-    if (err instanceof Error) {
-      console.error(err);
-      const failToast = deps?.fail ?? fail;
-      failToast(err.message);
-    }
-    
-    const email = err.customData?.email;
-    const fromError =
-      deps?.credentialFromError ?? GoogleAuthProvider.credentialFromError;
-    const credential = fromError(err);
-    console.log(email);
-    console.log(credential);
-    throw err;
-  } finally {
-    setIsLoading(false);
-  }
-}
-
-export async function handleLogout({
-  dispatch,
-  setLoginStatus,
-  setUserData,
-  navigate
-}: HandleAuthProps) {
-
-  try{
-    const resp = fetch(`${Backend_Url}/api/auth/logout`,{
-      credentials:'include'
-    })
-    
-    if(!(await resp).ok){
-      fail("server responded with an error status")
-      throw new Error("server responded with an error status ")
-    }
-
-    (await resp).json()
-      dispatch(setLoginStatus(false));
-      dispatch(setUserData(null));
-      success("logout successfull 🫤")
-      navigate("/signin")
-  }
-    catch(err) {
-      fail("Failed to logout, server error")
-      console.error(err)
-    }
-
-}
 
 export async function handleDeleteAccount({
   dispatch,
-  navigate,
   setError,
   setLoginStatus,
-  setUserData,
 }: HandleAuthProps) {
-  const { auth } = await loadFirebaseServices();
-  if (!auth?.currentUser) {
-    dispatch(
-      setError({
-        message: "Account deletion requires a signed-in user.",
-        code: 404,
-      }),
-    );
-    return;
-  }
+dispatch(setError({
+  message:"Account deletion coming soon!",
+  code:500
+}))
+dispatch(setLoginStatus(true))
 
-  auth.currentUser.delete();
-  dispatch(setUserData(null));
-  dispatch(setLoginStatus(false));
-  navigate("/signup");
+
 }
