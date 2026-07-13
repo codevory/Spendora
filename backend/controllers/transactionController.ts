@@ -45,6 +45,23 @@ type RequestWithSession<
   session: SessionUser;
 };
 
+type CustomExpenseTransactionQuery = {
+  query? : string
+  page? : string
+  size? : string
+  skip? : string
+  from? : string
+  to?   : string
+}
+
+type CustomRequestWithSession<
+Params = unknown,
+ReqBody = unknown,
+ResBody = unknown,
+ReqQuery = unknown> = Request<Params,ReqBody,ResBody,ReqQuery> & {
+  session: SessionUser
+} 
+
 export async function getExpense(req: RequestWithSession, res: Response) {
   const db = await getDBConnection();
 
@@ -53,7 +70,7 @@ export async function getExpense(req: RequestWithSession, res: Response) {
       `SELECT 
         e.id,
         e.amount,
-        e.paid_to AS "paidTo",
+        e.paid_to AS entity,
         e.paid_on AS date,
         e.transaction_id AS "transactionId",
         c.name AS "categoryName",
@@ -178,7 +195,7 @@ export async function getIncome(req: RequestWithSession, res: Response) {
 
   try {
     const incomeResult = await db.query(
-      'SELECT id,amount,source, received_on as date,transaction_id as "transactionId",created_at as "createdAt" FROM userincome WHERE user_id = $1',
+      'SELECT id,amount,source AS entity, received_on as date,transaction_id as "transactionId",created_at as "createdAt" FROM userincome WHERE user_id = $1',
       [req.session.userId],
     );
 
@@ -253,4 +270,57 @@ ORDER BY "date" DESC
     console.error(error.message);
     return res.status(500).json({ error: "Internal server error " });
   }
+}
+
+export async function getFilteredExpense(req:CustomRequestWithSession<unknown,unknown,unknown,CustomExpenseTransactionQuery>,res:Response){
+  const db:any = await getDBConnection()
+
+  let date = new Date()
+  let prev_month = new Date().getMonth();
+  let day = date.getUTCDate() + 1
+  let start_date = new Date(`${date.getFullYear()} / ${prev_month} / ${day}`)
+  let end_date = new Date()
+
+  let { query,page,size,skip,from,to } = req.query
+  let search_query = query === undefined  || query === '' || query === " " ? null : query?.trim().toLowerCase()
+  let pageNum:number = page !== undefined ? Number(page) : 1;
+  let dataSize = size !== undefined ? Number(size) : 10;
+  let dataToSkip = pageNum <= 1 ? 0 : skip !== undefined ? Number(skip) : (pageNum - 1) * dataSize
+  let startDate = from === undefined  || from  === '' ? start_date : new Date(from)
+  let endDate = to == undefined || to == '' ? end_date : new Date(to)
+  endDate.setHours(23,59,59,999)
+
+  console.log("query :",query," page :",pageNum," size :",dataSize," skip :",dataToSkip," from :",startDate," to : ",endDate)
+  try {
+    
+    const result = await db.query(
+     `SELECT
+     e.id,
+     e.amount,
+     e.paid_to AS entity,
+     e.paid_on AS "date",
+     e.transaction_id AS "transactionId",
+     e.category_id AS "categoryId",
+     c.name AS "categoryName",
+     e.created_at AS "createdAt",
+     'expense' AS "type"
+     FROM userexpense e
+     LEFT JOIN expensecategories c ON e.category_id = c.id
+     WHERE e.user_id = $1 
+     AND e.paid_on >= $3 
+     AND e.paid_on <= $4
+     AND ($2::TEXT IS NULL OR $2 = ' ' OR c.name = $2::TEXT)
+     ORDER BY e.paid_on DESC
+     LIMIT $5
+     OFFSET $6
+     ;`,[req.session.userId,search_query,startDate,endDate,dataSize,dataToSkip]
+    )
+    return res.status(200).json({expenses : result.rows})
+
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Failed to get filtered expense : ", error.message);
+    return res.status(500).json({ error: ` Internal Server Error ` });
+  }
+
 }

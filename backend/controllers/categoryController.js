@@ -57,7 +57,11 @@ export async function renameCategory(req, res) {
   try {
     const category_renamed = await db.query(
       "UPDATE expensecategories SET name = $1 WHERE user_id = $2 AND id = $3 RETURNING id,name",
-      [category.name.trim(), req.session.userId, parseInt(category.id)],
+      [
+        category.name.trim().toLowerCase(),
+        req.session.userId,
+        parseInt(category.id),
+      ],
     );
 
     if (category_renamed.rows.length === 0) {
