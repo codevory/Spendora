@@ -135,7 +135,7 @@ export async function handleAddIncomeTransaction({
   const incomeData: IncomeTransactionTypes = {
     id:1,
     amount: amount !== "" ? amount : 0,
-    source: incomeSource,
+    entity: incomeSource,
     date: incomeDate,
     transactionId: crypto.randomUUID(),
     createdAt: Date.now(),
