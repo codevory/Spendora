@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TransactionsContent from "../components/TransactionsContent";
 import ViewTransactionDetails from "../components/ViewTransactionDetails";
-import { useGetCategoriesQuery, useGetExpenseTransactionsQuery } from "../store/features/transactionApi";
+import { useGetCategoriesQuery } from "../store/features/transactionApi";
 import type { expenseTranscationTypes } from "../types/transactionType";
-import { useUserData } from "../Hooks/useUserData";
+import { useFilteredExpense, useUserData } from "../Hooks/useUserData";
 import Layout from "../components/Layout";
 import TrendGraph from "../charts/TrendGraph";
+import styles from "../components/component.module.css"
 
 interface TransactionLayoutProps {
   onToggle: () => void;
@@ -15,11 +16,16 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [query, setQuery] = useState<expenseTranscationTypes["categoryName"] | undefined>();
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
-  const { data: expenseResponse } = useGetExpenseTransactionsQuery();
+  const [page,setPage] = useState<number>(1)
   const { data: categoryResponse } = useGetCategoriesQuery();
 
-  const data = expenseResponse?.expenses ?? [];
   const categoriesData = categoryResponse?.categories ?? [];
+
+    const PAGE_SIZE = 5;
+    const canGoPrev = page > 1
+  const { isError,isFetching,data } = useFilteredExpense({page,PAGE_SIZE,query,dateFrom,dateTo  })
+
+    const canGoNext = data?.expenses.length === PAGE_SIZE
 
   const categories = useMemo(
     () =>
@@ -30,7 +36,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   );
 
   const filteredData = useMemo(() => {
-    return data.filter((txn) => {
+    return data?.expenses.filter((txn) => {
       const matchesCategory = query ? txn.categoryName?.toLowerCase() === query.toLowerCase() : true;
 
       const txnDate = new Date(txn.date);
@@ -39,7 +45,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
 
       return matchesCategory && matchesStart && matchesEnd;
     });
-  }, [data, dateFrom, dateTo, query]);
+  }, [data?.expenses, dateFrom, dateTo, query]);
 
   const resetFilters = () => {
     setQuery(undefined);
@@ -47,7 +53,12 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
     setDateTo("");
   };
 
+  useEffect(() => {
+    setPage(1)
+  },[query,dateFrom,dateTo])
+
   const { lineData } = useUserData();
+
 
   return (
     <>
@@ -75,7 +86,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
                     Visible
                   </p>
                   <p className="mt-1 text-lg font-semibold text-slate-100">
-                    {filteredData.length}
+                    {filteredData?.length ?? 0 }
                   </p>
                 </div>
                 <div className="rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2">
@@ -106,7 +117,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+          <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_0.85fr] ">
             <div className="space-y-4 rounded-2xl border border-slate-700 bg-slate-800/70 p-4 md:p-5 shadow-lg">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
@@ -148,7 +159,20 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
                 </div>
               </div>
 
-              <TransactionsContent query={query} data={filteredData} />
+              <TransactionsContent 
+              query={query} 
+              data={data?.expenses || []} 
+              isFetching={isFetching}
+              isError={isError}
+              />
+
+              <div className="flex justify-between items-center ">
+              <button onClick={() => setPage((p) => Math.max(1,p - 1))} 
+              disabled={!canGoPrev || isFetching} className={styles.paginationButton}>prev</button>
+              <p>{page}</p>
+              <button onClick={() => setPage((p) => p + 1)} 
+              disabled={!canGoNext || isFetching} className={styles.paginationButton}>next</button>
+            </div>
             </div>
 
             <div className="space-y-4">

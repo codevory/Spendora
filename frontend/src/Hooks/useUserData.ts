@@ -2,9 +2,12 @@ import type { ChartData } from "chart.js";
 import type { IncomeTransactionTypes, expenseTranscationTypes } from "../types/transactionType";
 import { getUserOriginList } from "../utils/currency";
 import {
-  useGetExpenseTransactionsQuery,
   useGetIncomeTransactionsQuery,
+  useGetExpenseTransactionsQuery,
+  useGetFilteredExpenseTransactionsQuery
 } from "../store/features/transactionApi";
+import { useSimpleDebounce } from "./useSimpleDebounce";
+import { useEffect, useRef,useState } from "react";
 
 interface MonthlyDataTypes {
   expenses: expenseTranscationTypes[];
@@ -21,10 +24,11 @@ const now = new Date();
 const targetDate = (month: number) => new Date(now.getFullYear(), month, 1);
 
 export const useUserData = () => {
-  const { data: expenseResponse } = useGetExpenseTransactionsQuery();
+
+  const { data } = useGetExpenseTransactionsQuery()
   const { data: incomeResponse } = useGetIncomeTransactionsQuery();
 
-  const expenses = expenseResponse?.expenses ?? [];
+  const expenses = data?.expenses ?? [];
   const incomeTrans = incomeResponse?.income ?? [];
 
   const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -72,7 +76,6 @@ export const useUserData = () => {
     (label) => prevMonthData[label] ?? 0,
   );
 
-  console.log("currentmonthamount : ",currentMonthAmounts,currentLabels)
   const pieData: ChartData<"pie"> = {
     labels: currentLabels,
     datasets: [
@@ -159,8 +162,6 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
   const targetMonth = targetDate(month).getMonth();
   const targetYear = targetDate(month).getFullYear();
 
-  console.log("expen -> getMonthlyData :",expenses) //log here
-
   return expenses
     .filter((t) => {
       const date = new Date(t.date);
@@ -179,7 +180,6 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
 }
 
 function getMonthlyExpense({ expenses, month }: MonthlyDataTypes) {
-  console.log("expen -> getMonthlyExpense : ",expenses) //log here
 
   return expenses
     .filter((t) => {
@@ -202,7 +202,6 @@ interface MonthlyIncomeType {
   transactions: IncomeTransactionTypes[];
 }
 function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
-  console.log("incomeTxn -> getMonthlyIncome :", transactions)
   return transactions
     .filter((t) => {
       const date = new Date(t.date);
@@ -213,11 +212,54 @@ function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
         month: "short",
       });
       if (!acc[month]) {
-        console.log(curr.amount,curr.source)
         acc[month] = (acc[month] ?? 0) + Number(curr.amount);
       } else {
         acc[month] += Number(curr.amount);
       }
       return acc;
     }, {});
+}
+
+type useFilteredDataTypes = {
+query?: string 
+page?: number
+dateFrom?: string
+dateTo?: string
+PAGE_SIZE?:number
+}
+export function useFilteredExpense({query,page,dateFrom,dateTo,PAGE_SIZE}:useFilteredDataTypes){
+  const [showLoading,setShowLoading] = useState(false)
+
+     const debouncedQuery = useSimpleDebounce(query,200)
+
+      const { data,isError,isFetching} = useGetFilteredExpenseTransactionsQuery({
+        query:debouncedQuery,
+        page,
+        size:PAGE_SIZE,
+        from:dateFrom === undefined || dateFrom === '' ?  undefined : new Date(dateFrom).toISOString(),
+        to: dateTo === undefined || dateTo === '' ? undefined : new Date(dateTo).toISOString()
+      })
+
+      const lastValidData = useRef(data)
+      if(data){
+        lastValidData.current = data
+      }
+
+      const stableData = data ?? lastValidData.current
+
+      useEffect(() => {
+        let timer:number
+        if(isFetching){
+          timer = setTimeout(() => {
+            setShowLoading(true)
+          }, 300);
+        }
+        else{
+          setShowLoading(false)
+        }
+
+        return () => clearTimeout(timer)
+      },[isFetching])
+
+    return { data:stableData,isFetching:showLoading,isError}
 }

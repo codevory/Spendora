@@ -2,7 +2,7 @@
 export interface expenseTranscationTypes {
   id: number;              // Database autoincrement ID
   amount: number;
-  paidTo: string;
+  entity: string;
   date: string;
   categoryId: number;       // Ties directly to your database foreign key
   categoryName : string ;    // Joined from the categories table for easy rendering
@@ -14,7 +14,7 @@ export interface expenseTranscationTypes {
 export interface IncomeTransactionTypes {
   id:number
   amount: number;
-  source: string;
+  entity: string;
   date: string;
   transactionId: string;
   createdAt: number;
@@ -62,5 +62,15 @@ export interface handleAddExpenseTransactionProps {
   setPayee: (val: string) => void;
   setIsSubmitting: (val: boolean) => void;
   addTxn:AddTxnTriggerFn
+
+}
+
+export interface expenseTransactionParamsType {
+query ? : string
+page ? : number
+size ? : number
+skip ? : number
+from ? : string | Date,
+to ? : string | Date
 
 }
