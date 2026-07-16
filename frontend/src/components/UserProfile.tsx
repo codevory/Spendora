@@ -6,8 +6,7 @@ import { getUserOriginList } from "../utils/currency";
 import { setUserCountry } from "../store/features/userSelections";
 
 interface UserProfileProps {
-  name: string;
-  age?: number;
+  fullName: string;
   email: string;
   image?: string;
   onLogout?: () => void;
@@ -15,8 +14,7 @@ interface UserProfileProps {
 }
 
 const UserProfile = ({
-  name,
-  age,
+  fullName,
   email,
   image,
   onLogout,
@@ -52,17 +50,14 @@ const UserProfile = ({
         <div className="flex gap-3 items-center">
           <img
             src={image}
-            alt={name}
+            alt={fullName}
             width={78}
             height={78}
             className="h-20 w-20 rounded-2xl border border-slate-600 object-cover"
           />
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-semibold text-slate-100">{name}</h2>
+            <h2 className="text-2xl font-semibold text-slate-100">{fullName}</h2>
             <p className="text-sm text-slate-400">{email}</p>
-            {typeof age === "number" && age > 0 ? (
-              <p className="text-sm text-slate-300">Age: {age}</p>
-            ) : null}
           </div>
         </div>
         <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">

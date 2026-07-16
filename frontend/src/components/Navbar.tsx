@@ -26,7 +26,6 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   const isLoggedin = useAppSelector((state) => state.userData.isLoggedin);
   const { isDark } = useThemeContext();
 
-
     const isAuthenticated = useMemo(
     () => hasSession || isLoggedin,
     [hasSession, isLoggedin],
@@ -40,15 +39,15 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
     setPhotoURL("/default-man.webp");
   }, [isAuthenticated]);
 
-
   async function getUser(){
     const user = await checkAuth()
-    if(user?.username){
-      dispatch(setUserData({name:user.fullName ?? user.username,email:user.email}))
+    if(user){
+      dispatch(setUserData(user))
       setHasSession(true)
       dispatch(setLoginStatus(true))
       setDisplayName(user.fullName ?? user.username)
     }
+
     else{
       dispatch(setUserData(null))
       setHasSession(false)
@@ -58,7 +57,6 @@ const Navbar = ({ onToggle }: NavbarPropsType) => {
   }
 
   const { handleLogout } = useLogoutUser(setIsSubmitting)
-
   if(isSubmitting){
     return <Loader />
   }

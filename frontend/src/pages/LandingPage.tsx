@@ -1,34 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState,useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../store/store';
-import { checkAuth } from '../utils/helperFunctions/authUI';
-import { setLoginStatus, setUserData } from '../store/features/userAuthenication';
+import { useAppSelector } from '../store/store';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const statusMessage = useRef("")
   const [simulationAmount, setSimulationAmount] = useState<number>(150);
   const isLoggedin  = useAppSelector((state) => state.userData.isLoggedin)
-
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-    async function getUser(){
-      const user = await checkAuth()
-
-      if(user == null) return;
-
-      if(user?.ok){
-        dispatch(setUserData(user))
-        dispatch(setLoginStatus(user))
-        navigate("/")
-      }
-      return user
-    }
     
-    getUser()
-  },[])
-
-
   return (
     <div className="min-h-screen bg-[#0a0d1a] text-slate-200 font-sans selection:bg-indigo-600 selection:text-white relative overflow-hidden">
       
@@ -73,6 +52,7 @@ export const LandingPage = () => {
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-6">
             ✨ Capital Leak Diagnostic Dashboard Open
           </span>
+          <span id='status-message inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-6'>{statusMessage.current}</span>
           
           <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6 leading-[1.1]">
             Your unmonitored metrics <br />
