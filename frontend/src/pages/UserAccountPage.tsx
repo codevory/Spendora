@@ -25,10 +25,8 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
   const navigate = useNavigate();
   const { expenses: transactions, incomeTrans: incomes } = useUserData();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
-  const user = useAppSelector((state) => state.userData);
-  const data = user.userData;
-  const error = user.error;
-
+  const user = useAppSelector((state) => state.userData.user);
+  const error = useAppSelector((state) => state.userData.error)
 
   const accountStats = useMemo(() => {
     const totalExpense = transactions.reduce((acc, txn) => acc + Number(txn.amount), 0);
@@ -42,20 +40,15 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
       transactionCount: transactions.length,
     };
   }, [incomes, transactions]);
-  
 
   const onDelete = handleDeleteAccount;
-  const { handleLogout, isLoading } = useLogoutUser(setIsSubmitting)
-
-  if(isSubmitting){
-    return <Loader />
-  }
+  const { handleLogout } = useLogoutUser(setIsSubmitting)
 
   return (
     <Layout onToggle={onToggle} isOpen={isOpen}>
       <div className="bg-main min-h-[calc(100vh-4rem)] p-4 md:p-6">
-        {isLoading ? <Loader /> : null}
 
+        { isSubmitting ? <Loader /> : null}
         <div className="space-y-6">
           <section className="profile-hero rounded-2xl p-4 md:p-6 shadow-lg">
             <p className="text-xs tracking-[0.3em] text-slate-400">ACCOUNT</p>
@@ -75,10 +68,9 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1fr]">
             <UserProfile
-              name={data?.name || "Spendora User"}
-              email={data?.email || "No email"}
-              image={data?.image || "/default-man.webp"}
-              age={data?.age}
+              fullName={user?.fullName  || "Spendora User"}
+              email={user?.email || "No email"}
+              image={user?.image || "/default-man.webp"}
               onLogout={ handleLogout }
               onDeleteAccount={() =>
                 onDelete({
@@ -87,7 +79,6 @@ const UserAccountPage = ({ onToggle, isOpen }: UserAccountPropsType) => {
                   setLoginStatus: setLoginStatus,
                   setUserData: setUserData,
                   navigate: navigate,
-                  
                 })
               }
             />

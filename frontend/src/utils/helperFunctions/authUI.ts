@@ -1,4 +1,5 @@
-import { Backend_Url } from "../../store/features/transaction";
+import { Backend_Url } from "../../store/features/transactionApi";
+import type { userDataType } from "../../store/features/userAuthenication";
 
 export async function checkAuth() {
     try {
@@ -12,11 +13,11 @@ export async function checkAuth() {
           return null
         }
 
-    const user = await res.json()
-    if(user.isGuest){
+    const user:userDataType | null = await res.json()
+    if(!user){
         return null;
     }
-
+ 
     return user
 
     } catch (error) {

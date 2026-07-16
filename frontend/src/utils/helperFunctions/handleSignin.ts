@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { Backend_Url } from "../../store/features/transaction";
+import { Backend_Url } from "../../store/features/transactionApi";
 import type { Dispatch } from "@reduxjs/toolkit";
 import { setLoginStatus, setUserData} from "../../store/features/userAuthenication";
 
@@ -44,10 +44,21 @@ export async function handleSigninWithPassword({
     const user = await res.json()
     if(res.ok){
       success("Logged in successfully🎉")
+
+      const userData = {
+        fullName:user.fullName,
+        email:user.email,
+        username:user.username,
+        currency:user.currency,
+        created_at:user.created_at,
+        name:user.fullName ?? user.username,
+        image:undefined
+      }
+      localStorage.setItem("userData",JSON.stringify(userData))
+      dispatch(setUserData(userData))
       dispatch(setLoginStatus(true))
-      dispatch(setUserData(user))
       setIsLoading(false)
-      return user;
+      return userData;
     }
     else{
         setIsLoading(false)
@@ -58,6 +69,7 @@ export async function handleSigninWithPassword({
       fail(err.message)
     }
     console.error("Failed to login",err) 
+    fail("Internal server error to login")
     setIsLoading(false)
   }finally{
     setPassword("")
