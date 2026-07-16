@@ -17,8 +17,10 @@ export interface IncomeTransactionTypes {
   entity: string;
   date: string;
   transactionId: string;
-  createdAt: number;
+  createdAt: string;
   type: "income";
+  categoryId:null;
+  categoryName:null
 }
 
 export type CategoryPropsType  = {
@@ -74,3 +76,12 @@ from ? : string | Date,
 to ? : string | Date
 
 }
+
+export type ResponseuserDataType = {
+  fullName:string
+  email:string
+  username:string 
+  currency:string 
+  created_at:string
+}
+

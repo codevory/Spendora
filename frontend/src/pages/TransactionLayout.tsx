@@ -6,7 +6,7 @@ import type { expenseTranscationTypes } from "../types/transactionType";
 import { useFilteredExpense, useUserData } from "../Hooks/useUserData";
 import Layout from "../components/Layout";
 import TrendGraph from "../charts/TrendGraph";
-import styles from "../components/component.module.css"
+import PageNavigation from "../components/PageNavigation";
 
 interface TransactionLayoutProps {
   onToggle: () => void;
@@ -22,10 +22,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const categoriesData = categoryResponse?.categories ?? [];
 
     const PAGE_SIZE = 5;
-    const canGoPrev = page > 1
   const { isError,isFetching,data } = useFilteredExpense({page,PAGE_SIZE,query,dateFrom,dateTo  })
-
-    const canGoNext = data?.expenses.length === PAGE_SIZE
 
   const categories = useMemo(
     () =>
@@ -166,13 +163,7 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
               isError={isError}
               />
 
-              <div className="flex justify-between items-center ">
-              <button onClick={() => setPage((p) => Math.max(1,p - 1))} 
-              disabled={!canGoPrev || isFetching} className={styles.paginationButton}>prev</button>
-              <p>{page}</p>
-              <button onClick={() => setPage((p) => p + 1)} 
-              disabled={!canGoNext || isFetching} className={styles.paginationButton}>next</button>
-            </div>
+             <PageNavigation page={page} setPage={setPage} data={data?.expenses || []} isFetching={isFetching} marginFromBottom={2} />
             </div>
 
             <div className="space-y-4">

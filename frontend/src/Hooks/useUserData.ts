@@ -4,7 +4,8 @@ import { getUserOriginList } from "../utils/currency";
 import {
   useGetIncomeTransactionsQuery,
   useGetExpenseTransactionsQuery,
-  useGetFilteredExpenseTransactionsQuery
+  useGetFilteredExpenseTransactionsQuery,
+  useGetRecentTransactionsQuery
 } from "../store/features/transactionApi";
 import { useSimpleDebounce } from "./useSimpleDebounce";
 import { useEffect, useRef,useState } from "react";
@@ -230,7 +231,7 @@ PAGE_SIZE?:number
 export function useFilteredExpense({query,page,dateFrom,dateTo,PAGE_SIZE}:useFilteredDataTypes){
   const [showLoading,setShowLoading] = useState(false)
 
-     const debouncedQuery = useSimpleDebounce(query,200)
+     const debouncedQuery = useSimpleDebounce(query,100)
 
       const { data,isError,isFetching} = useGetFilteredExpenseTransactionsQuery({
         query:debouncedQuery,
@@ -262,4 +263,43 @@ export function useFilteredExpense({query,page,dateFrom,dateTo,PAGE_SIZE}:useFil
       },[isFetching])
 
     return { data:stableData,isFetching:showLoading,isError}
+}
+
+
+type RecentTransactionsType = {
+  page:number 
+  PAGE_SIZE:number
+}
+export function useRecentTransactions({page,PAGE_SIZE}:RecentTransactionsType){
+ const { data,isError,isFetching } = useGetRecentTransactionsQuery({
+  page,
+  size:PAGE_SIZE,
+  skip: page === undefined || page == 0 ? 0 : (page - 1) * PAGE_SIZE
+ })
+
+ let timer:number;
+ const [showLoading,setShowLoading] = useState(false)
+ 
+  let lastDataRef = useRef(data)
+ 
+  if(data){
+   lastDataRef.current = data
+  }
+  const stableData = data ?? lastDataRef.current
+
+
+ useEffect(() => {
+  if(isFetching){
+    timer = setTimeout(() => {
+     setShowLoading(true)
+    },200)
+  }
+  else{
+    setShowLoading(false)
+  }
+
+  return () => clearTimeout(timer)
+ },[isFetching])
+
+ return { data:stableData,isError,isFetching:showLoading}
 }

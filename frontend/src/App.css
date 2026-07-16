@@ -29,6 +29,9 @@ input::-webkit-inner-spin-button {
 .transaction-container::-webkit-scrollbar {
   display: none;
 }
+.transaction-activity::-webkit-scrollbar{
+display: none;
+}
 
 .analysis-container::-webkit-scrollbar {
   display: none;

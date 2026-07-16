@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import type {
   GetTransactionsResponse,
   RecentTransactionsType,
@@ -6,6 +6,7 @@ import type {
 import type {
   CategoryPropsType,
   IncomeTransactionTypes,
+  ResponseuserDataType,
   expenseTransactionParamsType,
   expenseTranscationTypes,
 } from "../../types/transactionType.ts";
@@ -22,29 +23,31 @@ type IncomeResponse = {
   income: IncomeTransactionTypes[];
 };
 
-type ExpenseMutationResponse = {
-  transactionData: expenseTranscationTypes;
-};
-
-type IncomeMutationResponse = {
-  incomeData: IncomeTransactionTypes;
-};
-
 type CategoryMutationResponse = {
   category: CategoryPropsType;
 };
 
-
+export type loginDataType = {
+  email:string 
+  password:string
+}
+const staggeredBaseQuery = retry(
+  fetchBaseQuery({
+    baseUrl:`${Backend_Url}/api`,
+    credentials:"include",
+    timeout:10000
+  }),
+  { 
+    maxRetries:2
+  }
+)
 
 export const transactionApi = createApi({
   reducerPath: "transactionApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${Backend_Url}/api`,
-    credentials: "include",
-  }),
+  baseQuery: staggeredBaseQuery,
 
   refetchOnFocus : true,
-  tagTypes: ["Transactions", "Expenses", "Income", "Categories"],
+  tagTypes: ["RecentTransactions", "Expenses", "Income", "Categories"],
   endpoints: (builder) => ({
     getRecentTransactions: builder.query<GetTransactionsResponse, RecentTransactionsType>({
       query: ({ page, size, skip }) => ({
@@ -55,13 +58,13 @@ export const transactionApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              { type: "Transactions" as const, id: "LIST" },
+              { type: "RecentTransactions" as const, id: "LIST" },
               ...result.transactions.map((transaction) => ({
-                type: "Transactions" as const,
+                type: "RecentTransactions" as const,
                 id: transaction.transactionId,
               })),
             ]
-          : [{ type: "Transactions" as const, id: "LIST" }],
+          : [{ type: "RecentTransactions" as const, id: "LIST" }],
     }),
     getExpenseTransactions: builder.query<{ expenses: expenseTranscationTypes[] }, void>({
       query: () => ({
@@ -111,27 +114,117 @@ export const transactionApi = createApi({
             ]
           : [{ type: "Categories" as const, id: "LIST" }],
     }),
-    addExpenseTxn: builder.mutation<ExpenseMutationResponse, { transactionData: expenseTranscationTypes }>({
+   addExpenseTxn: builder.mutation<{transactionData:expenseTranscationTypes}, { transactionData: expenseTranscationTypes }>({
       query: ({ transactionData }) => ({
         url: "/transaction/addExpense",
         method: "POST",
         body: { transactionData },
       }),
+
       invalidatesTags: [
-        { type: "Transactions", id: "LIST" },
-        { type: "Expenses", id: "LIST" }
+        { type : "Expenses", id:"LIST"},
+        { type : "RecentTransactions", id: "LIST"}
       ],
+      async onQueryStarted({ transactionData }, { queryFulfilled, dispatch }) {
+        const optimisticExpense = {
+          ...transactionData,
+          amount: Number(transactionData.amount),
+          createdAt: new Date().toISOString(), 
+        };
+
+        const patchRecent = dispatch(
+          transactionApi.util.updateQueryData(
+            "getRecentTransactions",
+            { page: 1, size: 7, skip: 0 },
+            (draftList) => {
+              if (draftList && Array.isArray(draftList.transactions)) {
+                draftList.transactions.unshift(optimisticExpense);
+                draftList.size = Number(draftList.size) + 1;
+              }
+            }
+          )
+        );
+
+        const patchExpenseTab = dispatch(
+          transactionApi.util.updateQueryData(
+            "getExpenseTransactions",
+            undefined,
+            (draftList) => {
+              if (draftList && Array.isArray(draftList.expenses)) {
+                draftList.expenses.unshift(transactionData);
+              }
+            }
+          )
+        );
+
+        const patchFilteredExpense = dispatch(
+          transactionApi.util.updateQueryData("getFilteredExpenseTransactions",{page:1,size:7,skip:0,query:undefined,from:undefined,to:undefined},(draftList) => {
+            if(draftList && Array.isArray(draftList.expenses)){
+              draftList.expenses.unshift(optimisticExpense)
+            }
+          })
+        )
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchRecent.undo();
+          patchExpenseTab.undo();
+          patchFilteredExpense.undo()
+          console.error("Mutation failed, rolling back optimistic UI updates.");
+        }
+      }
     }),
-    addIncomeTxn: builder.mutation<IncomeMutationResponse, { incomeData: IncomeTransactionTypes }>({
+
+    addIncomeTxn: builder.mutation<{incomeData: IncomeTransactionTypes}, { incomeData: IncomeTransactionTypes }>({
       query: ({ incomeData }) => ({
         url: "/transaction/addIncome",
         method: "POST",
         body: { incomeData },
       }),
-      invalidatesTags: [
-        { type: "Transactions", id: "LIST" },
-        { type: "Income", id: "LIST" },
+      invalidatesTags:[
+        { type:"RecentTransactions", id: "LIST"},
+        { type: "Income", id: "LIST" }
       ],
+      async onQueryStarted({ incomeData }, { queryFulfilled, dispatch }) {
+        const optimisticIncome = {
+          ...incomeData,
+          amount: Number(incomeData.amount),
+          createdAt: new Date().toISOString(),
+        };
+
+        const patchRecent = dispatch(
+          transactionApi.util.updateQueryData(
+            "getRecentTransactions",
+            { page: 1, size: 7, skip: 0 },
+            (draftList) => {
+              if (draftList && Array.isArray(draftList.transactions)) {
+                draftList.transactions.unshift(optimisticIncome);
+              }
+            }
+          )
+        );
+
+        const patchIncomeTab = dispatch(
+          transactionApi.util.updateQueryData(
+            "getIncomeTransactions",
+            undefined,
+            (draftList) => {
+              if (draftList && Array.isArray(draftList.income)) {
+                draftList.income.unshift(incomeData);
+              }
+            }
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchRecent.undo();
+          patchIncomeTab.undo();
+          console.error("Mutation failed, rolling back optimistic UI updates.");
+        }
+      }
     }),
     addCategory: builder.mutation<CategoryMutationResponse, { name: string }>({
       query: ({ name }) => ({
@@ -153,7 +246,7 @@ export const transactionApi = createApi({
           : [
               { type: "Categories" as const, id: "LIST" },
               { type: "Categories" as const, id: category.id },
-              {type: "Transactions" as const, id: "LIST"},
+              {type: "RecentTransactions" as const, id: "LIST"},
               { type: "Expenses" as const, id: "LIST"}
             ],
     }),
@@ -166,7 +259,7 @@ export const transactionApi = createApi({
       invalidatesTags: [
         { type: "Categories", id: "LIST" },
         { type: "Expenses", id: "LIST"},
-        { type: "Transactions", id: "LIST"}
+        { type: "RecentTransactions", id: "LIST"}
       ],
     }),
 
@@ -176,22 +269,35 @@ export const transactionApi = createApi({
         method: "GET"
       })
     }),
+    loginUser: builder.mutation<ResponseuserDataType,loginDataType>({
+      query: ({email,password}) => ({
+       url: "/auth/login",
+       method: "POST",
+       body: {email,password}
+      })
+    }),
+    getUserProfile: builder.query<ResponseuserDataType,void>({
+      query: () => ({
+        url : "/auth/me",
+        method: "GET"
+      })
+    }),
 
     getFilteredExpenseTransactions : builder.query<{expenses: expenseTranscationTypes[]},expenseTransactionParamsType>({
       query: ({query,page,size,skip,from,to}) => ({
         url: "transaction/expenses/filtered",
         method: "GET",
-       params: {query,page,size,skip,from,to}
+        params: {query,page,size,skip,from,to}
       }),
       providesTags: (result) => 
         result 
       ? [
-        { type: "Transactions" as const, id: "LIST"},
+        { type: "RecentTransactions" as const, id: "LIST"},
         ...result.expenses.map((transaction) => ({
-          type: "Transactions" as const, id: transaction.transactionId
+          type: "RecentTransactions" as const, id: transaction.transactionId
         })),
       ] : 
-      [{type : "Transactions" as const, id: "LIST"}]
+      [{type : "RecentTransactions" as const, id: "LIST"}]
     })
   })
 });

@@ -1,12 +1,12 @@
 import React, { Suspense, useMemo, useState } from "react";
 import AddTransactionForm from "../components/AddTransactionForm";
 import RecentTransactions from "../components/RecentTransactions";
-import { useUserData } from "../Hooks/useUserData";
+import { useRecentTransactions, useUserData } from "../Hooks/useUserData";
 import { useAppSelector } from "../store/store";
 import HeaderCards from "./HeaderCards";
 import { formatCurrency } from "../utils/currency";
 import GraphSkeleton from "./GraphSkeleton";
-
+import PageNavigation,{ PAGE_SIZE } from "./PageNavigation"
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
 }
@@ -21,7 +21,8 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
 
   const { expenses: transactions, lineData } = useUserData();
-
+  const [page, setPage] = useState(1)
+  const { data, isFetching, isError } = useRecentTransactions({page,PAGE_SIZE})
 
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const weeklySnapshot = useMemo(() => {
@@ -176,8 +177,9 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               Latest debits and credits in chronological order.
             </p>
           </div>
-          <div className="transactions-box h-72 overflow-y-auto mb-10 lg:mb-3">
-            <RecentTransactions />
+          <div className="transactions-box mb-20 md:mb-2.7 relative transaction-activity-box">
+            <RecentTransactions data={data} isFetching={isFetching} isError={isError} />
+            <PageNavigation data={data?.transactions || []} isFetching={isFetching} page={page} setPage={setPage} marginFromBottom={11.5} />
           </div>
         </section>
       </div>

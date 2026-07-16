@@ -2,8 +2,9 @@ import GraphSkeleton from "../components/GraphSkeleton";
 import Layout from "../components/Layout";
 import MonthlyInsights from "../components/MonthlyInsights";
 import RecentTransactions from "../components/RecentTransactions";
-import { useUserData } from "../Hooks/useUserData";
-import React, { Suspense } from "react";
+import { useRecentTransactions, useUserData } from "../Hooks/useUserData";
+import React, { Suspense,useState } from "react";
+import PageNavigation from "../components/PageNavigation";
 
 interface AnalyticsPropsType {
   onToggle: () => void;
@@ -15,7 +16,9 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
   );
   const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
   const { analysisData } = useUserData();
-
+  const PAGE_SIZE = 7;
+   const [page, setPage] = useState<number>(1);
+   const { data, isFetching, isError } = useRecentTransactions({page,PAGE_SIZE})
   
   return (
     <div className="bg-main">
@@ -51,9 +54,17 @@ const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
               </div>
             </div>
 
-            <div className="xl:col-span-2 rounded-b-2xl ">
-              <RecentTransactions />
+
+             <div className="rounded-2xl xl:col-span-2 border border-slate-700 bg-slate-800/70 p-4 md:p-5 shadow-lg">
+                <h2 className="recent-transactions-title text-lg font-semibold mb-4">
+                 Recent Transactions
+                </h2>
+            <div className="xl:col-span-2 mb-4 rounded-b-2xl  relative transaction-box">
+              <RecentTransactions data={data} isError={isError} isFetching={isFetching} />
+              <PageNavigation data={data?.transactions ?? []} isFetching={isFetching} page={page} setPage={setPage} marginFromBottom={0} />
             </div>
+
+             </div>
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-5">
