@@ -120,10 +120,10 @@ input[type="number"] {
 }
 
 .graph-buttons {
-  @apply w-30 h-10 bg-black text-white p-2 rounded-xl cursor-pointer active:scale-95;
+  @apply w-25 h-9 bg-black text-white p-2 rounded-xl cursor-pointer active:scale-95;
 }
 .active-graphTab {
-  @apply scale-105 w-35 bg-emerald-700;
+  @apply scale-95 w-30 bg-emerald-700;
 }
 .buttons-tab {
   @apply h-14  text-white p-2 flex justify-center  gap-10;

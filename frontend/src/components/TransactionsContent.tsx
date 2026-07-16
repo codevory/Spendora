@@ -103,12 +103,10 @@ const Expenses = visibleData || []
             </div>
           </Link>
         ))}
-         <span className="card glass transaction-item mb-4"></span>
         {Expenses.length === 0 && !isFetching && (
           <p className="text-center text-muted py-6">No transactions found.</p>
         )}
       </div>
-      <span className="transaction-item"> </span>
     </div>
   );
 };
