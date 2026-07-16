@@ -23,7 +23,7 @@ export const useLogoutUser = (setIsSubmitting:(val:boolean) => void) => {
         timer = setTimeout(async () => {
                await triggerLogout()
                .unwrap()
-            .catch((err) => {
+               .catch((err) => {
                 console.error("Backend logout failed, proceeding with client cleanup", err);
                 failed("an error occured to logout")
             }).finally(() => {

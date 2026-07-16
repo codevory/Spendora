@@ -17,16 +17,15 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
   const [email, setEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
-  const { isLoggedin} = useAppSelector((state) => state.userData)
+  const isLoggedin = useAppSelector((state) => state.userData.isLoggedin)
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (isLoggedin) {
+    if (isLoggedin) { 
       navigate("/")
     }
-
     return;
   }, [dispatch, isLoggedin,1]);
 

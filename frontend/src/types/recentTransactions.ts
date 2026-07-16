@@ -3,26 +3,26 @@ export interface ExpenseTransaction {
   amount: number;
   type: "expense";
   entity: string;
-  date: Date;
+  date: string;
   transactionId: string;
   categoryId: number;
   categoryName: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
-export interface IncomeTransaction {
+export interface IncomeTransactionResponse {
   id: number;
   amount: number;
   type: "income";
   entity: string;
-  date: Date;
+  date: string;
   transactionId: string;
   categoryId: null;
   categoryName: null;
-  createdAt: Date;
+  createdAt: string;
 }
 
-export type Transaction = ExpenseTransaction | IncomeTransaction;
+export type Transaction = ExpenseTransaction | IncomeTransactionResponse;
 
 export interface GetTransactionsResponse {
   transactions: Transaction[];

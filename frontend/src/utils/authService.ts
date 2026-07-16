@@ -24,6 +24,4 @@ dispatch(setError({
   code:500
 }))
 dispatch(setLoginStatus(true))
-
-
 }

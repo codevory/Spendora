@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 
 type TransactionItem = {
   amount: number;
-  paidTo: string;
+  entity: string;
   date: string;
   categoryId: string | number;
   transactionId: string;
@@ -15,7 +15,7 @@ type ExpenseRequestBody = {
 
 type IncomeItem = {
   amount: number;
-  source: string;
+  entity: string;
   date: string;
   transactionId: string;
 };
@@ -120,7 +120,7 @@ export async function addExpense(
     SELECT 
     e.id,
     e.amount,
-    e.paid_to AS "paidTo",
+    e.paid_to AS "entity",
     e.paid_on AS "date",
     e.category_id AS "categoryId",
     e.transaction_id AS "transactionId",
@@ -132,7 +132,7 @@ export async function addExpense(
     const expenseCreated = await db.query(query, [
       req.session.userId,
       transactionData.amount,
-      transactionData.paidTo,
+      transactionData.entity,
       transactionData.date,
       transactionData.categoryId,
       transactionData.transactionId,
@@ -168,11 +168,11 @@ export async function addIncome(
 
   try {
     const incomeCreated = await db.query(
-      'INSERT INTO userincome (user_id,amount,source,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount,source, received_on as date,transaction_id as "transactionId",created_at as "createdAt" ',
+      'INSERT INTO userincome (user_id,amount,source,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount,source AS entity, received_on as date,transaction_id as "transactionId",created_at as "createdAt" ',
       [
         req.session.userId,
         incomeData.amount,
-        incomeData.source,
+        incomeData.entity,
         incomeData.transactionId,
         incomeData.date,
       ],

@@ -2,10 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface userDataType {
-  name?: string;
-  email?: string;
+  fullName: string;
+  email: string;
   image?: string;
-  age?: number;
+  username:string;
+  currency:string;
+  created_at :string;
+  name:string;
 }
 
 function getStoredUserData(): userDataType | null {
@@ -21,14 +24,14 @@ function getStoredUserData(): userDataType | null {
 }
 
 interface initialStateType {
-  userData: userDataType | null;
+  user: userDataType | null;
   isLoading: boolean;
   error: { message: string; code: number } | null;
   isLoggedin: boolean;
 }
 const storedUserData = getStoredUserData();
 const initialState: initialStateType = {
-  userData: storedUserData,
+  user: storedUserData,
   isLoggedin: Boolean(storedUserData?.email),
   error: null,
   isLoading: false,
@@ -40,14 +43,10 @@ const userAuth = createSlice({
   reducers: {
     setUserData: (
       state,
-      action: PayloadAction<initialStateType["userData"]>,
+      action: PayloadAction<userDataType | null>,
     ) => {
-      state.userData = action.payload;
-      if (action.payload) {
-        localStorage.setItem("userData", JSON.stringify(action.payload));
-      } else {
-        localStorage.removeItem("userData");
-      }
+      state.user = action.payload
+      localStorage.setItem("userData",JSON.stringify(action.payload))
     },
     setLoginStatus: (state, action: PayloadAction<boolean>) => {
       state.isLoggedin = action.payload;

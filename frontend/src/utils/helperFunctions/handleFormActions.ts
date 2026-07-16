@@ -8,9 +8,6 @@ import type {
   RenameCategoryTriggerFn,
   IncomeTransactionTypes,
 } from "../../types/transactionType";
-import {
-  Backend_Url
-} from "../../store/features/transaction";
 
 type commonTypes = Pick<
   handleAddExpenseTransactionProps,
@@ -79,32 +76,15 @@ export async function handleAddExpenseTransaction({
     transactionId: tId,
   };
 
-
-  // setIsSubmitting(true);
-
-  // dispatch(addExpense(transactionData))
-  //   .unwrap()
-  //   .then(() => {
-  //     success();
-  //   })
-  //   .catch((err) => {
-  //     failed(err || "Failed to add Expense");
-  //   })
-  //   .finally(() => {
-  //     setAmount(1);
-  //     setPayee("");
-  //     setIsSubmitting(false);
-  //   });
-
   try{
     setIsSubmitting(true)
     await addTxn({
       transactionData
     })
     .unwrap()
-    .then(() => {
+     .then(() => {
       success()
-    })
+     })
   }
     catch(err){
      failed("Failed to add Expense")
@@ -138,25 +118,28 @@ export async function handleAddIncomeTransaction({
     entity: incomeSource,
     date: incomeDate,
     transactionId: crypto.randomUUID(),
-    createdAt: Date.now(),
+    createdAt: Date.now().toString(),
     type: "income",
+    categoryId:null,
+    categoryName:null
   };
 
     setIsSubmitting(true)
     await addIncomeTxn({ incomeData })
     .unwrap()
     .then(() => {
-      success("income added successfully🎉")
+      return success("income added successfully🎉")
     })
     .catch((err:any) => {
-      failed(err ?? "Failed to add Income")
+      console.error(err)
+      failed("Failed to add, internal server error")
+      return 
     })
     .finally(() => {
       setIsSubmitting(false)
       setModalState("closed")
     })
   }
-
 
 export async function handleAddCategoryDB({  
   e,
@@ -184,10 +167,12 @@ export async function handleAddCategoryDB({
        await addCategoryTxn({ name })
        .unwrap() //.unwrap() allows us to listen to success/error inside the component
        .then(() => {
-         success("category added successfully🎉")
+         return success("category added successfully🎉")
         })
         .catch((err:any) => {
-          failed(err || "Failed to add Category😩")
+          failed("Internal server error to add Category")
+          console.error(err)
+          return ;
         })
         .finally(() => {
           setCategory("")
@@ -223,48 +208,18 @@ export function handleDeleteCategory({
    deleteCategoryTxn({ category })
    .unwrap()
    .then(() => {
-     success(`${category.name} deleted successfully🎉`)
+     return success(`${category.name} deleted successfully🎉`)
    })
    .catch((err:any) => {
      console.error(err)
-     failed(err || "Failed to delete ")
+     return failed("Internal server error to delete category")
    }).finally(() => {
      setIsSubmitting(false)
     Timer = null
    })
   
  }, 900);
-
-
 }
-  
-export async function getCategories(): Promise<CategoryPropsType[]> {
-    try {
-     const result = await fetch(`${Backend_Url}/api/data/categories`,{
-      credentials:'include'
-     })
-
-     const res = await result.json()
-
-     if(!result.ok){
-      console.error("Failed to get categories")
-     }
-      const categories = res.categories ?? []
-
-      console.log("got categories from api : ",categories) //log here
-
-      return categories
-     
-     } catch (err:any) {
-       if(err instanceof Error){
-         console.error(err.message)
-       }
-       console.error(err)
-     }
-  
-  return []
-  }
-
 
 export interface HandleRenameCategoryProps {
   e: React.SubmitEvent<HTMLFormElement>;
@@ -308,7 +263,9 @@ export function handleRenameCategory({
         success("renamed successfully🎉");
       })
       .catch((err:any) => {
-        fail(err || "Failed to rename");
+        fail("Internal server error to rename");
+        console.error(err)
+        return ;
       })
       .finally(() => {
         setIsLoading(false);

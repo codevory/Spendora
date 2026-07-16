@@ -21,7 +21,7 @@ const Signup = ({ isOpen, onToggle }: SignupPropsType) => {
   const [errorMessage,setErrorMessage] = useState<string>('')
   const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
 
-  const { isLoggedin } = useAppSelector((state) => state.userData)
+  const isLoggedin  = useAppSelector((state) => state.userData.isLoggedin)
 
   const navigate = useNavigate();
   
