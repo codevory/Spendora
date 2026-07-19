@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
 import type { GetTransactionsResponse, Transaction } from "../types/recentTransactions";
-import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton.tsx";
+import TransactionsSkeleton from "./TransactionsSkeleton.tsx";
 
 type DisplayTransaction = Transaction & {
   name: string;
@@ -37,7 +37,7 @@ const RecentTransactions = ({ data, isFetching, isError}:RecentTransactionProps)
   }, [recentTxns]);
 
   if (isFetching) {
-    return <RecentTransactionsSkeleton />;
+    return <TransactionsSkeleton />;
   }
 
   if (isError) {

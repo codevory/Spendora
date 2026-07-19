@@ -4,7 +4,7 @@ import type { expenseTranscationTypes } from "../types/transactionType";
 import EmptyState from "./EmptyState";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
-import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton";
+import TransactionsSkeleton from "./TransactionsSkeleton";
 
 interface TransactionsContentPropsType {
   query?: expenseTranscationTypes['categoryName'];
@@ -42,7 +42,7 @@ const Expenses = visibleData || []
 
   
   if(isFetching){
-    return <RecentTransactionsSkeleton />
+    return <TransactionsSkeleton />
   }
   
   if(isError){

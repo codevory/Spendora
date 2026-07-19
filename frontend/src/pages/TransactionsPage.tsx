@@ -1,0 +1,206 @@
+import { useEffect, useMemo, useState } from "react";
+import TransactionsContent from "../components/TransactionsContent";
+import ViewTransactionDetails from "../components/ViewTransactionDetails";
+import { useGetCategoriesQuery } from "../store/features/transactionApi";
+import type { expenseTranscationTypes } from "../types/transactionType";
+import { useFilteredExpense, useUserData } from "../Hooks/useUserData";
+import Layout from "../components/Layout";
+import TrendGraph from "../charts/TrendGraph";
+import PageNavigation, { PAGE_SIZE } from "../components/PageNavigation";
+
+interface TransactionLayoutProps {
+  onToggle: () => void;
+  isOpen: boolean;
+}
+const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
+  const [query, setQuery] = useState<expenseTranscationTypes["categoryName"] | undefined>();
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+  const [page,setPage] = useState<number>(1)
+  const { data: categoryResponse } = useGetCategoriesQuery();
+
+  const categoriesData = categoryResponse?.categories ?? [];
+
+  const { isError,isFetching,data } = useFilteredExpense({page,PAGE_SIZE,query,dateFrom,dateTo  })
+
+  const categories = useMemo(
+    () =>
+      [
+        ...new Set(categoriesData.map((c) => c.name)),
+      ] as expenseTranscationTypes["categoryName"][],
+    [categoriesData],
+  );
+
+  const filteredData = useMemo(() => {
+    return data?.expenses.filter((txn) => {
+      const matchesCategory = query ? txn.categoryName?.toLowerCase() === query.toLowerCase() : true;
+
+      const txnDate = new Date(txn.date);
+      const matchesStart = dateFrom ? txnDate >= new Date(dateFrom) : true;
+      const matchesEnd = dateTo ? txnDate <= new Date(dateTo) : true;
+
+      return matchesCategory && matchesStart && matchesEnd;
+    });
+  }, [data?.expenses, dateFrom, dateTo, query]);
+
+  const resetFilters = () => {
+    setQuery(undefined);
+    setDateFrom("");
+    setDateTo("");
+  };
+
+  useEffect(() => {
+    setPage(1)
+  },[query,dateFrom,dateTo])
+
+  const { lineData } = useUserData();
+
+
+  return (
+    <>
+      <Layout onToggle={onToggle} isOpen={isOpen}>
+        <div className="container-main space-y-6">
+          <section className="transactions-hero rounded-2xl p-4 md:p-6 shadow-lg">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-xs tracking-wider text-slate-400">
+                  TRANSACTIONS
+                </p>
+                <h1 className="mt-2 text-2xl md:text-3xl font-bold text-slate-100">
+                  Browse and inspect spending
+                </h1>
+                <p className="mt-2 max-w-2xl text-sm md:text-base text-slate-300">
+                  Filter by category or date range to quickly find a
+                  transaction, then compare it against your broader spending
+                  trend.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Visible
+                  </p>
+                  <p className="mt-1 text-lg font-semibold text-slate-100">
+                    {filteredData?.length ?? 0 }
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Categories
+                  </p>
+                  <p className="mt-1 text-lg font-semibold text-slate-100">
+                    {categories.length}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Date filter
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-slate-100">
+                    {dateFrom || "Start"} → {dateTo || "End"}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Focus
+                  </p>
+                  <p className="mt-1 text-sm font-medium text-slate-100">
+                    {query ?? "All categories"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+            <div className="space-y-2 overflow-y-scroll mb-6 relative transaction-activity rounded-2xl border border-slate-700 bg-slate-800/70 p-2 md:p-5 shadow-lg ">
+              <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-100">
+                    Transaction list
+                  </h2>
+                  <p className="text-sm text-slate-400">
+                    Use the filter bar to narrow down the records below.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    value={query ?? ""}
+                    onChange={(e) =>
+                      setQuery(
+                        e.target.value
+                          ? (e.target.value as expenseTranscationTypes["categoryName"])
+                          : undefined,
+                      )
+                    }
+                    className="input min-w-44"
+                  >
+                    <option value="">All Categories</option>
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="rounded-xl border border-slate-600 bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-slate-600 active:scale-95"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+
+              <TransactionsContent 
+              query={query} 
+              data={data?.expenses || []} 
+              isFetching={isFetching}
+              isError={isError}
+              />
+
+             <PageNavigation page={page} setPage={setPage} data={data?.expenses || []} isFetching={isFetching} marginFromBottom={1} />
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-3 md:p-5 shadow-lg">
+                <ViewTransactionDetails
+                  data={filteredData}
+                  dateFrom={dateFrom}
+                  dateTo={dateTo}
+                  setDateFrom={setDateFrom}
+                  setDateTo={setDateTo}
+                  handleSearchTxns={() => undefined}
+                />
+              </div>
+
+              <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-4 md:p-5 shadow-lg">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-100">
+                      Spending trend
+                    </h2>
+                    <p className="text-sm text-slate-400">
+                      Monthly comparison of your recorded expenses.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <div className="min-w-140 min-h-110">
+                    <TrendGraph data={lineData} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </Layout>
+    </>
+  );
+};
+
+export default TransactionsPage;
