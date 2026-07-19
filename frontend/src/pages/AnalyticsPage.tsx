@@ -10,11 +10,10 @@ interface AnalyticsPropsType {
   onToggle: () => void;
   isOpen: boolean;
 }
+const DistributionGraph = React.lazy(() => import("../charts/DistributionGraph"));
+const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
+
 const AnalyticsPage = ({ onToggle, isOpen }: AnalyticsPropsType) => {
-  const DistributionGraph = React.lazy(
-    () => import("../charts/DistributionGraph"),
-  );
-  const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
   const { analysisData } = useUserData();
   const PAGE_SIZE = 7;
    const [page, setPage] = useState<number>(1);

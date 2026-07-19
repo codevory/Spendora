@@ -5,15 +5,14 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import EmptyState from "./components/EmptyState";
 import SkeletalLoader from "./components/SkeletonLoader";
 import { LandingPage } from "./pages/LandingPage";
-import ProtectedRoute from "./components/protectedRoute"; // <-- Import your guard component
-
+import ProtectedRoute from "./components/protectedRoute"; 
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
+import UserAccountPage from "./pages/UserAccountPage";
+import TransactionsPage from "./pages/TransactionsPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import CategoriesPage from "./pages/CategoriesPage";
 const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
-const Signup = React.lazy(() => import("./pages/Signup"));
-const Signin = React.lazy(() => import("./pages/Signin"));
-const UserAccountPage = React.lazy(() => import("./pages/UserAccountPage"));
-const TransactionLayout = React.lazy(() => import("./pages/TransactionLayout"));
-const AnalyticsPage = React.lazy(() => import("./pages/AnalyticsPage"));
-const CategoriesPage = React.lazy(() => import("./pages/CategoriesPage"));
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -24,9 +23,7 @@ function App() {
     <>
       <Suspense fallback={<SkeletalLoader />}>
         <Routes>
-          {/* =========================================================
-             1. PUBLIC ROUTES (Anyone can visit)
-             ========================================================= */}
+
           <Route path="/welcome" element={<LandingPage />} />
           <Route
             path="/signup"
@@ -37,9 +34,7 @@ function App() {
             element={<Signin isOpen={isOpen} onToggle={toggleSidebar} />}
           />
 
-          {/* =========================================================
-             2. PROTECTED ROUTES (Requires authentication)
-             ========================================================= */}
+
           <Route element={<ProtectedRoute />}>
             <Route
               path="/"
@@ -54,13 +49,13 @@ function App() {
             <Route
               path="/transactions"
               element={
-                <TransactionLayout isOpen={isOpen} onToggle={toggleSidebar} />
+                <TransactionsPage isOpen={isOpen} onToggle={toggleSidebar} />
               }
             />
             <Route
               path="/transactions/tnx-details/:id"
               element={
-                <TransactionLayout isOpen={isOpen} onToggle={toggleSidebar} />
+                <TransactionsPage isOpen={isOpen} onToggle={toggleSidebar} />
               }
             />
             <Route
