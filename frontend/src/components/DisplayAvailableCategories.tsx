@@ -1,8 +1,7 @@
 import type {
   CategoryPropsType,
-  expenseTranscationTypes
 } from "../types/transactionType";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import EmptyState from "./EmptyState";
 import toast from "react-hot-toast";
@@ -12,23 +11,20 @@ import AddNewCategoryForm from "./AddCategoryForm";
 import { handleRenameCategory } from "../utils/helperFunctions/handleFormActions";
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
-import { useDeleteCategoryMutation, useGetCategoriesQuery, useRenameCategoryMutation } from "../store/features/transactionApi";
+import { useDeleteCategoryMutation, useRenameCategoryMutation } from "../store/features/transactionApi";
 import Loader from "./Loader";
 import SingleSkeleton from "./SingleSkeleton";
+import { useGetCategories } from "../Hooks/useUserData";
 
-type expenseDataType = {
-  data: expenseTranscationTypes[]
-}
-
-const DisplayAvailableCategories = ({ data }: expenseDataType) => {
+const DisplayAvailableCategories = () => {
   const [modalState, setModalState] = useState<"income" | "category" | "closed">("closed");
   const [category, setCategory] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryPropsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
-  const { data: categoryResponse, isFetching, isLoading: loadingResp } = useGetCategoriesQuery();
-  const categories = categoryResponse?.categories ?? [];
+  // const { data: categoryResponse, isFetching, isLoading: loadingResp } = useGetCategoriesQuery();
+  const { data, isError, isFetching} = useGetCategories()
   const [deleteCategoryTxn, { isLoading: isLoadingDelete }] = useDeleteCategoryMutation();
   const [renameCategoryTxn] = useRenameCategoryMutation();
 
@@ -37,18 +33,10 @@ const DisplayAvailableCategories = ({ data }: expenseDataType) => {
   const { isDark } = useThemeContext();
   const onDelete = handleDeleteCategory;
 
-  // Performance Optimization: Pre-calculate counts so we don't scan the array inside a map loop
-  const categoryUsageMap = useMemo(() => {
-    const counts: Record<string, number> = {};
-    if (!data) return counts;
-    for (let i = 0; i < data.length; i++) {
-      const catId = data[i].categoryId;
-      if (catId) {
-        counts[catId] = (counts[catId] || 0) + 1;
-      }
-    }
-    return counts;
-  }, [data]);
+  const categories = useMemo(() => {
+    const categoryData = data?.categories ?? []
+    return categoryData
+  },[data])
 
   // Dynamic Theme Styling Utilities
   const cardBg = isDark 
@@ -60,14 +48,18 @@ const DisplayAvailableCategories = ({ data }: expenseDataType) => {
   const pillBg = isDark ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/10" : "bg-indigo-50 text-indigo-600";
   const actionBorder = isDark ? "border-slate-800/80" : "border-slate-100";
 
-  if (isLoadingDelete || isSubmitting || loadingResp || isLoading) {
+  if (isLoadingDelete || isSubmitting || isFetching || isLoading) {
     return <Loader />;
   }
   
-  if (!isFetching && (!data || categories.length === 0)) {
+  if (!isFetching && (!data || data.categories.length === 0)) {
     return <EmptyState content={"No data available"} />;
   }
 
+  if(isError){
+    fail("Failed to get categories")
+    return <EmptyState content="oops! an error occured, we are working on it" />
+  }
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -88,9 +80,7 @@ const DisplayAvailableCategories = ({ data }: expenseDataType) => {
                 </div>
               </div>
             ))
-          : categories.map((cat) => {
-              const usageCount = categoryUsageMap[cat.id] || 0;
-              
+          : categories.map((cat) => {              
               return (
                 <article
                   key={cat.id}
@@ -120,7 +110,7 @@ const DisplayAvailableCategories = ({ data }: expenseDataType) => {
                       </div>
 
                       <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold shadow-sm whitespace-nowrap ${pillBg}`}>
-                        {usageCount} {usageCount === 1 ? 'txn' : 'txns'}
+                        {cat.transactionCount} {cat.transactionCount === 1 ? 'txn' : 'txns'}
                       </span>
                     </div>
 

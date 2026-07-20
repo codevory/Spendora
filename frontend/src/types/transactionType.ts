@@ -26,6 +26,7 @@ export interface IncomeTransactionTypes {
 export type CategoryPropsType  = {
   name: string;
   id : number
+  transactionCount:number
 }
 
 export type RecentTransactionsType = {
