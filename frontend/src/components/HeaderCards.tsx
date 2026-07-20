@@ -85,20 +85,19 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
       }`}>
         <div className="flex items-center justify-between">
           <p className={`${labelText} text-[10px] font-bold uppercase tracking-widest`}>Net Balance</p>
-          {!showLoader && (
+          {(showLoader ? <SingleSkeleton width={12} height={2} /> :
             <span className={`px-1 py-0.5 rounded text-[10px] font-bold ${
               metrics.monthlyIncomeChange <= 0 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
             }`}>
-              {metrics.monthlyIncomeChange > 0 ? "+" : ""}{metrics.monthlyIncomeChange.toFixed(0)}% MoM
+              {metrics.monthlyIncomeChange > 0 ? "+" : ""} {metrics.monthlyIncomeChange.toFixed(0)}% MoM
             </span>
           )}
         </div>
 
-        <div className="flex items-center justify-between gap-2">
-          {showLoader ? (
-            <SingleSkeleton width={24} height={6} />
-          ) : (
-            <div className={`text-xl font-black tracking-tight ${metrics.monthlyNet >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+          {showLoader ?
+            <SingleSkeleton width={20} height={4} />
+           : (
+            <div className={`text-xl font-black tracking-tight mr-10 ${metrics.monthlyNet >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
               {formatCurrency(metrics.monthlyNet, currencyKey)}
             </div>
           )}
@@ -110,16 +109,15 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           >
             Add Income
           </button>
-        </div>
         
         <div className={`space-y-1 border-t pt-2 ${borderMuted}`}>
           <div className="text-[11px] flex items-center justify-between">
             <span className={labelText}>Income</span>
-            {showLoader ? <SingleSkeleton width={12} height={4} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyIncome, currencyKey)}</span>}
+            {showLoader ? <SingleSkeleton width={12} height={2} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyIncome, currencyKey)}</span>}
           </div>
           <div className="text-[11px] flex items-center justify-between">
             <span className={labelText}>Spent</span>
-            {showLoader ? <SingleSkeleton width={12} height={4} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyExpense, currencyKey)}</span>}
+            {showLoader ? <SingleSkeleton width={12} height={2} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyExpense, currencyKey)}</span>}
           </div>
         </div>
       </div>
@@ -128,7 +126,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
       <div className={`p-3.5 backdrop-blur-md rounded-xl border border-l-4 border-l-indigo-500 shadow-md shadow-indigo-500/5 flex flex-col justify-center gap-2 ${cardBg}`}>
         <div className="flex items-center justify-between">
           <p className={`${labelText} text-[10px] font-bold uppercase tracking-widest`}>Monthly Spending</p>
-          {!showLoader && (
+          {showLoader ? <SingleSkeleton width={10} height={3} /> : (
             <span className={`px-1 py-0.5 rounded text-[10px] font-bold ${
               metrics.monthlyExpenseChange > 0 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
             }`}>
@@ -137,13 +135,11 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           )}
         </div>
 
-        <div className="flex items-center h-7">
           {showLoader ? (
-            <SingleSkeleton width={28} height={6} />
+            <SingleSkeleton width={20} height={6} />
           ) : (
             <h2 className="text-xl font-black tracking-tight">{formatCurrency(metrics.monthlyExpense, currencyKey)}</h2>
           )}
-        </div>
 
         <div className={`border-t pt-2 ${borderMuted}`}>
           <div className="flex justify-between items-center mb-1 text-[10px] font-bold uppercase tracking-wide">
@@ -152,7 +148,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           </div>
           <div className={`h-1.5 w-full rounded-full overflow-hidden ${isDark ? "bg-slate-950" : "bg-slate-100"}`}>
             <div
-              className="h-full bg-linear-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
+              className="h-full bg-linear-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-700"
               style={{ width: showLoader ? "0%" : `${metrics.spendingProgress}%` }}
             ></div>
           </div>
@@ -163,7 +159,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
       <div className={`p-3.5 backdrop-blur-md rounded-xl border border-l-4 border-l-orange-500 shadow-md shadow-orange-500/5 flex flex-col justify-center gap-2 sm:col-span-2 lg:col-span-1 ${cardBg}`}>
         <div className="flex items-center justify-between">
           <p className={`${labelText} text-[10px] font-bold uppercase tracking-widest`}>Top Category</p>
-          {!showLoader && (
+          {showLoader ? <SingleSkeleton width={10} height={3} /> : (
             <span className="px-1 py-0.5 bg-orange-500/10 text-orange-500 text-[10px] font-bold rounded">
               {metrics.topCategoryShare.toFixed(0)}% Share
             </span>
@@ -172,16 +168,14 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
 
         <div className="flex items-center h-7">
           {showLoader ? (
-            <SingleSkeleton width={32} height={6} />
+            <SingleSkeleton width={20} height={6} />
           ) : (
             <h2 className="text-xl font-black tracking-tight truncate capitalize">{metrics.topCategory.category ?? "No Data"}</h2>
           )}
         </div>
         
         <div className={`border-t pt-2 text-[11px] ${borderMuted} ${labelText}`}>
-          {showLoader ? (
-            <SingleSkeleton width={36} height={4} />
-          ) : (
+          {!showLoader && (
             <div className="flex justify-between items-center gap-2">
               <span className="whitespace-nowrap">Weekly Max:</span>
               <span className={`font-semibold truncate max-w-[65%] ${subText}`}>

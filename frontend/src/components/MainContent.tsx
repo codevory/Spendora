@@ -161,24 +161,35 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               </div>
 
               <div className="grid grid-cols-3 gap-2 mt-1">
-                <div className={`p-2 rounded-lg text-center ${snapshotBoxBg}`}>
+                {
+                  showLoader ? <SingleSkeleton width={12} height={4} /> : 
+                  <div className={`p-2 rounded-lg text-center ${snapshotBoxBg}`}>
                   <p className={`text-[10px] font-medium ${labelMuted}`}>Spent</p>
                   <p className="mt-0.5 text-xs font-black text-rose-400 truncate">
-                    {showLoader ? <SingleSkeleton width={14} height={4} /> : formatCurrency(weeklySnapshot.totalSpent, currencyKey)}
+                    {formatCurrency(weeklySnapshot.totalSpent, currencyKey)}
                   </p>
                 </div>
+                }
+
+                {
+                showLoader ? <SingleSkeleton width={12} height={4} /> :
                 <div className={`p-2 rounded-lg text-center ${snapshotBoxBg}`}>
                   <p className={`text-[10px] font-medium ${labelMuted}`}>Txns</p>
                   <p className={`mt-0.5 text-xs font-black truncate ${titleColor}`}>
                     {showLoader ? <SingleSkeleton width={8} height={4} /> : weeklySnapshot.count}
                   </p>
                 </div>
+                }
+
+                {
+                showLoader ? <SingleSkeleton width={12} height={4} /> : 
                 <div className={`p-2 rounded-lg text-center ${snapshotBoxBg}`}>
                   <p className={`text-[10px] font-medium ${labelMuted}`}>Top Type</p>
                   <p className="mt-0.5 text-xs font-black text-indigo-400 truncate capitalize">
-                    {weeklySnapshot.topCategory ? weeklySnapshot.topCategory[0] : "None"}
+                    {showLoader ? <SingleSkeleton /> : (weeklySnapshot.topCategory ? weeklySnapshot.topCategory[0] : "None")}
                   </p>
                 </div>
+                }
               </div>
             </div>
           </div>
