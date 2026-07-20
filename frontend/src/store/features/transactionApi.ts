@@ -35,6 +35,12 @@ type CategoryMutationResponse = {
   category: CategoryPropsType;
 };
 
+type RenameCategoryProps ={
+name:string,
+id:number
+}
+
+
 export type expenseResponseDataType = {
   expenses: expenseTranscationTypes[],
   meta: {
@@ -257,7 +263,7 @@ export const transactionApi = createApi({
       }),
       invalidatesTags: [{ type: "Categories", id: "LIST" }],
     }),
-    renameCategory: builder.mutation<CategoryMutationResponse, { category: CategoryPropsType }>({
+    renameCategory: builder.mutation<CategoryMutationResponse, { category: RenameCategoryProps }>({
       query: ({ category }) => ({
         url: "/data/renameCategory",
         method: "POST",

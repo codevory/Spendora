@@ -76,7 +76,7 @@ const CategoriesPage = ({ onToggle, isOpen }: CategoriesPagePropsType) => {
                 </div>
               </div>
 
-              <DisplayAvailableCategories data={expenseTransactions} />
+              <DisplayAvailableCategories />
             </div>
 
             <div className="space-y-4 min-h-60 mb-20 lg:mb-5">
