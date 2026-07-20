@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import type {
-  GetTransactionsResponse,
+  GetRecentTransactionsResponse,
   RecentTransactionsType,
 } from "../../types/recentTransactions.ts";
 import type {
@@ -20,12 +20,35 @@ type CategoryResponse = {
 };
 
 type IncomeResponse = {
-  income: IncomeTransactionTypes[];
+  incomes: IncomeTransactionTypes[];
+  meta: {
+    page: number,
+    skip : number,
+    size: {
+      requested: number,
+      received: number
+    }
+  }
 };
 
 type CategoryMutationResponse = {
   category: CategoryPropsType;
 };
+
+export type expenseResponseDataType = {
+  expenses: expenseTranscationTypes[],
+  meta: {
+    page: number,
+    skip: number,
+    query: string | null,
+    from: string,
+    to: string,
+    size: {
+      requested: number,
+      received: number
+    }
+  }
+}
 
 export type loginDataType = {
   email:string 
@@ -49,7 +72,7 @@ export const transactionApi = createApi({
   refetchOnFocus : true,
   tagTypes: ["RecentTransactions", "Expenses", "Income", "Categories"],
   endpoints: (builder) => ({
-    getRecentTransactions: builder.query<GetTransactionsResponse, RecentTransactionsType>({
+    getRecentTransactions: builder.query<GetRecentTransactionsResponse, RecentTransactionsType>({
       query: ({ page, size, skip }) => ({
         url: "/transaction/transactions",
         method: "GET",
@@ -66,7 +89,7 @@ export const transactionApi = createApi({
             ]
           : [{ type: "RecentTransactions" as const, id: "LIST" }],
     }),
-    getExpenseTransactions: builder.query<{ expenses: expenseTranscationTypes[] }, void>({
+    getExpenseTransactions: builder.query<expenseResponseDataType, void>({
       query: () => ({
         url: "/transaction/expenses",
         method: "GET",
@@ -91,7 +114,7 @@ export const transactionApi = createApi({
         result
           ? [
               { type: "Income" as const, id: "LIST" },
-              ...result.income.map((income) => ({
+              ...result?.incomes.map((income) => ({
                 type: "Income" as const,
                 id: income.transactionId,
               })),
@@ -139,7 +162,7 @@ export const transactionApi = createApi({
             (draftList) => {
               if (draftList && Array.isArray(draftList.transactions)) {
                 draftList.transactions.unshift(optimisticExpense);
-                draftList.size = Number(draftList.size) + 1;
+                draftList.meta.size.received = Number(draftList.meta.size.received) + 1;
               }
             }
           )
@@ -210,8 +233,8 @@ export const transactionApi = createApi({
             "getIncomeTransactions",
             undefined,
             (draftList) => {
-              if (draftList && Array.isArray(draftList.income)) {
-                draftList.income.unshift(incomeData);
+              if (draftList && Array.isArray(draftList.incomes)) {
+                draftList.incomes.unshift(incomeData);
               }
             }
           )
@@ -283,9 +306,9 @@ export const transactionApi = createApi({
       })
     }),
 
-    getFilteredExpenseTransactions : builder.query<{expenses: expenseTranscationTypes[]},expenseTransactionParamsType>({
+    getFilteredExpenseTransactions : builder.query<expenseResponseDataType,expenseTransactionParamsType>({
       query: ({query,page,size,skip,from,to}) => ({
-        url: "transaction/expenses/filtered",
+        url: "transaction/expenses",
         method: "GET",
         params: {query,page,size,skip,from,to}
       }),

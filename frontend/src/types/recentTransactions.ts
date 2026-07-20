@@ -24,10 +24,18 @@ export interface IncomeTransactionResponse {
 
 export type Transaction = ExpenseTransaction | IncomeTransactionResponse;
 
-export interface GetTransactionsResponse {
+export interface GetRecentTransactionsResponse {
+  meta: {
+    page: number
+    skip: number
+    from : string
+    to: string
+    size: {
+      requested: number
+      received: number
+    }
+  },
   transactions: Transaction[];
-  page: number;
-  size: number;
 }
 export type RecentTransactionsType = {
   page ? : number,

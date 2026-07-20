@@ -24,7 +24,7 @@ type IncomeRequestBody = {
   incomeData: IncomeItem;
 };
 
-type TransactionQuery = {
+type QueryParamsType = {
   page?: string
   size?: string
   skip?: string
@@ -45,7 +45,7 @@ type RequestWithSession<
   session: SessionUser;
 };
 
-type CustomExpenseTransactionQuery = {
+type CustomQueryParamsType = {
   query? : string
   page? : string
   size? : string
@@ -62,32 +62,10 @@ ReqQuery = unknown> = Request<Params,ReqBody,ResBody,ReqQuery> & {
   session: SessionUser
 } 
 
-export async function getExpense(req: RequestWithSession, res: Response) {
-  const db = await getDBConnection();
 
-  try {
-    const expensesResult = await db.query(
-      `SELECT 
-        e.id,
-        e.amount,
-        e.paid_to AS entity,
-        e.paid_on AS date,
-        e.transaction_id AS "transactionId",
-        c.name AS "categoryName",
-        e.category_id AS "categoryId"
-        FROM userexpense e
-        LEFT JOIN expensecategories c ON e.category_id = c.id
-        WHERE e.user_id = $1`,
-      [req.session.userId],
-    );
-
-    return res.status(200).json({ expenses: expensesResult.rows });
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error(String(err));
-    console.error("Error getting expense : ", error.message);
-    return res.status(500).json({ error: "Internal server Error" });
-  }
-}
+  let now = new Date()
+  let startDateDefault = new Date(now.getFullYear(), now .getMonth() - 3, now.getDate())
+  let endDateDefault = now
 
 export async function addExpense(
   req: RequestWithSession<unknown, unknown, ExpenseRequestBody>,
@@ -190,16 +168,63 @@ export async function addIncome(
   }
 }
 
-export async function getIncome(req: RequestWithSession, res: Response) {
+export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,CustomQueryParamsType>, res: Response) {
   const db = await getDBConnection();
+
+  const { page, size, skip, from, to} = req.query
+
+ let start_date = !from ? startDateDefault : new Date(from)
+ let end_date = !to ? endDateDefault : new Date(to)
+ end_date.setHours(23,59,59,999)
+
+  let pageNum = page !== undefined && parseInt(page) > 0 ? Math.max(parseInt(page), 1) : 1
+  if(isNaN(pageNum) || pageNum < 0){
+  pageNum = 1
+  }
+
+  let dataSize = size !== undefined ? Math.min(parseInt(size), 250) : 250
+  if(isNaN(dataSize) || dataSize < 0){
+    dataSize = 250
+  }
+
+  let dataToSkip = skip !== undefined && parseInt(skip) > 0 ? Math.max(parseInt(skip), 0) : (pageNum - 1) * dataSize
+  if(isNaN(dataToSkip) || dataToSkip < 0){
+    dataToSkip = (pageNum - 1) * dataSize
+  }
 
   try {
     const incomeResult = await db.query(
-      'SELECT id,amount,source AS entity, received_on as date,transaction_id as "transactionId",created_at as "createdAt" FROM userincome WHERE user_id = $1',
-      [req.session.userId],
+      `SELECT 
+       id,
+       amount,
+       source AS entity,
+       received_on as "date",
+       transaction_id as "transactionId",
+       created_at as "createdAt" 
+       FROM userincome 
+       WHERE user_id = $1 AND received_on >= $2
+       AND received_on <= $3
+
+       ORDER BY received_on DESC
+       LIMIT $4
+       OFFSET $5
+       `,
+      [req.session.userId,start_date,end_date,dataSize,dataToSkip],
     );
 
-    return res.status(200).json({ income: incomeResult.rows });
+    return res.status(200).json({
+      meta: {
+       page: pageNum,
+       skip: dataToSkip,
+       from: start_date,
+       to: end_date,
+       size: {
+         requested: dataSize,
+         received: incomeResult.rows.length
+       }
+      },
+      incomes: incomeResult.rows,
+      });
   } catch (err) {
     const error = err instanceof Error ? err : new Error(String(err));
     console.error("Failed to get income : ", error.message);
@@ -207,16 +232,32 @@ export async function getIncome(req: RequestWithSession, res: Response) {
   }
 }
 
-export async function getTransactions(
-  req: RequestWithSession<unknown, unknown, unknown, TransactionQuery>,
+export async function getRecentTransactions(
+  req: RequestWithSession<unknown, unknown, unknown, CustomQueryParamsType>,
   res: Response,
 ) {
   const db = await getDBConnection();
-  const { page, size, skip } = req.query;
+  const { page, size, skip, from, to } = req.query;
 
-  let pageNum:number = page !== undefined ? parseInt(page) : 1;
-  let dataSize:number = size !== undefined ? parseInt(size) : 5;
-  let dataToSkip = skip !== undefined ? parseInt(skip) : pageNum === 1 ? 0 : (pageNum - 1) * dataSize;
+  let start_date = !from ? startDateDefault : new Date(from)
+  let end_date = !to ? endDateDefault : new Date(to)
+  end_date.setHours(23,59,59,999)
+
+  let pageNum:number = page !== undefined ? Math.max(parseInt(page), 1) : 1;
+  if(isNaN(pageNum) || pageNum < 0){
+    pageNum = 1
+  }
+
+  let dataSize:number = size !== undefined ? Math.min(parseInt(size),20) : 20 ;
+  if(isNaN(dataSize) || dataSize < 0){
+    dataSize = 20
+  }
+
+  let dataToSkip = skip !== undefined ? parseInt(skip) : (pageNum - 1) * dataSize;
+  if(isNaN(dataToSkip) || dataToSkip < 0){
+    dataToSkip = 0;
+    pageNum = 1;
+  }
 
   console.log("page :", pageNum, "size :", dataSize, "skip : ", dataToSkip);
   try {
@@ -251,18 +292,27 @@ UNION ALL
  ui.created_at AS "createdAt"
  FROM userincome ui
  WHERE ui.user_id = $1
+ AND ui.received_on >= $2 AND ui.received_on <= $3
 )
 ORDER BY "date" DESC
- LIMIT $2
- OFFSET $3
+ LIMIT $4
+ OFFSET $5
  ;
     `,
-      [req.session.userId, dataSize, dataToSkip],
+      [req.session.userId,start_date,end_date, dataSize, dataToSkip],
     );
 
     return res.status(200).json({
-      page: page,
-      size: size,
+      meta: {
+        page: pageNum,
+        skip: dataToSkip,
+        from: start_date,
+        to: end_date,
+        size: {
+          requested: dataSize,
+          received: txnResult.rows.length
+        }
+      },
       transactions: txnResult.rows,
     });
   } catch (err) {
@@ -272,27 +322,28 @@ ORDER BY "date" DESC
   }
 }
 
-export async function getFilteredExpense(req:CustomRequestWithSession<unknown,unknown,unknown,CustomExpenseTransactionQuery>,res:Response){
+export async function getExpense(req:CustomRequestWithSession<unknown,unknown,unknown,CustomQueryParamsType>,res:Response){
   const db:any = await getDBConnection()
 
-  let date = new Date()
-  let prev_month = new Date().getMonth();
-  let day = date.getUTCDate() + 1
-  let start_date = new Date(`${date.getFullYear()} / ${prev_month} / ${day}`)
-  let end_date = new Date()
-
   let { query,page,size,skip,from,to } = req.query
-  let search_query = query === undefined  || query === '' || query === " " ? null : query?.trim().toLowerCase()
-  let pageNum:number = page !== undefined ? Number(page) : 1;
-  let dataSize = size !== undefined ? Number(size) : 10;
-  let dataToSkip = pageNum <= 1 ? 0 : skip !== undefined ? Number(skip) : (pageNum - 1) * dataSize
-  let startDate = from === undefined  || from  === '' ? start_date : new Date(from)
-  let endDate = to == undefined || to == '' ? end_date : new Date(to)
-  endDate.setHours(23,59,59,999)
 
-  console.log("query :",query," page :",pageNum," size :",dataSize," skip :",dataToSkip," from :",startDate," to : ",endDate)
+  let search_query = !query || query.trim() === '' ? null : query?.trim().toLowerCase()
+  let pageNum = page !== undefined ? Math.max(Number(page), 1) : 1;
+  let dataSize = !size || Number(size) < 0 ? 250 : Math.min(Number(size), 250)
+
+  let dataToSkip = pageNum == 1 ? 0 : skip !== undefined ? Number(skip) : (pageNum - 1) * dataSize ;
+  if(isNaN(dataToSkip) || dataToSkip < 0){
+    pageNum = 1
+    dataToSkip = 0
+  }
+
+  let start_date = !from ? startDateDefault : new Date(from)
+  let end_date = !to ? endDateDefault : new Date(to)
+  end_date.setHours(23,59,59,999)
+
+  console.log("query :",query," page :",pageNum," size :",dataSize," skip :",dataToSkip," from :",start_date," to : ",end_date)
+  
   try {
-    
     const result = await db.query(
      `SELECT
      e.id,
@@ -313,9 +364,22 @@ export async function getFilteredExpense(req:CustomRequestWithSession<unknown,un
      ORDER BY e.paid_on DESC
      LIMIT $5
      OFFSET $6
-     ;`,[req.session.userId,search_query,startDate,endDate,dataSize,dataToSkip]
+     ;`,[req.session.userId,search_query,start_date,end_date,dataSize,dataToSkip]
     )
-    return res.status(200).json({expenses : result.rows})
+    return res.status(200).json({
+      meta:{
+        query: search_query,
+        page: pageNum,
+        skip: dataToSkip,
+        from: start_date,
+        to: end_date,
+        size:{
+          requested:dataSize,
+          received:result.rows.length
+        }
+      },
+      expenses : result.rows
+    })
 
   } catch (err) {
     const error = err instanceof Error ? err : new Error(String(err));
