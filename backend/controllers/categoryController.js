@@ -1,20 +1,5 @@
 import { getDBConnection } from "../db/getBDConnection.js";
 
-export async function getCategories(req, res) {
-  const db = await getDBConnection();
-  try {
-    const categoriesResult = await db.query(
-      "SELECT id, name FROM expensecategories WHERE user_id = $1 ORDER BY id DESC",
-      [req.session.userId],
-    );
-
-    return res.status(200).json({ categories: categoriesResult.rows });
-  } catch (err) {
-    console.error("error getting categories : ", err.message);
-    return res.status(500).json({ error: `internal server error ` });
-  }
-}
-
 export async function addNewCategory(req, res) {
   const db = await getDBConnection();
 
@@ -108,5 +93,30 @@ export async function deleteCategory(req, res) {
   } catch (err) {
     console.error("error causing to delete ", err.message);
     return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function getCategories(req, res) {
+  const db = await getDBConnection();
+
+  try {
+    const categoriesResult = await db.query(
+      `SELECT 
+      c.id,
+      c.name,
+      COUNT(c.name) AS "transactionCount"
+      FROM expensecategories c
+      LEFT JOIN userexpense e ON c.id = e.category_id
+      WHERE c.user_id = $1 
+      GROUP BY c.name,c.id
+      ORDER BY "transactionCount" DESC
+      `,
+      [req.session.userId],
+    );
+
+    return res.status(200).json({ categories: categoriesResult.rows });
+  } catch (err) {
+    console.error("error getting categories : ", err.message);
+    return res.status(500).json({ error: `internal server error ` });
   }
 }

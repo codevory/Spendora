@@ -12,7 +12,7 @@ interface TransactionLayoutProps {
   onToggle: () => void;
   isOpen: boolean;
 }
-const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
+const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [query, setQuery] = useState<expenseTranscationTypes["categoryName"] | undefined>();
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
@@ -203,4 +203,4 @@ const TransactionLayout = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   );
 };
 
-export default TransactionLayout;
+export default TransactionsPage;

@@ -5,7 +5,8 @@ import {
   useGetIncomeTransactionsQuery,
   useGetExpenseTransactionsQuery,
   useGetFilteredExpenseTransactionsQuery,
-  useGetRecentTransactionsQuery
+  useGetRecentTransactionsQuery,
+  useGetCategoriesQuery
 } from "../store/features/transactionApi";
 import { useSimpleDebounce } from "./useSimpleDebounce";
 import { useEffect, useRef,useState } from "react";
@@ -30,7 +31,7 @@ export const useUserData = () => {
   const { data: incomeResponse } = useGetIncomeTransactionsQuery();
 
   const expenses = data?.expenses ?? [];
-  const incomeTrans = incomeResponse?.income ?? [];
+  const incomeTrans = incomeResponse?.incomes ?? [];
 
   const normalizedCurrentDate = new Date(now.getFullYear(), now.getMonth(), 1);
   const currMonthData = getMonthlyData({
@@ -302,4 +303,26 @@ export function useRecentTransactions({page,PAGE_SIZE}:RecentTransactionsType){
  },[isFetching])
 
  return { data:stableData,isError,isFetching:showLoading}
+}
+
+export function useGetCategories(){
+  const { data, isError,isFetching } = useGetCategoriesQuery()
+  const [showLoading, setShowLoading] = useState(false)
+  let timer:number | undefined;
+
+  
+  useEffect(() => {
+
+    timer = setTimeout(() => {
+      if(isFetching){
+       setShowLoading(true)
+      }else{
+       setShowLoading(false)
+      }
+    },200)
+
+    return () => clearTimeout(timer)
+  },[isFetching])
+
+  return { data, isError,isFetching:showLoading}
 }

@@ -2,11 +2,10 @@ import express from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 import {
   addExpense,
-  getExpense,
   addIncome,
   getIncome,
-  getTransactions,
-  getFilteredExpense,
+  getRecentTransactions,
+  getExpense,
 } from "../controllers/transactionController.ts";
 import {
   getDataRateLimiter,
@@ -18,8 +17,9 @@ transactionRoute.get(
   "/transactions",
   requireAuth,
   getDataRateLimiter,
-  getTransactions,
+  getRecentTransactions,
 );
+
 transactionRoute.get("/expenses", requireAuth, getDataRateLimiter, getExpense);
 transactionRoute.get("/incomes", requireAuth, getDataRateLimiter, getIncome);
 transactionRoute.post(
@@ -36,10 +36,3 @@ transactionRoute.post(
 );
 // transactionRouter.patch("/updateExpense/:id", requireAuth, handler);
 // incomeRouter.patch("/updateIncome/:id", requireAuth, handler);
-
-transactionRoute.get(
-  "/expenses/filtered",
-  requireAuth,
-  getDataRateLimiter,
-  getFilteredExpense,
-);

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
-import type { GetTransactionsResponse, Transaction } from "../types/recentTransactions";
-import RecentTransactionsSkeleton from "./RecentTransactionsSkeleton.tsx";
+import type { GetRecentTransactionsResponse ,Transaction } from "../types/recentTransactions";
+import TransactionsSkeleton from "./TransactionsSkeleton.tsx";
 
 type DisplayTransaction = Transaction & {
   name: string;
@@ -16,7 +16,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 });
 
 type RecentTransactionProps = {
-  data:GetTransactionsResponse | undefined
+  data:GetRecentTransactionsResponse | undefined
   isError: boolean 
   isFetching: boolean
 }
@@ -37,7 +37,7 @@ const RecentTransactions = ({ data, isFetching, isError}:RecentTransactionProps)
   }, [recentTxns]);
 
   if (isFetching) {
-    return <RecentTransactionsSkeleton />;
+    return <TransactionsSkeleton />;
   }
 
   if (isError) {
