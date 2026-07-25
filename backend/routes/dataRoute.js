@@ -34,5 +34,6 @@ dataRoute.delete(
   "/deleteCategory",
   requireAuth,
   csrfProtection,
+  postDataRateLimiter,
   deleteCategory,
 );
