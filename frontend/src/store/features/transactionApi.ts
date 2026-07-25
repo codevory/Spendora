@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
+import type { BaseQueryFn,FetchArgs,FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import type {
   GetRecentTransactionsResponse,
   RecentTransactionsType,
@@ -40,7 +41,6 @@ name:string,
 id:number
 }
 
-
 export type expenseResponseDataType = {
   expenses: expenseTranscationTypes[],
   meta: {
@@ -60,21 +60,57 @@ export type loginDataType = {
   email:string 
   password:string
 }
+
+export type csrfTokenType = string | undefined
+export type csrfResponseDataType = {
+  csrfToken: string | undefined
+}
+
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
     baseUrl:`${Backend_Url}/api`,
     credentials:"include",
-    timeout:10000
+    timeout:10000,
+    prepareHeaders: (headers) => {
+      const csrfToken = getCookie("_csrf")
+      if(csrfToken){
+        headers.set("X-CSRF-Token",decodeURIComponent(csrfToken))
+      }
+      return headers
+    }
   }),
-  { 
-    maxRetries:2
+  {
+    maxRetries:1
+  })
+
+const baseQueryWithFailureHandling: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>  = async (args, api,extraOptions) => {
+  const result = await staggeredBaseQuery(args,api,extraOptions)
+  if(result.error){
+    const status = result.error.status
+    const errorData = result.error
+
+    console.error("Api request failure",{ status: errorData})
+
+    if(status === 403 || status === 401){
+      console.warn("Authentication or CSRF token issue")
+    }
+    else if(status === "FETCH_ERROR"){
+      console.warn("Network failure - check connection")
+    }
   }
-)
+  return result
+}
+
+function getCookie(name:string):string{
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts?.pop()?.split(';').shift() ?? ""
+  return ""
+}
 
 export const transactionApi = createApi({
   reducerPath: "transactionApi",
-  baseQuery: staggeredBaseQuery,
-
+  baseQuery: baseQueryWithFailureHandling,
   refetchOnFocus : true,
   tagTypes: ["RecentTransactions", "Expenses", "Income", "Categories"],
   endpoints: (builder) => ({
@@ -147,7 +183,7 @@ export const transactionApi = createApi({
       query: ({ transactionData }) => ({
         url: "/transaction/addExpense",
         method: "POST",
-        body: { transactionData },
+        body: { transactionData }
       }),
 
       invalidatesTags: [
@@ -209,7 +245,7 @@ export const transactionApi = createApi({
       query: ({ incomeData }) => ({
         url: "/transaction/addIncome",
         method: "POST",
-        body: { incomeData },
+        body: { incomeData }
       }),
       invalidatesTags:[
         { type:"RecentTransactions", id: "LIST"},
