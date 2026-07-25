@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 
-// https://vite.dev/config/
 export default defineConfig({
   base:'',
   plugins: [tailwindcss(),react(),
@@ -18,7 +17,6 @@ export default defineConfig({
       output:{
         manualChunks:{
           charts:["react-chartjs-2","chart.js"],
-          // firebase:["firebase/app","firebase/auth","firebase/firestore","firebase/analytics"],
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-utils': ['immer', '@reduxjs/toolkit', 'react-redux'],
         }
