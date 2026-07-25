@@ -46,7 +46,7 @@ const Expenses = visibleData || []
   }
   
   if(isError){
-    return <p>An error occured</p>
+    return <p className="text-center text-muted py-6">No transactions found.</p>
   }
   
   if (Expenses.length === 0) {

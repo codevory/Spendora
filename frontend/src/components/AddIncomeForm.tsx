@@ -38,8 +38,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             addIncomeTxn,
           })
         }
-        className="flex flex-col gap-5"
-      >
+        className="flex flex-col gap-5">
         <div className="flex flex-col gap-1 relative">
           <label className="text-muted block mb-1 text-sm">
             amount ({currencyMeta.currencySymbol})
@@ -49,10 +48,9 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             type="number"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            required
+            required 
           />
         </div>
-
         <div className="flex flex-col gap-1 relative">
           <label className="text-muted block mb-1 text-sm">income source</label>
           <input

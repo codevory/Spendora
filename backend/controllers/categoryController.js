@@ -104,17 +104,22 @@ export async function getCategories(req, res) {
       `SELECT 
       c.id,
       c.name,
-      COUNT(c.name) AS "transactionCount"
+      COUNT(e.id) AS "transactionCount"
       FROM expensecategories c
       LEFT JOIN userexpense e ON c.id = e.category_id
       WHERE c.user_id = $1 
-      GROUP BY c.name,c.id
+      GROUP BY c.id, c.name 
       ORDER BY "transactionCount" DESC
       `,
       [req.session.userId],
     );
 
-    return res.status(200).json({ categories: categoriesResult.rows });
+    return res.status(200).json({
+      categories: categoriesResult.rows,
+      meta: {
+        size: categoriesResult.rows.length,
+      },
+    });
   } catch (err) {
     console.error("error getting categories : ", err.message);
     return res.status(500).json({ error: `internal server error ` });

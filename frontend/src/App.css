@@ -726,7 +726,7 @@ input[type="number"] {
 
 .graph-skeleton-grid {
   background:
-    linear-gradient(to top, rgba(100, 116, 139, 0.26) 1px, transparent 1px) 0
+    linear-gradient(to top, rgba(194, 200, 208, 0.26) 1px, transparent 1px) 0
       0 / 100% 24%,
     rgba(15, 23, 42, 0.44);
 }
@@ -794,7 +794,7 @@ input[type="number"] {
   position: absolute;
   inset: 0;
   transform: translateX(-33%);
-  animation: single-skeleton-shimmer 2s infinite;
+  animation: single-skeleton-shimmer 2.5s infinite;
 }
 
 .single-skeleton-light::after{
@@ -820,6 +820,6 @@ input[type="number"] {
 }
 @keyframes single-skeleton-shimmer {
   100%{
-    transform: translateX(45%);
+    transform: translateX(40%);
   }
 }

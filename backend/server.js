@@ -15,6 +15,7 @@ import { transactionRoute } from "./routes/transactionRoute.js";
 import { dataRoute } from "./routes/dataRoute.js";
 import { fileURLToPath } from "node:url";
 import { serverHealthRoute } from "./routes/serverHealthRoute.js";
+import { csrfProtection } from "./middleware/csrfProtection.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +40,7 @@ app.use(
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
   }),
 );
 app.use(
@@ -55,24 +56,20 @@ app.use(
       httpOnly: true,
       secure: is_Production,
       sameSite: is_Production ? "none" : "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 1000,
     },
   }),
 );
 
 app.use(express.json());
-// const publicFolder = path.join(__dirname, "../frontend/dist");
-
-// app.use(express.static(publicFolder));
+app.get("/api/auth/csrfToken", csrfProtection, (req, res) => {
+  res.status(200).json({ csrfToken: res.locals._csrf });
+});
 app.use("/api/auth/me", meRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRoute);
 app.use("/api/data", dataRoute);
 app.use("/api/status", serverHealthRoute);
-
-// app.get("/{*splat}", (req, res) => {
-//   res.sendFile(path.join(publicFolder, "index.html"));
-// });
 
 app.listen(PORT, () => {
   try {

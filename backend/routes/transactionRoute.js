@@ -11,6 +11,7 @@ import {
   getDataRateLimiter,
   postDataRateLimiter,
 } from "../helpers/rateLimiters.ts";
+import { csrfProtection } from "../middleware/csrfProtection.js";
 
 export const transactionRoute = express.Router();
 transactionRoute.get(
@@ -25,12 +26,14 @@ transactionRoute.get("/incomes", requireAuth, getDataRateLimiter, getIncome);
 transactionRoute.post(
   "/addIncome",
   requireAuth,
+  csrfProtection,
   postDataRateLimiter,
   addIncome,
 );
 transactionRoute.post(
   "/addExpense",
   requireAuth,
+  csrfProtection,
   postDataRateLimiter,
   addExpense,
 );

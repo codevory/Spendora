@@ -17,10 +17,10 @@ interface HeaderCardsPropsType {
 }
 
 const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
-  const { expenses: selectedState, incomeTrans: userIncome } = useUserData();
+  const { expenses: selectedState, incomeTrans: userIncome,incomeError,incomeLoading,expenseError,expenseLoading } = useUserData();
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const transactions = Array.isArray(selectedState) ? selectedState : [];
-  const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
   const { isDark } = useThemeContext();
 
   const metrics = useMemo(() => {
@@ -61,14 +61,25 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
   }, [transactions, userIncome]);
 
   useEffect(() => {
-    setShowLoader(true);
-    let timer = setTimeout(() => {
-      setShowLoader(false);
-    }, 500);
+   if(incomeError || expenseError){
+    setShowLoader(false)
+    return;
+   } 
+
+   let timer:number;
+   if(incomeLoading || expenseLoading){
+     setShowLoader(true)
+   timer = setTimeout(() => {
+    setShowLoader(false)
+   },200)
+   }
+   else{
+    setShowLoader(false)
+   }
 
     return () => clearTimeout(timer);
   }, [transactions, userIncome]);
-
+  
   // Dynamic Theme Classes
   const cardBg = isDark ? "bg-slate-900/80 border-slate-800 shadow-slate-950/40 text-slate-100" : "bg-white border-slate-200 shadow-slate-200/60 text-slate-800";
   const subText = isDark ? "text-slate-400" : "text-slate-600";
@@ -89,7 +100,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
             <span className={`px-1 py-0.5 rounded text-[10px] font-bold ${
               metrics.monthlyIncomeChange <= 0 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
             }`}>
-              {metrics.monthlyIncomeChange > 0 ? "+" : ""} {metrics.monthlyIncomeChange.toFixed(0)}% MoM
+              {metrics.monthlyIncomeChange > 0 ? "+" : ""} {metrics.monthlyIncomeChange.toFixed(0) ?? 0}% MoM
             </span>
           )}
         </div>
@@ -98,7 +109,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
             <SingleSkeleton width={20} height={4} />
            : (
             <div className={`text-xl font-black tracking-tight mr-10 ${metrics.monthlyNet >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
-              {formatCurrency(metrics.monthlyNet, currencyKey)}
+              {formatCurrency(metrics.monthlyNet, currencyKey) ?? 0}
             </div>
           )}
           <button
@@ -113,11 +124,11 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
         <div className={`space-y-1 border-t pt-2 ${borderMuted}`}>
           <div className="text-[11px] flex items-center justify-between">
             <span className={labelText}>Income</span>
-            {showLoader ? <SingleSkeleton width={12} height={2} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyIncome, currencyKey)}</span>}
+            {showLoader ? <SingleSkeleton width={12} height={2} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyIncome, currencyKey) ?? 0}</span>}
           </div>
           <div className="text-[11px] flex items-center justify-between">
             <span className={labelText}>Spent</span>
-            {showLoader ? <SingleSkeleton width={12} height={2} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyExpense, currencyKey)}</span>}
+            {showLoader ? <SingleSkeleton width={12} height={2} /> : <span className={`font-semibold ${subText}`}>{formatCurrency(metrics.monthlyExpense, currencyKey) ?? 0}</span>}
           </div>
         </div>
       </div>
@@ -130,7 +141,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
             <span className={`px-1 py-0.5 rounded text-[10px] font-bold ${
               metrics.monthlyExpenseChange > 0 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
             }`}>
-              {metrics.monthlyExpenseChange > 0 ? "+" : ""}{metrics.monthlyExpenseChange.toFixed(0)}% MoM
+              {metrics.monthlyExpenseChange > 0 ? "+" : ""}{metrics.monthlyExpenseChange.toFixed(0) ?? 0}% MoM
             </span>
           )}
         </div>
@@ -138,7 +149,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           {showLoader ? (
             <SingleSkeleton width={20} height={6} />
           ) : (
-            <h2 className="text-xl font-black tracking-tight">{formatCurrency(metrics.monthlyExpense, currencyKey)}</h2>
+            <h2 className="text-xl font-black tracking-tight">{formatCurrency(metrics.monthlyExpense, currencyKey) ?? 0}</h2>
           )}
 
         <div className={`border-t pt-2 ${borderMuted}`}>
@@ -161,7 +172,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
           <p className={`${labelText} text-[10px] font-bold uppercase tracking-widest`}>Top Category</p>
           {showLoader ? <SingleSkeleton width={10} height={3} /> : (
             <span className="px-1 py-0.5 bg-orange-500/10 text-orange-500 text-[10px] font-bold rounded">
-              {metrics.topCategoryShare.toFixed(0)}% Share
+              {metrics.topCategoryShare.toFixed(0) ?? 0}% Share
             </span>
           )}
         </div>

@@ -9,10 +9,7 @@ import type {
   IncomeTransactionTypes,
 } from "../../types/transactionType";
 
-type commonTypes = Pick<
-  handleAddExpenseTransactionProps,
-  "e" | "failed"
->;
+type commonTypes = Pick<handleAddExpenseTransactionProps,"e" | "failed">;
 interface handleAddIncomeTransactionProps extends commonTypes {
   incomeSource: string;
   amount: number | "";
@@ -24,18 +21,14 @@ interface handleAddIncomeTransactionProps extends commonTypes {
 }
 
 type categoryFormCommontypes = Pick<
-  handleAddIncomeTransactionProps,
-  "e" | "success" | "failed" | "setModalState" | "setIsSubmitting" >;
+  handleAddIncomeTransactionProps, "e" | "success" | "failed" | "setModalState" | "setIsSubmitting" >;
 interface HandleCategoryFormProps extends categoryFormCommontypes {
   category: string;
   setCategory: (val: string) => void;
   addCategoryTxn: AddCategoryTriggerFn;
 }
 
-type DeleteCategoryCommonProps = Pick<
-  HandleCategoryFormProps,
-  "success" | "failed" 
->;
+type DeleteCategoryCommonProps = Pick<HandleCategoryFormProps, "success" | "failed" >;
 interface HandleDeleteCategoryProps extends DeleteCategoryCommonProps {
   category: CategoryPropsType;
   deleteCategoryTxn: DeleteCategoryTriggerFn;
@@ -54,7 +47,7 @@ export async function handleAddExpenseTransaction({
   amount,
   category,
   transaction,
-  addTxn
+  addTxn,
 }: handleAddExpenseTransactionProps) {
   e.preventDefault();
   if (typeof amount !== "number" || amount <= 0) {
@@ -79,15 +72,23 @@ export async function handleAddExpenseTransaction({
   try{
     setIsSubmitting(true)
     await addTxn({
-      transactionData
+      transactionData,
+      
     })
     .unwrap()
      .then(() => {
       success()
+     }).catch((err) => {
+      if(err instanceof Error){
+        failed(err.message ?? "Failed to add expense")
+      }
+      else{
+        failed("Oops! Failed to add expense")
+      }
      })
   }
     catch(err){
-     failed("Failed to add Expense")
+     failed("Internal server error ")
      console.error(err)
     }
     finally{
@@ -110,8 +111,8 @@ export async function handleAddIncomeTransaction({
 }: handleAddIncomeTransactionProps) {
   e.preventDefault();
   if (amount !== "" && amount < 0) return failed("Not valid income amount");
-  if (incomeDate === "" || incomeSource === "")
-    return failed("Fill all required details");
+  if (incomeDate === "" || incomeSource === "") return failed("Fill all required details");
+
   const incomeData: IncomeTransactionTypes = {
     id:1,
     amount: amount !== "" ? amount : 0,
@@ -124,21 +125,26 @@ export async function handleAddIncomeTransaction({
     categoryName:null
   };
 
+  try{
     setIsSubmitting(true)
-    await addIncomeTxn({ incomeData })
+    await addIncomeTxn({ incomeData:incomeData })
     .unwrap()
     .then(() => {
       return success("income added successfully🎉")
     })
-    .catch((err:any) => {
+    .catch((err) => {
+      failed("network error")
       console.error(err)
-      failed("Failed to add, internal server error")
-      return 
     })
-    .finally(() => {
-      setIsSubmitting(false)
-      setModalState("closed")
-    })
+  }catch(err){
+    console.error(err)
+    failed("Failed to add, internal server error")
+    return 
+
+  }finally{
+    setIsSubmitting(false)
+    setModalState('closed')
+  }
   }
 
 export async function handleAddCategoryDB({  
@@ -154,18 +160,14 @@ export async function handleAddCategoryDB({
 
  e.preventDefault();
   if (category.trim() === "") return failed("kindly type category name");
-
    const name = category.trim().toLowerCase();
-
    if(Timer !== null){
     clearTimeout(Timer)
    }
-
      setIsSubmitting(true)
-
      Timer = setTimeout(async () => {
-       await addCategoryTxn({ name })
-       .unwrap() //.unwrap() allows us to listen to success/error inside the component
+       await addCategoryTxn({ name,   })
+       .unwrap()
        .then(() => {
          return success("category added successfully🎉")
         })
@@ -180,7 +182,6 @@ export async function handleAddCategoryDB({
           setModalState("closed")
           Timer = null
         })
-      
      }, 900);
 
 }
@@ -189,8 +190,7 @@ export function handleDeleteCategory({
   deleteCategoryTxn,
   success,
   failed,
-  setIsSubmitting
-
+  setIsSubmitting,
 }: HandleDeleteCategoryProps) {
   const confirmDelete = (val: string) => window.confirm(`Transcactions added in ${val} category will be deleted`);
  
@@ -205,7 +205,7 @@ export function handleDeleteCategory({
     setIsSubmitting(true)
 
  Timer = setTimeout(() => {
-   deleteCategoryTxn({ category })
+   deleteCategoryTxn({ category,  })
    .unwrap()
    .then(() => {
      return success(`${category.name} deleted successfully🎉`)
@@ -220,7 +220,6 @@ export function handleDeleteCategory({
   
  }, 900);
 }
-
 export interface HandleRenameCategoryProps {
   e: React.SubmitEvent<HTMLFormElement>;
   category: CategoryPropsType;
@@ -249,15 +248,13 @@ export function handleRenameCategory({
     id:category.id
   }
   e.preventDefault();
-
   if (Timer) {
     clearTimeout(Timer);
   }
-
   setIsSubmitting(true);
 
   Timer = setTimeout(() => {
-    renameCategoryTxn({ category: categoryToRename })
+    renameCategoryTxn({ category: categoryToRename   })
       .unwrap()
       .then(() => {
         success("renamed successfully🎉");

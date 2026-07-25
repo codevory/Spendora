@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import React,{ useEffect, useMemo, useState, Suspense } from "react";
 import TransactionsContent from "../components/TransactionsContent";
 import ViewTransactionDetails from "../components/ViewTransactionDetails";
 import { useGetCategoriesQuery } from "../store/features/transactionApi";
 import type { expenseTranscationTypes } from "../types/transactionType";
 import { useFilteredExpense, useUserData } from "../Hooks/useUserData";
 import Layout from "../components/Layout";
-import TrendGraph from "../charts/TrendGraph";
 import PageNavigation, { PAGE_SIZE } from "../components/PageNavigation";
+import GraphSkeleton from "../components/GraphSkeleton";
+const TrendGraph = React.lazy(() => import("../charts/TrendGraph"))
 
 interface TransactionLayoutProps {
   onToggle: () => void;
@@ -18,10 +19,9 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [dateTo, setDateTo] = useState<string>("");
   const [page,setPage] = useState<number>(1)
   const { data: categoryResponse } = useGetCategoriesQuery();
-
   const categoriesData = categoryResponse?.categories ?? [];
-
   const { isError,isFetching,data } = useFilteredExpense({page,PAGE_SIZE,query,dateFrom,dateTo  })
+  const { lineData } = useUserData();
 
   const categories = useMemo(
     () =>
@@ -52,9 +52,6 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   useEffect(() => {
     setPage(1)
   },[query,dateFrom,dateTo])
-
-  const { lineData } = useUserData();
-
 
   return (
     <>
@@ -191,7 +188,9 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
 
                 <div className="overflow-x-auto">
                   <div className="min-w-140 min-h-110">
+                    <Suspense fallback={<GraphSkeleton />}>
                     <TrendGraph data={lineData} />
+                    </Suspense>
                   </div>
                 </div>
               </div>
