@@ -188,7 +188,8 @@ export const transactionApi = createApi({
 
       invalidatesTags: [
         { type : "Expenses", id:"LIST"},
-        { type : "RecentTransactions", id: "LIST"}
+        { type : "RecentTransactions", id: "LIST"},
+        { type:"Categories", id: "LIST"}
       ],
       async onQueryStarted({ transactionData }, { queryFulfilled, dispatch }) {
         const optimisticExpense = {

@@ -30,15 +30,15 @@ export const LandingPage = () => {
               onClick={() => {
                 isLoggedin ? navigate("/") : navigate("/signin")
               }} 
-              className="text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+              className="text-xs md:mr-2 font-semibold text-slate-400 hover:text-white transition-colors"
             >
               {isLoggedin ? "Dashboard" : "Sign In"}
             </button>
             <button 
               onClick={() => navigate('/signup')} 
-              className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl shadow-lg shadow-indigo-600/30 transition-all"
+              className="px-3 py-2 md:ml-2 text-[10px]  md:px-4 md:py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl shadow-lg shadow-indigo-600/30 transition-all"
             >
-              Start Free Session
+              Start tracking
             </button>
           </div>
         </div>
