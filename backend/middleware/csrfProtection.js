@@ -11,7 +11,10 @@ export const csrfProtection = [
     cookie: {
       name: "_csrf",
       httpOnly: is_Production ? true : false,
-      path: "/",
+      options:{
+        secure:is_Production,
+        sameSite:'None',
+      }
     },
   }),
 ];
