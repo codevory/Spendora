@@ -16,34 +16,56 @@ import { dataRoute } from "./routes/dataRoute.js";
 import { fileURLToPath } from "node:url";
 import { serverHealthRoute } from "./routes/serverHealthRoute.js";
 import { csrfProtection } from "./middleware/csrfProtection.js";
+import cookieParser from "cookie-parser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: `.env.${environment}` });
 const secret = process.env.SPIRAL_SESSION_SECRET;
+
 const app = express();
 app.set("trust proxy", 1);
 const PORT = process.env.PORT || 2122;
-
-//initialize the postgres store constructor
 const PostgresStore = pgSession(session);
 const dbPool = await getDBConnection();
 
+// 2. CORS MIDDLEWARE
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:2122",
+  "http://localhost:3000",
+  "https://spendora-khaki.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:2122",
-      "http://localhost:3000",
-      "https://spendora-khaki.vercel.app",
-    ],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
-    exposedHeaders: ["X-CSRF-Token"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-CSRF-Token",
+      "x-csrf-token",
+    ],
+    exposedHeaders: ["X-CSRF-Token", "x-csrf-token"],
   }),
 );
+
+// 3. BODY PARSERS
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 4. SESSION MIDDLEWARE (Must come before CSRF protection)
 app.use(
   session({
     store: new PostgresStore({
@@ -57,15 +79,13 @@ app.use(
       httpOnly: true,
       secure: is_Production,
       sameSite: is_Production ? "none" : "lax",
-      maxAge: 24 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
     },
   }),
 );
 
-app.use(express.json());
-app.get("/api/auth/csrfToken", csrfProtection, (req, res) => {
-  res.status(200).json({ csrfToken: res.locals._csrf });
-});
+app.use(csrfProtection);
+
 app.use("/api/auth/me", meRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRoute);
@@ -74,7 +94,7 @@ app.use("/api/status", serverHealthRoute);
 
 app.listen(PORT, () => {
   try {
-    console.log(`app live at Base_Ur:${PORT}`);
+    console.log(`app live at Base_URL:${PORT}`);
   } catch (err) {
     console.error("Error listening to port ", err.message);
   }
