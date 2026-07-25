@@ -80,10 +80,10 @@ const DisplayAvailableCategories = () => {
                 </div>
               </div>
             ))
-          : categories.map((cat,idx) => {              
+          : categories.map((cat) => {              
               return (
                 <article
-                  key={cat.id + idx}
+                  key={cat.id}
                   className={`p-3.5 rounded-xl border border-l-4 border-l-indigo-500 flex flex-col justify-between gap-2.5 transition-all duration-300 hover:scale-[1.005] hover:border-indigo-500 ${cardBg}`}
                 >
                   <div>
