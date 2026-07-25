@@ -1,8 +1,6 @@
 import DisplayAvailableCategories from "../components/DisplayAvailableCategories.js";
 import Layout from "../components/Layout";
 import { useGetCategoriesQuery, useGetExpenseTransactionsQuery } from "../store/features/transactionApi";
-
-
 interface CategoriesPagePropsType {
   onToggle: () => void;
   isOpen: boolean;

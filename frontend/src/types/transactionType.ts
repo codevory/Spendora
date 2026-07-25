@@ -1,12 +1,11 @@
-
 export interface expenseTranscationTypes {
-  id: number;              // Database autoincrement ID
+  id: number;     
   amount: number;
   entity: string;
   date: string;
-  categoryId: number;       // Ties directly to your database foreign key
-  categoryName : string ;    // Joined from the categories table for easy rendering
-  transactionId: string;    // Your frontend generated tracking UUID
+  categoryId: number;  
+  categoryName : string;  
+  transactionId: string;    
   createdAt: string;
   type:"expense"
 }
@@ -65,7 +64,6 @@ export interface handleAddExpenseTransactionProps {
   setPayee: (val: string) => void;
   setIsSubmitting: (val: boolean) => void;
   addTxn:AddTxnTriggerFn
-
 }
 
 export interface expenseTransactionParamsType {
@@ -75,7 +73,6 @@ size ? : number
 skip ? : number
 from ? : string | Date,
 to ? : string | Date
-
 }
 
 export type ResponseuserDataType = {

@@ -58,8 +58,7 @@ const AddNewCategoryForm = ({
             setCategory: setCategory,
             setModalState: setModalState,
             category: categoryValue,
-            setIsSubmitting: setIsSubmitting
-            ,
+            setIsSubmitting: setIsSubmitting,
             addCategoryTxn,
           });
         }}

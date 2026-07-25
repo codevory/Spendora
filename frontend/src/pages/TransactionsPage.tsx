@@ -18,10 +18,9 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [dateTo, setDateTo] = useState<string>("");
   const [page,setPage] = useState<number>(1)
   const { data: categoryResponse } = useGetCategoriesQuery();
-
   const categoriesData = categoryResponse?.categories ?? [];
-
   const { isError,isFetching,data } = useFilteredExpense({page,PAGE_SIZE,query,dateFrom,dateTo  })
+  const { lineData } = useUserData();
 
   const categories = useMemo(
     () =>
@@ -52,9 +51,6 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   useEffect(() => {
     setPage(1)
   },[query,dateFrom,dateTo])
-
-  const { lineData } = useUserData();
-
 
   return (
     <>

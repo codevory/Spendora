@@ -13,15 +13,13 @@ import useThemeContext from "../Hooks/useThemeContext";
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
 }
-
-// Fixed: Moved lazy imports outside the component body to prevent full recreation on every render cycle
 const TrendGraph = React.lazy(() => import("../charts/TrendGraph"));
 const DistributionGraph = React.lazy(() => import("../charts/DistributionGraph"));
 const OverviewGraph = React.lazy(() => import("../charts/OverviewGraph"));
 
 const MainContent = ({ setModalState }: MainContentPropsType) => {
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
-  const { expenses: transactions, lineData } = useUserData();
+  const { expenses: transactions, lineData,expenseError,expenseLoading } = useUserData();
   const [page, setPage] = useState(1);
   const { data, isFetching, isError } = useRecentTransactions({ page, PAGE_SIZE });
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
@@ -58,11 +56,22 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   }, [transactions]);
 
   useEffect(() => {
-    setShowLoader(true);
-    let timer = setTimeout(() => {
-      setShowLoader(false);
-    }, 500);
-
+    if(expenseError){
+      setShowLoader(false)
+      return;
+    }
+    
+    let timer:number;
+    if(expenseLoading){
+     setShowLoader(true)
+    timer = setTimeout(() => {
+      setShowLoader(false)
+    },200)
+  }
+  
+  else{
+    setShowLoader(false)
+  }
     return () => clearTimeout(timer);
   }, [transactions]);
 
@@ -166,7 +175,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
                   <div className={`p-2 rounded-lg text-center ${snapshotBoxBg}`}>
                   <p className={`text-[10px] font-medium ${labelMuted}`}>Spent</p>
                   <p className="mt-0.5 text-xs font-black text-rose-400 truncate">
-                    {formatCurrency(weeklySnapshot.totalSpent, currencyKey)}
+                    {formatCurrency(weeklySnapshot.totalSpent, currencyKey) ?? 0}
                   </p>
                 </div>
                 }
@@ -176,7 +185,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
                 <div className={`p-2 rounded-lg text-center ${snapshotBoxBg}`}>
                   <p className={`text-[10px] font-medium ${labelMuted}`}>Txns</p>
                   <p className={`mt-0.5 text-xs font-black truncate ${titleColor}`}>
-                    {showLoader ? <SingleSkeleton width={8} height={4} /> : weeklySnapshot.count}
+                    {showLoader ? <SingleSkeleton width={8} height={4} /> : weeklySnapshot.count ?? 0}
                   </p>
                 </div>
                 }
