@@ -31,21 +31,22 @@ const PostgresStore = pgSession(session);
 const dbPool = await getDBConnection();
 
 // 2. CORS MIDDLEWARE
-const allowedOrigins = [
+const allowedOriginsProd = ["https://spendora-khaki.vercel.app"];
+const allowedOriginsDev = [
   "http://localhost:5173",
   "http://localhost:2122",
   "http://localhost:3000",
-  "https://spendora-khaki.vercel.app",
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (is_Production && allowedOriginsProd.includes(origin)) {
+        callback(null, true);
+      } else if (!is_Production && allowedOriginsDev.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error("Not allowed by cors"));
       }
     },
     credentials: true,
@@ -63,7 +64,7 @@ app.use(
 // 3. BODY PARSERS
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 // 4. SESSION MIDDLEWARE (Must come before CSRF protection)
 app.use(
@@ -74,7 +75,7 @@ app.use(
     }),
     secret: secret,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
       httpOnly: true,
       secure: is_Production,

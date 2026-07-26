@@ -9,7 +9,7 @@ export const csrfProtection = lusca.csrf({
     options: {
       httpOnly: true,
       secure: is_Production,
-      sameSite: is_Production ? "none" : "lax", // Must be lowercase "none" when secure: true
+      sameSite: is_Production ? "none" : "lax",
     },
   },
 });
