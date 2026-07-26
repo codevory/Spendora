@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import "./App.css";
 import { Outlet, Route, Routes } from "react-router-dom";
@@ -12,12 +12,37 @@ import UserAccountPage from "./pages/UserAccountPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import CategoriesPage from "./pages/CategoriesPage";
+import { Backend_Url } from "./store/features/transactionApi";
+import { useAppDispatch } from "./store/store";
+import { setCsrf } from "./store/features/userAuthenication";
 const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleSidebar = () => setIsOpen((p) => !p);
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+  async function getCsrf() {
+  try {
+    const data = await fetch(`${Backend_Url}/api/auth/csrf`, {
+      credentials:"include"
+    })
+    if(!data.ok){
+      console.log("no-csrf-cookie-found-server")
+    }
+
+    const token = await data.json()
+    const csrf = token.csrf
+    console.log("csrf-set :  ",csrf)
+    dispatch(setCsrf(csrf))
+  } catch (error) {
+    console.error("internal server error")
+  }
+}
+getCsrf()
+  },[])
 
   return (
     <>

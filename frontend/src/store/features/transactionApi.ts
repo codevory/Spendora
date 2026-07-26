@@ -11,6 +11,7 @@ import type {
   expenseTransactionParamsType,
   expenseTranscationTypes,
 } from "../../types/transactionType.ts";
+import Store from "../store.ts";
 
 export const Backend_Url = import.meta.env.PROD
   ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")
@@ -68,21 +69,24 @@ export type csrfResponseDataType = {
 
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
-    baseUrl:`${Backend_Url}/api`,
-    credentials:"include",
-    timeout:10000,
-    prepareHeaders: (headers) => {
-      const csrfToken = getCookie("_csrf")
-      if(csrfToken){
-        headers.set("x-csrf-token",decodeURIComponent(csrfToken))
-        headers.set("x-xsrf-token",decodeURIComponent(csrfToken))
+    baseUrl: `${Backend_Url}/api`,
+    credentials: "include",
+    timeout: 10000,
+
+    prepareHeaders: (headers ) => {
+      try {
+        const csrfToken = Store.getState().userData.csrfToken ;
+        if (csrfToken) {
+          headers.set("x-csrf-token",csrfToken);
+        }
+      } catch (error) {
+        console.error("Failed to fetch CSRF token:", error);
       }
-      return headers
+      return headers;
     }
   }),
-  {
-    maxRetries:1
-  })
+  { maxRetries: 1 }
+);
 
 const baseQueryWithFailureHandling: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>  = async (args, api,extraOptions) => {
   const result = await staggeredBaseQuery(args,api,extraOptions)
@@ -100,13 +104,6 @@ const baseQueryWithFailureHandling: BaseQueryFn<string | FetchArgs, unknown, Fet
     }
   }
   return result
-}
-
-function getCookie(name:string):string{
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts?.pop()?.split(';').shift() ?? ""
-  return ""
 }
 
 export const transactionApi = createApi({

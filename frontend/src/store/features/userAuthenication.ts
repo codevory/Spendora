@@ -28,10 +28,12 @@ interface initialStateType {
   isLoading: boolean;
   error: { message: string; code: number } | null;
   isLoggedin: boolean;
+  csrfToken:string
 }
 const storedUserData = getStoredUserData();
 const initialState: initialStateType = {
   user: storedUserData,
+  csrfToken:"no-csrf",
   isLoggedin: Boolean(storedUserData?.email),
   error: null,
   isLoading: false,
@@ -58,9 +60,12 @@ const userAuth = createSlice({
     setError: (state, action: PayloadAction<initialStateType["error"]>) => {
       state.error = action.payload;
     },
+    setCsrf: (state,action:PayloadAction<string>) => {
+     state.csrfToken = action.payload
+    }
   },
 });
 
 export default userAuth.reducer;
-export const { setUserData, setLoginStatus, setError, setLoading } =
+export const { setUserData, setLoginStatus, setError, setLoading,setCsrf } =
   userAuth.actions;
