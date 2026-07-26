@@ -84,8 +84,6 @@ app.use(
   }),
 );
 
-app.use(csrfProtection);
-
 app.use("/api/auth/me", meRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRoute);
