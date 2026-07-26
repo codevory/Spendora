@@ -74,7 +74,8 @@ const staggeredBaseQuery = retry(
     prepareHeaders: (headers) => {
       const csrfToken = getCookie("_csrf")
       if(csrfToken){
-        headers.set("X-CSRF-Token",decodeURIComponent(csrfToken))
+        headers.set("x-csrf-token",decodeURIComponent(csrfToken))
+        headers.set("x-xsrf-token",decodeURIComponent(csrfToken))
       }
       return headers
     }
