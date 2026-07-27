@@ -5,6 +5,7 @@ import { handleSigninWithPassword } from "../utils/helperFunctions/handleSignin"
 import LoginComponent from "../components/LoginComponent";
 import Layout from "../components/Layout";
 import { useAppDispatch, useAppSelector } from "../store/store";
+import { getCsrf } from "../utils/authService";
 
 interface SigninPropsType {
   isOpen: boolean;
@@ -24,6 +25,7 @@ const Signin = ({ isOpen, onToggle }: SigninPropsType) => {
 
   useEffect(() => {
     if (isLoggedin) { 
+      getCsrf(dispatch)
       navigate("/")
     }
     return;

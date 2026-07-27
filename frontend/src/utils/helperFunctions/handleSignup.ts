@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
 import { Backend_Url } from "../../store/features/transactionApi";
-
 const success = (message: string) => toast.success(message);
 const fail = (message: string) => toast.error(message);
 
@@ -48,7 +47,7 @@ export async function handleSignupWithEmailPassword({
       success("Registered successfully🎉")
       console.log(data)
       setIsLoading(false);
-      navigate("/")
+      navigate("/signin")
       return data
     }
     else{

@@ -5,7 +5,10 @@ interface EmptyStatePropsType {
 }
 
 const EmptyState = ({ content }: EmptyStatePropsType) => {
-  return <>{content}</>;
+  return (
+  <div className="flex justify-center items-center mt-[50%] font-bold text-red-600 text-2xl">
+    {content}
+    </div>);
 };
 
 export default EmptyState;
