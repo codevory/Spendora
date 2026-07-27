@@ -35,7 +35,6 @@ function App() {
 
     const token = await data.json()
     const csrf = token.csrf
-    console.log("csrf-set :  ",csrf)
     dispatch(setCsrf(csrf))
   } catch (error) {
     console.error("internal server error")

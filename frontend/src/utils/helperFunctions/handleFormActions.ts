@@ -172,8 +172,8 @@ export async function handleAddCategoryDB({
          return success("category added successfully🎉")
         })
         .catch((err:any) => {
-          failed("Internal server error to add Category")
-          console.error(err)
+          failed(err.data.error  ?? "Internal server error to add Category")
+          console.error(err.data.error)
           return ;
         })
         .finally(() => {
