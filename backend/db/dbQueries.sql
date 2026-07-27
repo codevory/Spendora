@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users(
     password TEXT NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 -- create table session
 CREATE TABLE IF NOT EXISTS sessions(
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS sessions(
     expire TIMESTAMP NOT NULL,
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-)
+);
 
 -- create table expensecategories
 CREATE TABLE IF NOT EXISTS expensecategories(
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS expensecategories(
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT unique_user_category UNIQUE (user_id, name)
-)
+);
 
 -- create userexpense table
 CREATE TABLE IF NOT EXISTS userexpense(
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS userexpense(
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(category_id) REFERENCES expensecategories(id) ON DELETE CASCADE
-)
+);
 
 -- create userincome table
 CREATE TABLE IF NOT EXISTS userincome (
@@ -54,4 +54,4 @@ CREATE TABLE IF NOT EXISTS userincome (
     received_on DATE NOT NULL,
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-)
+);
