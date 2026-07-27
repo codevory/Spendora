@@ -5,7 +5,7 @@ export async function getCurrentUser(req, res) {
 
   try {
     const userResult = await db.query(
-      'SELECT name AS "fullName",email,username,currency,created_at FROM users WHERE id = $1',
+      'SELECT fullname AS "fullName",uid,email,username,currency,inserted_at FROM users WHERE id = $1',
       [req.session.userId],
     );
 

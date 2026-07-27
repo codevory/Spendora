@@ -9,7 +9,7 @@ import {
   is_Production,
 } from "./db/getBDConnection.js";
 import { meRouter } from "./routes/meRouter.js";
-import { authRouter } from "./routes/auth.ts";
+import { authRouter } from "./routes/auth.js";
 import path from "node:path";
 import { transactionRoute } from "./routes/transactionRoute.js";
 import { dataRoute } from "./routes/dataRoute.js";
@@ -71,7 +71,7 @@ app.use(
   session({
     store: new PostgresStore({
       pool: dbPool,
-      tableName: "session",
+      tableName: "sessions",
     }),
     secret: secret,
     resave: false,
