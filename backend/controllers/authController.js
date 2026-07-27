@@ -52,7 +52,7 @@ export async function registerUser(req, res) {
 
   try {
     const result = await db.query(
-      "INSERT INTO users (name,email,username,password,currency) VALUES($1,$2,$3,$4,$5) RETURNING id",
+      "INSERT INTO users (fullname,email,username,password,currency) VALUES($1,$2,$3,$4,$5) RETURNING id",
       [fullName, email, username, password, currency],
     );
 
@@ -79,7 +79,7 @@ export async function loginUser(req, res) {
     }
 
     const userResult = await db.query(
-      'SELECT id,name AS "fullName",email,username,password,currency,created_at FROM users WHERE email = $1',
+      "SELECT id,fullname,email,username,password,currency,inserted_at FROM users WHERE email = $1",
       [email],
     );
 
@@ -93,9 +93,7 @@ export async function loginUser(req, res) {
     if (!isValid) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
-
     req.session.userId = user.id;
-
     return res.status(200).json({ user });
   } catch (err) {
     console.error("Error during login : ", err.message);

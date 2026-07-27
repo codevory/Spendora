@@ -89,16 +89,17 @@ export async function addExpense(
     return res.status(400).json({ error: "categoryId is required" });
   }
 
+  transactionData.transactionId = `TXN_${crypto.randomUUID()}`
   try {
     const query = `
     WITH inserted_expense AS (
-    INSERT INTO userexpense (user_id,amount, paid_to,paid_on,category_id,transaction_id) VALUES($1,$2,$3,$4,$5,$6) 
-    RETURNING id,amount,paid_to ,transaction_id , paid_on,category_id
+    INSERT INTO userexpense (user_id,amount, entity,paid_on,category_id,transaction_id) VALUES($1,$2,$3,$4,$5,$6) 
+    RETURNING id,amount,entity ,transaction_id , paid_on,category_id
     )
     SELECT 
     e.id,
     e.amount,
-    e.paid_to AS "entity",
+    entity,
     e.paid_on AS "date",
     e.category_id AS "categoryId",
     e.transaction_id AS "transactionId",
@@ -142,11 +143,12 @@ export async function addIncome(
     return res.status(400).json({ error: "Invalid amount" });
   }
 
+  incomeData.transactionId = `TXN_${crypto.randomUUID()}`
   const db = await getDBConnection();
 
   try {
     const incomeCreated = await db.query(
-      'INSERT INTO userincome (user_id,amount,source,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount,source AS entity, received_on as date,transaction_id as "transactionId",created_at as "createdAt" ',
+      'INSERT INTO userincome (user_id,amount,entity,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount, entity, received_on as date,transaction_id as "transactionId", inserted_at as "createdAt" ',
       [
         req.session.userId,
         incomeData.amount,
@@ -197,10 +199,10 @@ export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,
       `SELECT 
        id,
        amount,
-       source AS entity,
+       entity,
        received_on as "date",
        transaction_id as "transactionId",
-       created_at as "createdAt" 
+       inserted_at as "createdAt" 
        FROM userincome 
        WHERE user_id = $1 AND received_on >= $2
        AND received_on <= $3
@@ -268,12 +270,12 @@ export async function getRecentTransactions(
  e.id,
  e.amount,
  'expense' AS "type",
- e.paid_to AS "entity",
+ e.entity,
  e.paid_on AS "date",
  e.transaction_id AS "transactionId",
  e.category_id AS "categoryId",
  c.name AS "categoryName",
- e.created_at AS "createdAt"
+ e.inserted_at AS "createdAt"
  FROM userexpense e
  LEFT JOIN expensecategories c ON e.category_id = c.id
  WHERE e.user_id = $1
@@ -284,12 +286,12 @@ UNION ALL
  ui.id,
  ui.amount,
  'income' AS "type",
- ui.source AS "entity",
+ ui.entity,
  ui.received_on AS "date",
  ui.transaction_id AS "transactionId",
  NULL AS "categoryId",
  NULL AS "categoryName",
- ui.created_at AS "createdAt"
+ ui.inserted_at AS "createdAt"
  FROM userincome ui
  WHERE ui.user_id = $1
  AND ui.received_on >= $2 AND ui.received_on <= $3
@@ -348,12 +350,12 @@ export async function getExpense(req:CustomRequestWithSession<unknown,unknown,un
      `SELECT
      e.id,
      e.amount,
-     e.paid_to AS entity,
+     e.entity,
      e.paid_on AS "date",
      e.transaction_id AS "transactionId",
      e.category_id AS "categoryId",
      c.name AS "categoryName",
-     e.created_at AS "createdAt",
+     e.inserted_at AS "createdAt",
      'expense' AS "type"
      FROM userexpense e
      LEFT JOIN expensecategories c ON e.category_id = c.id

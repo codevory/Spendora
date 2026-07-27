@@ -65,8 +65,8 @@ const AddNewCategoryForm = ({
         className="form flex flex-col gap-2 "
       >
         <div className=" flex flex-col">
-          <label className="text-accent label text-sm font-medium">
-            category
+          <label className="text-accent label text-sm font-medium mb-1">
+            name
           </label>
           <input
             className="input"
@@ -82,11 +82,11 @@ const AddNewCategoryForm = ({
         </div>
 
         <button
-          className="btn-primary w-26 h-11 font-medium active:scale-95"
+          className="btn-primary w-30 h-10 font-bold active:scale-95"
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? buttonText.concat('ing..') : buttonText}
+          {isSubmitting ? "Creating.." : buttonText}
         </button>
       </form>
     </div>

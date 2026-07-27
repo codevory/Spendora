@@ -46,6 +46,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           <input
             className="bg-transparent w-full outline-none input"
             type="number"
+            placeholder="enter amount you received"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
             required 
@@ -56,6 +57,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           <input
             className="bg-transparent w-full outline-none input"
             type="text"
+            placeholder="eg Fiverr"
             value={incomeSource}
             onChange={(e) => setIncomeSource(e.target.value)}
           />
