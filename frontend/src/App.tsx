@@ -12,35 +12,17 @@ import UserAccountPage from "./pages/UserAccountPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import CategoriesPage from "./pages/CategoriesPage";
-import { Backend_Url } from "./store/features/transactionApi";
+import { getCsrf } from "./utils/authService";
 import { useAppDispatch } from "./store/store";
-import { setCsrf } from "./store/features/userAuthenication";
 const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const toggleSidebar = () => setIsOpen((p) => !p);
   const dispatch = useAppDispatch()
+  const toggleSidebar = () => setIsOpen((p) => !p);
 
   useEffect(() => {
-  async function getCsrf() {
-  try {
-    const data = await fetch(`${Backend_Url}/api/auth/csrf`, {
-      credentials:"include"
-    })
-    if(!data.ok){
-      console.log("no-csrf-cookie-found-server")
-    }
-
-    const token = await data.json()
-    const csrf = token.csrf
-    dispatch(setCsrf(csrf))
-  } catch (error) {
-    console.error("internal server error")
-  }
-}
-getCsrf()
+    getCsrf(dispatch)
   },[])
 
   return (

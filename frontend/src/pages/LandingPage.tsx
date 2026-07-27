@@ -7,7 +7,7 @@ export const LandingPage = () => {
   const statusMessage = useRef("")
   const [simulationAmount, setSimulationAmount] = useState<number>(150);
   const isLoggedin  = useAppSelector((state) => state.userData.isLoggedin)
-    
+
   return (
     <div className="min-h-screen bg-[#0a0d1a] text-slate-200 font-sans selection:bg-indigo-600 selection:text-white relative overflow-hidden">
       
