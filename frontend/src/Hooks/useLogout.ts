@@ -5,7 +5,7 @@ import toast from "react-hot-toast"
 import { setLoginStatus, setUserData } from "../store/features/userAuthenication"
 
 export const useLogoutUser = (setIsSubmitting:(val:boolean) => void) => {
-    let timer:number | null = null;
+    let timer:NodeJS.Timeout | null = null;
 
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
