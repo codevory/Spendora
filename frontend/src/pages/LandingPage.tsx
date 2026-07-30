@@ -1,6 +1,7 @@
 import { useState,useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../store/store';
+import { Helmet } from "react-helmet-async"
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -11,6 +12,16 @@ export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-[#0a0d1a] text-slate-200 font-sans selection:bg-indigo-600 selection:text-white relative overflow-hidden">
       
+      <Helmet>
+        <title>Spendora | Personal Finance Analytics & Tracking</title>
+        <meta
+         name="description"
+         content="Spendora is a personal finance analytical platform to visualize your money flow and track expenses effortlessly."
+        />
+
+        <meta property="og:title" content="Spendora - Finance Tracker" />
+        <meta property="og:description" content="Visualize your money flow and track your expenses." />
+      </Helmet>
       {/* 1. PREMIUM AMBIENT BACKGROUND GLOWS */}
       <div className="absolute top-[-10%] left-[-20%] w-200 h-150 bg-linear-to-tr from-indigo-600/15 via-purple-600/5 to-transparent rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute top-[40%] right-[-20%] w-150 h-150 bg-linear-to-bl from-emerald-500/10 via-blue-500/5 to-transparent rounded-full blur-[140px] pointer-events-none" />

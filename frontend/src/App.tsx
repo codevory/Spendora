@@ -39,8 +39,6 @@ function App() {
             path="/signin"
             element={<Signin isOpen={isOpen} onToggle={toggleSidebar} />}
           />
-
-
           <Route element={<ProtectedRoute />}>
             <Route
               path="/"
@@ -83,9 +81,7 @@ function App() {
               }
             />
           </Route>
-
-          {/* Fallback Catch-All */}
-          <Route path="*" element={<EmptyState content="No page found" />} />
+          <Route path="*" element={<EmptyState content="No page found" position={50} />} />
         </Routes>
         <Outlet />
       </Suspense>

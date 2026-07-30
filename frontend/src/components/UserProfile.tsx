@@ -65,28 +65,34 @@ const UserProfile = ({
         </span>
       </div>
 
-      <div className="mt-5 flex flex-col gap-4">
-        <form onSubmit={onSubmitForm} className="form flex items-center gap-3">
-          <select
-            value={userKey}
-            onChange={(e) => setUserKey(e.target.value)}
-            className="outline-none bg-slate-800"
-          >
-            {userOrigins.map((u) => (
-              <option key={u.key} value={u.key}>
-                {u.key}
-              </option>
-            ))}
-          </select>
-          <span>{userOriginDetails.currencySymbol}</span>
-          <button className="form-button">Change</button>
-        </form>
-        <ThemeSwitcher />
+        <div className="mt-5 flex flex-col gap-4">
+         <div className="flex gap-4">
+          <form onSubmit={onSubmitForm} className="form flex items-center gap-3">
+            <select
+              value={userKey}
+              onChange={(e) => {
+                setUserKey(e.target.value)
+              }}
+              className="outline-none bg-slate-800"
+            >
+              {userOrigins.map((u) => (
+                <option key={u.key} value={u.key}>
+                 {u.key}​​​​​​​  •  {u.currencySymbol}
+                </option>
+              ))}
+            </select>
+            <button className="form-button">save</button>
+          </form>
+          <div className={`block sm:hidden`}>
+          <ThemeSwitcher />
+          </div>
+
+        </div>
         {isAuthenticated ? (
           <button
             type="button"
             onClick={onLogout}
-            className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-4 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
+            className="h-10 rounded-lg border border-slate-700 bg-slate-900 px-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 active:scale-95"
           >
             Logout
           </button>

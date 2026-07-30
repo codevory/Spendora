@@ -27,14 +27,7 @@ const ViewTransactionDetails = ({
     (state) => state.origin.userOrigin.currencySymbol,
   );
 
-  if (data === undefined || data?.length === 0) {
-    return <EmptyState content={"No data found"} />;
-  }
-
-  const txnFound = data.find((txn) => txn.transactionId === id)
-
-  if (!txnFound) {
-    return (
+  const noTransactionSelected = (
       <EmptyState
         content={
           <div className="card glass flex min-h-72 flex-col justify-center gap-3 border border-slate-700 p-6 text-center">
@@ -78,6 +71,16 @@ const ViewTransactionDetails = ({
         }
       />
     );
+
+
+  if (data === undefined || data?.length === 0) {
+    return noTransactionSelected
+  }
+
+  const txnFound = data.find((txn) => txn.transactionId === id)
+
+  if (!txnFound) {
+    return noTransactionSelected
   }
 
   return (

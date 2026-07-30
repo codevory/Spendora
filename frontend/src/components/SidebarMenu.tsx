@@ -31,6 +31,11 @@ const navItems = [
 ] as const;
 
 const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
+
+    const handleOpenDocs = () => {
+    window.open('/api/v1/docs', '_blank');
+  };
+
   const { isDark } = useThemeContext();
   return (
     <div className="sidebar flex h-full flex-col gap-3 py-3">
@@ -43,8 +48,7 @@ const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
             title={item.label}
             className={({ isActive }) =>
               `sidebar-item ${isOpen ? "" : "justify-center"} ${isActive ? "sidebar-item-active shadow-lg shadow-indigo-950/50" : ""}`
-            }
-          >
+            }>
            <NavIcon name={item.name} isDarkMode={isDark} size={26} />
             {isOpen ? (
               <span className="text-sm md:font-medium lg:font-semibold">
@@ -65,6 +69,10 @@ const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
           <NavIcon name="settings" isDarkMode={isDark} />
           <span>Budgets and settings</span>
         </div>
+      </div>
+
+        <div className={`font-bold flex items-center gap-2 text-sm text-slate-300 mt-2 rounded-xl border border-slate-700 bg-slate-800/70 px-3 py-2 ${isOpen ? "" : "hidden"}`}>
+         <button onClick={handleOpenDocs} formTarget="_target" >Api Docs</button>
       </div>
     </div>
   );

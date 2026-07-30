@@ -2,11 +2,12 @@ import type { ReactNode } from "react";
 
 interface EmptyStatePropsType {
   content: ReactNode;
+  position?:number
 }
 
-const EmptyState = ({ content }: EmptyStatePropsType) => {
+const EmptyState = ({ content,position }: EmptyStatePropsType) => {
   return (
-  <div className="flex justify-center items-center mt-[50%] font-bold text-red-600 text-2xl">
+  <div className={`flex justify-center items-center relative top-${position} font-bold text-red-600 text-2xl`}>
     {content}
     </div>);
 };
