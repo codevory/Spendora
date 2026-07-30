@@ -52,14 +52,14 @@ export async function registerUser(req, res) {
 
   try {
     const result = await db.query(
-      "INSERT INTO users (fullname,email,username,password,currency) VALUES($1,$2,$3,$4,$5) RETURNING id",
+      'INSERT INTO users (fullname,email,username,password,currency) VALUES($1,$2,$3,$4,$5) RETURNING id,fullname as "fullName", email, username,currency',
       [fullName, email, username, password, currency],
     );
 
     req.session.userId = result.rows[0].id;
-
-    return res.status(201).json({ message: "Registration Successfull" });
+    return res.status(201).json({ user: result.rows[0] });
   } catch (err) {
+    return res.status(500).json({ error: "Internal server error" });
     console.error("Error : ", err.message);
   }
 }

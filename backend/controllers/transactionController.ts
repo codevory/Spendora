@@ -45,7 +45,7 @@ type RequestWithSession<
   session: SessionUser;
 };
 
-type CustomQueryParamsType = {
+export type CustomQueryParamsType = {
   query? : string
   page? : string
   size? : string
@@ -54,7 +54,7 @@ type CustomQueryParamsType = {
   to?   : string
 }
 
-type CustomRequestWithSession<
+export type CustomRequestWithSession<
 Params = unknown,
 ReqBody = unknown,
 ResBody = unknown,
@@ -64,8 +64,10 @@ ReqQuery = unknown> = Request<Params,ReqBody,ResBody,ReqQuery> & {
 
 
   let now = new Date()
-  let startDateDefault = new Date(now.getFullYear(), now .getMonth() - 3, now.getDate())
-  let endDateDefault = now
+  export const defaultDate = {
+     startDateDefault : new Date(now.getFullYear(), now .getMonth() - 3, now.getDate()),
+     endDateDefault : now
+  }
 
 export async function addExpense(
   req: RequestWithSession<unknown, unknown, ExpenseRequestBody>,
@@ -175,8 +177,8 @@ export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,
 
   const { page, size, skip, from, to} = req.query
 
- let start_date = !from ? startDateDefault : new Date(from)
- let end_date = !to ? endDateDefault : new Date(to)
+ let start_date = !from ? defaultDate.startDateDefault : new Date(from)
+ let end_date = !to ? defaultDate.endDateDefault : new Date(to)
  end_date.setHours(23,59,59,999)
 
   let pageNum = page !== undefined && parseInt(page) > 0 ? Math.max(parseInt(page), 1) : 1
@@ -241,8 +243,8 @@ export async function getRecentTransactions(
   const db = await getDBConnection();
   const { page, size, skip, from, to } = req.query;
 
-  let start_date = !from ? startDateDefault : new Date(from)
-  let end_date = !to ? endDateDefault : new Date(to)
+  let start_date = !from ? defaultDate.startDateDefault : new Date(from)
+  let end_date = !to ? defaultDate.endDateDefault : new Date(to)
   end_date.setHours(23,59,59,999)
 
   let pageNum:number = page !== undefined ? Math.max(parseInt(page), 1) : 1;
@@ -339,8 +341,8 @@ export async function getExpense(req:CustomRequestWithSession<unknown,unknown,un
     dataToSkip = 0
   }
 
-  let start_date = !from ? startDateDefault : new Date(from)
-  let end_date = !to ? endDateDefault : new Date(to)
+  let start_date = !from ? defaultDate.startDateDefault : new Date(from)
+  let end_date = !to ? defaultDate.endDateDefault : new Date(to)
   end_date.setHours(23,59,59,999)
 
   console.log("query :",query," page :",pageNum," size :",dataSize," skip :",dataToSkip," from :",start_date," to : ",end_date)
