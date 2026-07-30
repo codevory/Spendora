@@ -14,24 +14,24 @@ import {
   postDataRateLimiter,
 } from "../helpers/rateLimiters.ts";
 
-export const dataRoute = express.Router();
-dataRoute.get("/categories", requireAuth, getDataRateLimiter, getCategories);
-dataRoute.post(
-  "/addNewCategory",
+export const categoryRoute = express.Router();
+categoryRoute.get("/", requireAuth, getDataRateLimiter, getCategories);
+categoryRoute.post(
+  "/",
   requireAuth,
   csrfProtection,
   postDataRateLimiter,
   addNewCategory,
 );
-dataRoute.post(
-  "/renameCategory",
+categoryRoute.patch(
+  "/:id",
   requireAuth,
   csrfProtection,
   postDataRateLimiter,
   renameCategory,
 );
-dataRoute.delete(
-  "/deleteCategory",
+categoryRoute.delete(
+  "/:id",
   requireAuth,
   csrfProtection,
   postDataRateLimiter,

@@ -254,7 +254,7 @@ export function handleRenameCategory({
   setIsSubmitting(true);
 
   Timer = setTimeout(() => {
-    renameCategoryTxn({ category: categoryToRename   })
+    renameCategoryTxn({name:categoryToRename.name,id:categoryToRename.id   })
       .unwrap()
       .then(() => {
         success("renamed successfully🎉");

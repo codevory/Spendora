@@ -34,7 +34,7 @@ export async function handleSignupWithEmailPassword({
   try {
     setIsLoading(true);
     setErrorMessage("")
-   const resp = await fetch(`${Backend_Url}/api/auth/register`,{
+   const resp = await fetch(`${Backend_Url}/api/v1/auth/register`,{
     method:"POST",
     credentials:'include',
     headers:{

@@ -30,8 +30,9 @@ export type CategoryPropsType  = {
 
 export type RecentTransactionsType = {
   page ? : number,
-  size ? : number,
-  skip ? : number
+  limit ? : number,
+  skip ? : number,
+  sort ? :string
 }
 import { useAddExpenseTxnMutation } from "../store/features/transactionApi.ts";
 import type { useAddCategoryMutation, useDeleteCategoryMutation, useRenameCategoryMutation, useAddIncomeTxnMutation } from "../store/features/transactionApi.ts";
@@ -69,10 +70,11 @@ export interface handleAddExpenseTransactionProps {
 export interface expenseTransactionParamsType {
 query ? : string
 page ? : number
-size ? : number
+limit ? : number
 skip ? : number
 from ? : string | Date,
-to ? : string | Date
+to ? : string | Date,
+sort : string
 }
 
 export type ResponseuserDataType = {
@@ -83,3 +85,12 @@ export type ResponseuserDataType = {
   created_at:string
 }
 
+export interface paramTypes {
+query ? : string
+page ? : number
+limit ? : number
+skip ? : number
+from ? : string | Date,
+to ? : string | Date,
+sort : string
+}

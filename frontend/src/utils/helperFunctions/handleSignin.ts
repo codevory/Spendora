@@ -32,7 +32,7 @@ export async function handleSigninWithPassword({
  
   setIsSubmitting(true)
   try {
-    const res = await fetch(`${Backend_Url}/api/auth/login`,{
+    const res = await fetch(`${Backend_Url}/api/v1/auth/login`,{
       method:"POST",
       credentials:'include',
       headers:{

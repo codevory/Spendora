@@ -30,7 +30,7 @@ dispatch(setLoginStatus(true))
 
 export async function getCsrf(dispatch:Dispatch) {
   try {
-    const data = await fetch(`${Backend_Url}/api/auth/csrf`, {
+    const data = await fetch(`${Backend_Url}/api/v1/auth/csrf`, {
       credentials:"include"
     })
     if(!data.ok){
