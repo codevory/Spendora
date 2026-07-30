@@ -20,6 +20,8 @@ import cookieParser from "cookie-parser";
 import { expenseRoute } from "./routes/expenseRoute.js";
 import { incomeRoute } from "./routes/incomeRoute.js";
 import { getDataRateLimiter } from "./helpers/rateLimiters.ts";
+import SwaggerUI from "swagger-ui-express";
+import { apiSpecs } from "./public/data/data..js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -88,6 +90,14 @@ app.use(
   }),
 );
 
+app.use(
+  "/api/v1/docs",
+  getDataRateLimiter,
+  SwaggerUI.serve,
+  SwaggerUI.setup(apiSpecs, {
+    customSiteTitle: "Spendora Api Docs",
+  }),
+);
 app.use("/api/v1/auth/me", meRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/transaction", transactionRoute);
