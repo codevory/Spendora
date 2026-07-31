@@ -26,8 +26,9 @@ dist-ssr
 # other files
 stats.html
 
-# .gitignore
-*.env
 .env.development
+.env.production
 node_modules/
 dist/
+.vercel
+.env*

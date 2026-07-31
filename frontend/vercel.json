@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "$VITE_BASE_URL/api/:path*"
+      "source": "/api/v1/:path*",
+      "destination": "$BACKEND_URL/api/v1/:path*"
     },
     {
-      "source":"/((?!api/).*)",
-      "destination":"/index.html"
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
     }
   ]
 }
