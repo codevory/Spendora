@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://spendora-backend-4ado.onrender.com/api/:path*"
+      "destination": "$VITE_BASE_URL/api/:path*"
     },
     {
       "source":"/((?!api/).*)",

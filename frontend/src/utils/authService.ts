@@ -4,7 +4,6 @@ import {
   setError,
   setCsrf,
 } from "../store/features/userAuthenication";
-import { Backend_Url } from "../store/features/transactionApi";
 import type { Dispatch } from "@reduxjs/toolkit";
 import type { AppDispatch } from "../store/store";
 
@@ -30,7 +29,7 @@ dispatch(setLoginStatus(true))
 
 export async function getCsrf(dispatch:Dispatch) {
   try {
-    const data = await fetch(`${Backend_Url}/api/v1/auth/csrf`, {
+    const data = await fetch(`/api/v1/auth/csrf`, {
       credentials:"include"
     })
     if(!data.ok){

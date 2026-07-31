@@ -14,10 +14,6 @@ import type {
 } from "../../types/transactionType.ts";
 import Store from "../store.ts";
 
-export const Backend_Url = import.meta.env.PROD
-  ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")
-  : "http://localhost:2122";
-
 type CategoryResponse = {
   categories: CategoryPropsType[];
 };
@@ -70,13 +66,13 @@ export type csrfResponseDataType = {
 
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
-    baseUrl: `${Backend_Url}/api/v1`,
+    baseUrl: `/api/v1`,
     credentials: "include",
     timeout: 10000,
 
     prepareHeaders: (headers ) => {
       try {
-        const csrfToken = Store.getState().userData.csrfToken ;
+        const csrfToken = Store.getState().userData.csrfToken;
         if (csrfToken) {
           headers.set("x-csrf-token",csrfToken);
         }
@@ -115,7 +111,7 @@ export const transactionApi = createApi({
   endpoints: (builder) => ({
     getRecentTransactions: builder.query<GetRecentTransactionsResponse, RecentTransactionsType>({
       query: ({ page, limit, skip }) => ({
-        url: "/transaction",
+        url: "/transactions",
         method: "GET",
         params: { page, limit, skip, sort:"desc" },
       }),
@@ -140,9 +136,8 @@ export const transactionApi = createApi({
         if(params?.to) queryParams.to = params.to
         if(params?.page) queryParams.page = params.page
 
-
         return {
-          url:"/transaction/expenses",
+          url:"/transactions/expenses",
           method: "GET",
           params:queryParams
         }
@@ -169,7 +164,7 @@ export const transactionApi = createApi({
         if(params?.page) queryParams.page = params.page
 
         return {
-          url: "/transaction/incomes",
+          url: "/transactions/incomes",
           method: "GET",
           params : queryParams
         }
@@ -210,7 +205,7 @@ export const transactionApi = createApi({
     }),
    addExpenseTxn: builder.mutation<{transactionData:expenseTranscationTypes}, { transactionData: expenseTranscationTypes }>({
       query: ({ transactionData }) => ({
-        url: "/transaction/expenses",
+        url: "/transactions/expenses",
         method: "POST",
         body: { transactionData }
       }),
@@ -273,7 +268,7 @@ export const transactionApi = createApi({
 
     addIncomeTxn: builder.mutation<{incomeData: IncomeTransactionTypes}, { incomeData: IncomeTransactionTypes }>({
       query: ({ incomeData }) => ({
-        url: "/transaction/incomes",
+        url: "/transactions/incomes",
         method: "POST",
         body: { incomeData }
       }),
@@ -379,7 +374,7 @@ export const transactionApi = createApi({
 
     getFilteredExpenseTransactions : builder.query<expenseResponseDataType,expenseTransactionParamsType>({
       query: ({query,page,limit,skip,from,to}) => ({
-        url: "transaction/expenses",
+        url: "transactions/expenses",
         method: "GET",
         params: {query,page,limit,skip,from,to}
       }),
