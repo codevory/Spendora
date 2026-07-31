@@ -61,7 +61,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
       return;
     }
     
-    let timer:number;
+    let timer:NodeJS.Timeout;
     if(expenseLoading){
      setShowLoader(true)
     timer = setTimeout(() => {

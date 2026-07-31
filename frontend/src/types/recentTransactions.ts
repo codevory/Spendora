@@ -39,6 +39,7 @@ export interface GetRecentTransactionsResponse {
 }
 export type RecentTransactionsType = {
   page ? : number,
-  size ? : number,
-  skip ? : number
+  limit ? : number,
+  skip ? : number,
+  sort : string
 }

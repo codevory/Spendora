@@ -1,4 +1,5 @@
 import { getDBConnection } from "../db/getBDConnection.js";
+import { validateLimit, validateSort } from "../helpers/utils.ts";
 
 export async function addNewCategory(req, res) {
   const db = await getDBConnection();
@@ -33,20 +34,20 @@ export async function addNewCategory(req, res) {
 
 export async function renameCategory(req, res) {
   const db = await getDBConnection();
-  const { category } = req.body;
+  let { id } = req.params;
+  id = parseInt(id);
+  const { name } = req.body;
 
-  if (!category?.id || typeof category.name !== "string") {
-    return res.status(400).json({ error: "category id and name are required" });
+  if (!id || typeof id !== "number") {
+    return res.status(400).json({ error: "category id is required" });
+  } else if (!name || typeof name !== "string") {
+    return res.status(200).json({ error: "category name is required" });
   }
 
   try {
     const category_renamed = await db.query(
       "UPDATE expensecategories SET name = $1 WHERE user_id = $2 AND id = $3 RETURNING id,name",
-      [
-        category.name.trim().toLowerCase(),
-        req.session.userId,
-        parseInt(category.id),
-      ],
+      [name.trim().toLowerCase(), req.session.userId, parseInt(id)],
     );
 
     if (category_renamed.rows.length === 0) {
@@ -65,30 +66,32 @@ export async function renameCategory(req, res) {
 }
 
 export async function deleteCategory(req, res) {
-  let { category } = req.body;
-  if (!category?.id) {
+  let { id } = req.params;
+  id = parseInt(id);
+
+  console.log("cat to del:  ", id);
+  if (!id || typeof id !== "number") {
     return res.status(400).json({ error: "categoryId is required" });
   }
-  category.id = parseInt(category.id);
-  if (isNaN(category.id)) {
+  if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid categoryId" });
   }
   const db = await getDBConnection();
 
   try {
     const isValid = await db.query(
-      "SELECT id, name FROM expensecategories WHERE id = $1 AND user_id = $2",
-      [category.id, req.session.userId],
+      "SELECT id FROM expensecategories WHERE id = $1 AND user_id = $2",
+      [id, req.session.userId],
     );
     if (isValid.rows.length === 0) {
       return res.status(400).json({ error: "Category not found" });
     }
     await db.query(
       "DELETE FROM expensecategories WHERE id = $1 AND user_id = $2",
-      [category.id, req.session.userId],
+      [id, req.session.userId],
     );
 
-    console.log("item ", category, "deleted successfully");
+    console.log("category deleted successfully");
     return res.status(204).send();
   } catch (err) {
     console.error("error causing to delete ", err.message);
@@ -97,6 +100,11 @@ export async function deleteCategory(req, res) {
 }
 
 export async function getCategories(req, res) {
+  const { sort, limit } = req.params;
+
+  let data_sort = validateSort(sort);
+  let data_limit = validateLimit(limit ?? 50);
+
   const db = await getDBConnection();
 
   try {
@@ -109,9 +117,10 @@ export async function getCategories(req, res) {
       LEFT JOIN userexpense e ON c.id = e.category_id
       WHERE c.user_id = $1 
       GROUP BY c.id, c.name 
-      ORDER BY "transactionCount" DESC
+      ORDER BY "transactionCount" ${data_sort}
+      LIMIT $2
       `,
-      [req.session.userId],
+      [req.session.userId, data_limit],
     );
 
     return res.status(200).json({

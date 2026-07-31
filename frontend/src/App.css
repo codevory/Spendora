@@ -161,7 +161,7 @@ input[type="number"] {
 }
 
 .transaction-container {
-  max-height: 100vh;
+  max-height: 90vh;
   min-height: 50vh;
 }
 
@@ -785,41 +785,59 @@ input[type="number"] {
   }
 }
 
-.single-skeleton{
+/* Base container for small elements (amounts, names, tags) */
+.single-skeleton {
   position: relative;
+  overflow: hidden; 
+  display: inline-block; 
+  border-radius: 4px;
+  user-select: none;
+  pointer-events: none;
 }
 
-.single-skeleton::after{
+/* Ensure empty text/amount elements preserve height and width */
+.single-skeleton:empty::before {
+  content: "\00a0"; /* Non-breaking space keeps natural line-height */
+}
+
+/* Shimmer overlay sweep */
+.single-skeleton::after {
   content: "";
   position: absolute;
   inset: 0;
-  transform: translateX(-33%);
-  animation: single-skeleton-shimmer 2.5s infinite;
+  transform: translateX(-100%); 
+  animation: single-skeleton-shimmer 1.8s infinite continuous;
 }
 
-.single-skeleton-light::after{
+.single-skeleton-dark {
+  background-color: #e2e8f0;
+}
+
+.single-skeleton-dark::after {
   background: linear-gradient(
-    100deg,
-    transparent 15%,
-    rgba(226, 226, 226, 0.601) 45%,
-    rgba(37, 34, 34, 0.625) 50%,
-    rgba(229, 218, 218, 0.495) 55%,
-    transparent 85%
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
   );
 }
 
-.single-skeleton-dark::after{
-    background: linear-gradient(
-    100deg,
-    transparent 15%,
-    rgba(18, 17, 17, 0.14) 45%,
-    rgba(71, 70, 70, 0.597) 50%,
-    rgba(11, 11, 11, 0.14) 55%,
-    transparent 85%
+.single-skeleton-light {
+  background-color: #5c7bab; 
+}
+
+.single-skeleton-light::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(175, 146, 146, 0.63) 50%,
+    transparent 100%
   );
 }
+
+/* Keyframes: Full sweep across the element */
 @keyframes single-skeleton-shimmer {
-  100%{
-    transform: translateX(40%);
+  100% {
+    transform: translateX(100%); /* End completely off-screen right */
   }
 }

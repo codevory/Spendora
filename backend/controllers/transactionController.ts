@@ -1,5 +1,6 @@
 import { getDBConnection } from "../db/getBDConnection.js";
 import type { Request, Response } from "express";
+import { validateLimit, validateSort } from "../helpers/utils.ts";
 
 type TransactionItem = {
   amount: number;
@@ -45,16 +46,17 @@ type RequestWithSession<
   session: SessionUser;
 };
 
-type CustomQueryParamsType = {
+export type CustomQueryParamsType = {
   query? : string
   page? : string
-  size? : string
+  limit? : string
   skip? : string
   from? : string
   to?   : string
+  sort? :string
 }
 
-type CustomRequestWithSession<
+export type CustomRequestWithSession<
 Params = unknown,
 ReqBody = unknown,
 ResBody = unknown,
@@ -64,8 +66,10 @@ ReqQuery = unknown> = Request<Params,ReqBody,ResBody,ReqQuery> & {
 
 
   let now = new Date()
-  let startDateDefault = new Date(now.getFullYear(), now .getMonth() - 3, now.getDate())
-  let endDateDefault = now
+  export const defaultDate = {
+     startDateDefault : new Date(now.getFullYear(), now .getMonth() - 3, now.getDate()),
+     endDateDefault : now
+  }
 
 export async function addExpense(
   req: RequestWithSession<unknown, unknown, ExpenseRequestBody>,
@@ -173,10 +177,10 @@ export async function addIncome(
 export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,CustomQueryParamsType>, res: Response) {
   const db = await getDBConnection();
 
-  const { page, size, skip, from, to} = req.query
+  const { page, limit, skip, from, to, sort} = req.query
 
- let start_date = !from ? startDateDefault : new Date(from)
- let end_date = !to ? endDateDefault : new Date(to)
+ let start_date = !from ? defaultDate.startDateDefault : new Date(from)
+ let end_date = !to ? defaultDate.endDateDefault : new Date(to)
  end_date.setHours(23,59,59,999)
 
   let pageNum = page !== undefined && parseInt(page) > 0 ? Math.max(parseInt(page), 1) : 1
@@ -184,16 +188,14 @@ export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,
   pageNum = 1
   }
 
-  let dataSize = size !== undefined ? Math.min(parseInt(size), 250) : 250
-  if(isNaN(dataSize) || dataSize < 0){
-    dataSize = 250
-  }
-
-  let dataToSkip = skip !== undefined && parseInt(skip) > 0 ? Math.max(parseInt(skip), 0) : (pageNum - 1) * dataSize
+  let data_limit = validateLimit(limit);
+  let data_sort = validateSort(sort);
+  let dataToSkip = skip !== undefined && parseInt(skip) > 0 ? Math.max(parseInt(skip), 0) : (pageNum - 1) * data_limit
   if(isNaN(dataToSkip) || dataToSkip < 0){
-    dataToSkip = (pageNum - 1) * dataSize
+    dataToSkip = (pageNum - 1) * data_limit
   }
 
+  console.log("income params",page, limit, skip, from, to, sort)
   try {
     const incomeResult = await db.query(
       `SELECT 
@@ -206,12 +208,11 @@ export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,
        FROM userincome 
        WHERE user_id = $1 AND received_on >= $2
        AND received_on <= $3
-
-       ORDER BY received_on DESC
+       ORDER BY received_on ${data_sort}
        LIMIT $4
        OFFSET $5
        `,
-      [req.session.userId,start_date,end_date,dataSize,dataToSkip],
+      [req.session.userId,start_date,end_date,data_limit,dataToSkip],
     );
 
     return res.status(200).json({
@@ -221,7 +222,7 @@ export async function getIncome(req: RequestWithSession<unknown,unknown,unknown,
        from: start_date,
        to: end_date,
        size: {
-         requested: dataSize,
+         requested: data_limit,
          received: incomeResult.rows.length
        }
       },
@@ -239,10 +240,10 @@ export async function getRecentTransactions(
   res: Response,
 ) {
   const db = await getDBConnection();
-  const { page, size, skip, from, to } = req.query;
+  const { page, limit, skip, from, to,sort } = req.query;
 
-  let start_date = !from ? startDateDefault : new Date(from)
-  let end_date = !to ? endDateDefault : new Date(to)
+  let start_date = !from ? defaultDate.startDateDefault : new Date(from)
+  let end_date = !to ? defaultDate.endDateDefault : new Date(to)
   end_date.setHours(23,59,59,999)
 
   let pageNum:number = page !== undefined ? Math.max(parseInt(page), 1) : 1;
@@ -250,18 +251,16 @@ export async function getRecentTransactions(
     pageNum = 1
   }
 
-  let dataSize:number = size !== undefined ? Math.min(parseInt(size),20) : 20 ;
-  if(isNaN(dataSize) || dataSize < 0){
-    dataSize = 20
-  }
+  let data_limit:number = validateLimit(limit);
+  let data_sort = validateSort(sort);
 
-  let dataToSkip = skip !== undefined ? parseInt(skip) : (pageNum - 1) * dataSize;
+  let dataToSkip = skip !== undefined ? parseInt(skip) : (pageNum - 1) * data_limit;
   if(isNaN(dataToSkip) || dataToSkip < 0){
     dataToSkip = 0;
     pageNum = 1;
   }
 
-  console.log("page :", pageNum, "size :", dataSize, "skip : ", dataToSkip);
+  console.log("page :", pageNum, "size :", data_limit, "skip : ", dataToSkip," sort ",data_sort);
   try {
     const txnResult = await db.query(
       `
@@ -296,12 +295,12 @@ UNION ALL
  WHERE ui.user_id = $1
  AND ui.received_on >= $2 AND ui.received_on <= $3
 )
-ORDER BY "date" DESC
+ORDER BY "date" ${data_sort}
  LIMIT $4
  OFFSET $5
  ;
     `,
-      [req.session.userId,start_date,end_date, dataSize, dataToSkip],
+      [req.session.userId,start_date,end_date, data_limit, dataToSkip],
     );
 
     return res.status(200).json({
@@ -311,7 +310,7 @@ ORDER BY "date" DESC
         from: start_date,
         to: end_date,
         size: {
-          requested: dataSize,
+          requested: data_limit,
           received: txnResult.rows.length
         }
       },
@@ -327,11 +326,12 @@ ORDER BY "date" DESC
 export async function getExpense(req:CustomRequestWithSession<unknown,unknown,unknown,CustomQueryParamsType>,res:Response){
   const db:any = await getDBConnection()
 
-  let { query,page,size,skip,from,to } = req.query
+  let { query,page,limit,skip,from,to,sort } = req.query
 
   let search_query = !query || query.trim() === '' ? null : query?.trim().toLowerCase()
   let pageNum = page !== undefined ? Math.max(Number(page), 1) : 1;
-  let dataSize = !size || Number(size) < 0 ? 250 : Math.min(Number(size), 250)
+  let dataSize = validateLimit(limit);
+  let data_sort = validateSort(sort)
 
   let dataToSkip = pageNum == 1 ? 0 : skip !== undefined ? Number(skip) : (pageNum - 1) * dataSize ;
   if(isNaN(dataToSkip) || dataToSkip < 0){
@@ -339,11 +339,9 @@ export async function getExpense(req:CustomRequestWithSession<unknown,unknown,un
     dataToSkip = 0
   }
 
-  let start_date = !from ? startDateDefault : new Date(from)
-  let end_date = !to ? endDateDefault : new Date(to)
+  let start_date = !from ? defaultDate.startDateDefault : new Date(from)
+  let end_date = !to ? defaultDate.endDateDefault : new Date(to)
   end_date.setHours(23,59,59,999)
-
-  console.log("query :",query," page :",pageNum," size :",dataSize," skip :",dataToSkip," from :",start_date," to : ",end_date)
   
   try {
     const result = await db.query(
@@ -363,7 +361,7 @@ export async function getExpense(req:CustomRequestWithSession<unknown,unknown,un
      AND e.paid_on >= $3 
      AND e.paid_on <= $4
      AND ($2::TEXT IS NULL OR $2 = ' ' OR c.name = $2::TEXT)
-     ORDER BY e.paid_on DESC
+     ORDER BY e.paid_on ${data_sort}
      LIMIT $5
      OFFSET $6
      ;`,[req.session.userId,search_query,start_date,end_date,dataSize,dataToSkip]

@@ -66,12 +66,13 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
     return;
    } 
 
-   let timer:number;
+   let timer:NodeJS.Timeout;
    if(incomeLoading || expenseLoading){
      setShowLoader(true)
+     
    timer = setTimeout(() => {
     setShowLoader(false)
-   },200)
+   },250)
    }
    else{
     setShowLoader(false)
@@ -87,7 +88,7 @@ const HeaderCards = ({ setModalState }: HeaderCardsPropsType) => {
   const borderMuted = isDark ? "border-slate-800/80" : "border-slate-100";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 transform-fill">
 
       <div className={`p-3.5 backdrop-blur-md rounded-xl border border-l-4 shadow-md flex flex-col justify-center gap-2 ${cardBg} ${
         metrics.monthlyNet >= 0 

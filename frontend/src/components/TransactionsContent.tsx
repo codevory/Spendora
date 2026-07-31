@@ -54,7 +54,7 @@ const Expenses = visibleData || []
   }
   
   return (
-    <div className="transaction-container overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900/70 p-3 shadow-lg">
+    <div className="transaction-container overflow-y-scroll rounded-2xl border border-slate-700 bg-slate-900/70 p-3 shadow-lg">
       <div className="mb-3 flex items-center justify-between px-1">
         <div>
           <h3 className="text-lg font-semibold text-slate-100">Transactions</h3>

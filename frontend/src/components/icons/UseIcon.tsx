@@ -1,5 +1,5 @@
 interface NavIconProps {
-  name: 'dashboard' | 'analytics' | 'settings' | 'moon' | 'sun' | 'menu-toggle' | 'pencil' |
+  name: 'dashboard' | 'analytics' | 'settings' | 'moon' | 'sun' | 'menu-toggle' | 'pencil' | 'api' |
   'transactions' | 'categoryTag' | 'profile' | 'home' | 'categoriesTag';
   isDarkMode: boolean;
   size?:number

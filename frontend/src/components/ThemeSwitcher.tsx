@@ -16,7 +16,7 @@ const ThemeSwitcher = () => {
     border: 'none',
     cursor: 'pointer'
   }}
-      className={`h-6 w-12 items-center transition-all `}
+      className={`h-6 w-12 items-center transition-transform `}
     >
         {isDark ? (
          <NavIcon name="moon" isDarkMode={isDark} />

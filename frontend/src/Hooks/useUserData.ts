@@ -27,8 +27,8 @@ const targetDate = (month: number) => new Date(now.getFullYear(), month, 1);
 
 export const useUserData = () => {
 
-  const { data,isError:expenseError,isLoading:expenseLoading } = useGetExpenseTransactionsQuery()
-  const { data: incomeResponse,isError:incomeError,isLoading:incomeLoading } = useGetIncomeTransactionsQuery();
+  const { data,isError:expenseError,isLoading:expenseLoading } = useGetExpenseTransactionsQuery({sort:"DESC"})
+  const { data: incomeResponse,isError:incomeError,isLoading:incomeLoading } = useGetIncomeTransactionsQuery({sort:"DESC"});
 
   const expenses = data?.expenses ?? [];
   const incomeTrans = incomeResponse?.incomes ?? [];
@@ -235,26 +235,25 @@ PAGE_SIZE?:number
 }
 export function useFilteredExpense({query,page,dateFrom,dateTo,PAGE_SIZE}:useFilteredDataTypes){
   const [showLoading,setShowLoading] = useState(false)
-
      const debouncedQuery = useSimpleDebounce(query,100)
 
       const { data,isError,isFetching} = useGetFilteredExpenseTransactionsQuery({
         query:debouncedQuery,
         page,
-        size:PAGE_SIZE,
+        limit:PAGE_SIZE,
         from:dateFrom === undefined || dateFrom === '' ?  undefined : new Date(dateFrom).toISOString(),
-        to: dateTo === undefined || dateTo === '' ? undefined : new Date(dateTo).toISOString()
+        to: dateTo === undefined || dateTo === '' ? undefined : new Date(dateTo).toISOString(),
+        sort: "desc"
       })
 
       const lastValidData = useRef(data)
       if(data){
         lastValidData.current = data
       }
-
       const stableData = data ?? lastValidData.current
 
       useEffect(() => {
-        let timer:number
+        let timer:NodeJS.Timeout
         if(isFetching){
           timer = setTimeout(() => {
             setShowLoading(true)
@@ -275,16 +274,17 @@ type RecentTransactionsType = {
   page:number 
   PAGE_SIZE:number
 }
+
 export function useRecentTransactions({page,PAGE_SIZE}:RecentTransactionsType){
  const { data,isError,isFetching } = useGetRecentTransactionsQuery({
   page,
-  size:PAGE_SIZE,
-  skip: page === undefined || page == 0 ? 0 : (page - 1) * PAGE_SIZE
+  limit:PAGE_SIZE,
+  skip: page === undefined || page == 0 ? 0 : (page - 1) * PAGE_SIZE,
+  sort:"desc"
  })
 
- let timer:number;
+ let timer:NodeJS.Timeout;
  const [showLoading,setShowLoading] = useState(false)
- 
   let lastDataRef = useRef(data)
  
   if(data){
@@ -310,13 +310,11 @@ export function useRecentTransactions({page,PAGE_SIZE}:RecentTransactionsType){
 }
 
 export function useGetCategories(){
-  const { data,isFetching,error } = useGetCategoriesQuery()
+  const { data,isFetching,error } = useGetCategoriesQuery({sort:"desc",limit:50})
   const [showLoading, setShowLoading] = useState(false)
-  let timer:number | undefined;
-
+  let timer:NodeJS.Timeout;
   
   useEffect(() => {
-
     timer = setTimeout(() => {
       if(isFetching){
        setShowLoading(true)

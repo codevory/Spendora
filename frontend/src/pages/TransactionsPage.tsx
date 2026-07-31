@@ -18,7 +18,7 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [page,setPage] = useState<number>(1)
-  const { data: categoryResponse } = useGetCategoriesQuery();
+  const { data: categoryResponse } = useGetCategoriesQuery({sort:"DESC",limit:50});
   const categoriesData = categoryResponse?.categories ?? [];
   const { isError,isFetching,data } = useFilteredExpense({page,PAGE_SIZE,query,dateFrom,dateTo  })
   const { lineData } = useUserData();
@@ -111,7 +111,7 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-            <div className="space-y-2 overflow-y-scroll mb-6 relative transaction-activity rounded-2xl border border-slate-700 bg-slate-800/70 p-2 md:p-5 shadow-lg ">
+            <div className="space-y-2 mb-6 relative transaction-activity rounded-2xl border border-slate-700 bg-slate-800/70 p-2 md:p-5 shadow-lg ">
               <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-100">
@@ -145,7 +145,7 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="rounded-xl border border-slate-600 bg-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-slate-600 active:scale-95"
+                    className="rounded-xl border border-slate-600 bg-slate-700 px-4 py-1 text-sm font-semibold text-slate-100 transition hover:bg-slate-600 active:scale-95"
                   >
                     Reset
                   </button>
@@ -162,8 +162,8 @@ const TransactionsPage = ({ onToggle, isOpen }: TransactionLayoutProps) => {
              <PageNavigation page={page} setPage={setPage} data={data?.expenses || []} isFetching={isFetching} marginFromBottom={1} />
             </div>
 
-            <div className="space-y-4">
-              <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-3 md:p-5 shadow-lg">
+            <div className="space-y-2 flex flex-col">
+              <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-2 md:p-5 shadow-lg">
                 <ViewTransactionDetails
                   data={filteredData}
                   dateFrom={dateFrom}
