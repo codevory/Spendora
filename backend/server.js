@@ -21,7 +21,7 @@ import { expenseRoute } from "./routes/expenseRoute.js";
 import { incomeRoute } from "./routes/incomeRoute.js";
 import { getDataRateLimiter } from "./helpers/rateLimiters.ts";
 import SwaggerUI from "swagger-ui-express";
-import { apiSpecs } from "./public/data/data..js";
+import { apiSpecs } from "./public/data/api_specs.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,13 +96,16 @@ app.use(
   SwaggerUI.serve,
   SwaggerUI.setup(apiSpecs, {
     customSiteTitle: "Spendora Api Docs",
+    swaggerOptions: {
+      supportedSubmitMethods: [],
+    },
   }),
 );
 app.use("/api/v1/auth/me", meRouter);
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/transaction", transactionRoute);
-app.use("/api/v1/transaction/expenses", expenseRoute);
-app.use("/api/v1/transaction/incomes", incomeRoute);
+app.use("/api/v1/transactions", transactionRoute);
+app.use("/api/v1/transactions/expenses", expenseRoute);
+app.use("/api/v1/transactions/incomes", incomeRoute);
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/status", serverHealthRoute);
 
