@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { Backend_Url } from "../../store/features/transactionApi";
 const success = (message: string) => toast.success(message);
 const fail = (message: string) => toast.error(message);
 
@@ -33,7 +34,7 @@ export async function handleSignupWithEmailPassword({
   try {
     setIsLoading(true);
     setErrorMessage("")
-   const resp = await fetch(`/api/v1/auth/register`,{
+   const resp = await fetch(`${Backend_Url}/api/v1/auth/register`,{
     method:"POST",
     credentials:'include',
     headers:{

@@ -1,8 +1,9 @@
+import { Backend_Url } from "../../store/features/transactionApi";
 import type { userDataType } from "../../store/features/userAuthenication";
 
 export async function checkAuth() {
     try {
-      const res = await fetch(`/api/v1/auth/me`,{
+      const res = await fetch(`${Backend_Url}/api/v1/auth/me`,{
         method:"GET",
         credentials:'include'
       })
