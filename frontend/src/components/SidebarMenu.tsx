@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import useThemeContext from "../Hooks/useThemeContext";
 import { NavIcon } from "./icons/UseIcon";
-import { Backend_Url } from "../store/features/transactionApi.ts"
 
 const navItems = [
   {
@@ -34,7 +33,7 @@ const navItems = [
 const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
 
     const handleOpenDocs = () => {
-    window.open(`${Backend_Url}/api/v1/docs`, '_blank');
+    window.open(`/docs/v1/api`, '_blank');
   };
 
   const { isDark } = useThemeContext();

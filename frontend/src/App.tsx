@@ -14,6 +14,7 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import { getCsrf } from "./utils/authService";
 import { useAppDispatch } from "./store/store";
+import Api_docs from "./components/Api_docs";
 const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
 
 function App() {
@@ -81,6 +82,10 @@ function App() {
               }
             />
           </Route>
+          <Route
+          path="/docs/v1/api"
+          element={<Api_docs />}
+          />
           <Route path="*" element={<EmptyState content="No page found" position={50} />} />
         </Routes>
         <Outlet />
