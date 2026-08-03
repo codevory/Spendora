@@ -22,6 +22,7 @@ import { incomeRoute } from "./routes/incomeRoute.js";
 import { getDataRateLimiter } from "./helpers/rateLimiters.ts";
 import SwaggerUI from "swagger-ui-express";
 import { apiSpecs } from "./public/data/api_specs.js";
+import compression from "compression";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,6 +69,7 @@ app.use(
 );
 
 // 3. BODY PARSERS
+app.use(compression());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -101,6 +103,10 @@ app.use(
     },
   }),
 );
+
+app.use("/api/v1/apispecs", getDataRateLimiter, (req, res) => {
+  res.status(200).json(swaggerUi);
+});
 app.use("/api/v1/auth/me", meRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/transactions", transactionRoute);

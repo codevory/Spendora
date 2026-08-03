@@ -32,8 +32,8 @@ const navItems = [
 
 const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
 
-    const handleOpenDocs = () => {
-    window.open(`/docs/v1/api`, '_blank');
+  function handleOpenDocs(){
+     window.open(`/api/v1/docs`, '_blank');
   };
 
   const { isDark } = useThemeContext();
