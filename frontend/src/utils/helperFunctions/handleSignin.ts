@@ -1,7 +1,6 @@
 import toast from "react-hot-toast";
 import type { Dispatch } from "@reduxjs/toolkit";
 import { setLoginStatus, setUserData} from "../../store/features/userAuthenication";
-import { Backend_Url } from "../../store/features/transactionApi";
 
 interface hanldeSigninWithPasswordProps {
   setIsLoading: (val: boolean) => void;
@@ -32,7 +31,7 @@ export async function handleSigninWithPassword({
  
   setIsSubmitting(true)
   try {
-    const res = await fetch(`${Backend_Url}/api/v1/auth/login`,{
+    const res = await fetch(`/api/v1/auth/login`,{
       method:"POST",
       credentials:'include',
       headers:{
