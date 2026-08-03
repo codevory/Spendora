@@ -64,13 +64,11 @@ export type csrfResponseDataType = {
   csrfToken: string | undefined
 }
 
-export const Backend_Url = import.meta.env.PROD
-  ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")
-  : "http://localhost:2122";
+// export const Backend_Url = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL
 
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
-    baseUrl: `${Backend_Url}/api/v1`,
+    baseUrl: `/api/v1`,
     credentials: "include",
     timeout: 10000,
 

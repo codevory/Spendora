@@ -81,7 +81,11 @@ function App() {
               }
             />
           </Route>
-          <Route path="*" element={<EmptyState content="No page found" position={50} />} />
+          <Route 
+          path="/app/error"
+          element={<EmptyState content="we are working on this" />}
+          />
+          <Route path="*" element={<EmptyState content="No page found" />} />
         </Routes>
         <Outlet />
       </Suspense>

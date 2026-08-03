@@ -98,7 +98,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
 
   return (
     <div className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-slate-950" : "bg-slate-50/50"}`}>
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-4">
+      <div className="max-w-8xl mx-auto px-4 py-6 space-y-4">
         
         {/* KPI Top Cards Row */}
         <HeaderCards setModalState={setModalState} />
