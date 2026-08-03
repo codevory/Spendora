@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import EmptyState from "./EmptyState";
 import type { expenseTranscationTypes } from "../types/transactionType";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
@@ -28,8 +27,6 @@ const ViewTransactionDetails = ({
   );
 
   const noTransactionSelected = (
-      <EmptyState
-        content={
           <div className="card glass flex min-h-72 flex-col justify-center gap-3 border border-slate-700 p-6 text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
               Transaction details
@@ -68,10 +65,7 @@ const ViewTransactionDetails = ({
               </div>
             </div>
           </div>
-        }
-      />
-    );
-
+        )
 
   if (data === undefined || data?.length === 0) {
     return noTransactionSelected

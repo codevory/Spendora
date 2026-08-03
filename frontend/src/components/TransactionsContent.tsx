@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMemo} from "react";
 import type { expenseTranscationTypes } from "../types/transactionType";
-import EmptyState from "./EmptyState";
 import { useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
 import TransactionsSkeleton from "./TransactionsSkeleton";
@@ -50,7 +49,7 @@ const Expenses = visibleData || []
   }
   
   if (Expenses.length === 0) {
-    return <EmptyState content={noData} />;
+    return noData;
   }
   
   return (
