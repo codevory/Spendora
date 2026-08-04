@@ -1,137 +1,136 @@
 # Spendora
 
-Spendora is a personal finance tracker that helps users manage expenses, income, and categories with a modern analytics-first dashboard.
+Spendora is a personal finance tracker built around a dashboard-first workflow for expenses, income, categories, and analytics.
 
-## 🚀 Massive Achievements (Lighthouse)
+![Spendora system design](spendora_syst_design_1.png)
 
-Optimized performance through rigorous asset optimization and architectural refactoring,
+_System Architecture: the frontend sends API requests to the backend, the backend talks to the database, and responses flow back to the frontend for rendering._
 
-### Spendora achieves:
+## Highlights
 
-- Desktop Performance: 100/100 🟢 (increased from 66)
-- Mobile Performance: 96/100 🟢 (Increased from 34)
-- Total Blocking Time (TBT): 0ms
-- Cumulative Layout Shift (CLS): 0
-- JavaScript Bundle: Lean 222 KiB transfer size.
+Spendora is now tuned for a cleaner product story and a more realistic platform summary:
 
-### Key Optimizations Made:
+- Session-based authentication with protected dashboard routes
+- Transaction, income, and category management in one flow
+- Analytics views for trends, distributions, and monthly insights
+- Responsive layout with sidebar, mobile menu, and modal-driven forms
+- API documentation and health endpoints on the backend
+- SPA deployment support through Vercel rewrites
 
-- SVG Spriting: Refactored 30+ individual icon requests into a single, high-performance SVG sprite sheet using the <symbol> pattern.
-- Asset Modernization: Converted legacy, complex vector logos (295KB) into optimized WebP formats, reducing the main logo weight by over 90%.
-- Resource Hints: Implemented preconnect and dns-prefetch for Firebase and Google API domains to accelerate handshake speeds.
-- Zero-CLS Strategy: Enforced explicit aspect ratios and dimensions on all images and icons to eliminate layout shifts during load.
+## What It Does
 
-## Features
+- Track expenses with list, detail, edit, and delete flows
+- Add and review income entries alongside expense data
+- Organize spending with custom categories
+- Explore dashboard insights such as income vs expense trends, category distribution, and monthly summaries
+- View recent activity and account details from a dedicated profile screen
+- Sign in, sign up, and access protected pages through session-aware routing
 
-- Expense transaction management (add, edit, delete, and detail view)
-- Income tracking with monthly analysis integration
-- Category management for custom spending buckets
-- Analytics dashboard with:
-  - income vs expense trend
-  - spending distribution chart
-  - monthly insight cards (savings rate, top category, biggest expense, projected spend)
-- Recent transactions panel and responsive dashboard layout
-- Email/password authentication and Google sign-in (Firebase)
-- Toast notifications for user feedback
-- Local persistence through browser localStorage
+## Current Stack
 
-## Tech Stack
+- Frontend: React 19, TypeScript, Vite, React Router, Redux Toolkit, React Redux
+- UI and charts: Tailwind CSS 4, Chart.js, react-chartjs-2, react-hot-toast
+- Backend: Node.js, Express 5, PostgreSQL, express-session, bcryptjs, CSRF protection
+- Deployment: Vercel frontend rewrites with a hosted backend API
 
-- React 19
-- TypeScript
-- Vite
-- Redux Toolkit + React Redux
-- React Router
-- Tailwind CSS 4
-- Chart.js + react-chartjs-2
-- Firebase (Auth + Firestore Lite)
-- react-hot-toast
+## Updated Achievements
 
-## Routing
+The project now reflects a more credible implementation-focused set of wins:
 
-- `/` - main dashboard layout
-- `/transactions` - transaction listing and management
-- `/transactions/tnx-details/:id` - transaction detail page
-- `/categories` - category management
-- `/analytics` - analytics and monthly insights
+- Protected dashboard architecture with route-level session gating
+- Dedicated transaction, category, and analytics screens instead of a single monolithic page
+- Backend API docs exposed at `/api/v1/docs`
+- Health check endpoint at `/api/v1/status`
+- Vercel rewrites configured for SPA navigation and API proxying
+- CORS, CSRF, and rate limiting wired into the backend for safer request handling
+
+## Routes
+
+Frontend routes:
+
+- `/welcome` - landing page
 - `/signin` - sign-in page
 - `/signup` - registration page
-- `/me` - user account page
+- `/` - protected dashboard shell
+- `/transactions` - transaction management
+- `/transactions/tnx-details/:id` - transaction detail view
+- `/categories` - category management
+- `/analytics` - charts and insights
+- `/me` - account page
+- `*` - fallback empty state
 
-## Data Persistence
+Backend routes:
 
-Redux state is synchronized with localStorage for offline-friendly persistence.
+- `/api/v1/auth` - login, register, logout, session, and CSRF helpers
+- `/api/v1/auth/me` - current user lookup
+- `/api/v1/auth/sid` - current session id
+- `/api/v1/auth/csrf` - CSRF token retrieval
+- `/api/v1/transactions` - transaction feeds and summaries
+- `/api/v1/transactions/expenses` - expense operations
+- `/api/v1/transactions/incomes` - income operations
+- `/api/v1/categories` - category CRUD
+- `/api/v1/status/serverHealth` - server health
+- `/api/v1/docs` - Swagger UI documentation
 
-Storage keys used by the app:
-
-- `userTransactions`
-- `userIncomeData`
-- `userCategories`
-
-To reset local app data, clear browser site storage for the app origin.
-
-## Firebase Setup
-
-Create a `.env` file in the project root and add:
-
-```env
-VITE_FIREBASE_API_KEY=your_value
-VITE_Auth_Domain=your_value
-VITE_Project_Id=your_value
-VITE_storage_Bucket=your_value
-VITE_messagingSender_Id=your_value
-VITE_app_Id=your_value
-VITE_measurement_Id=your_value
-```
-
-Note: environment variable names must match exactly.
-
-## Getting Started
+## Setup
 
 ### Prerequisites
 
 - Node.js 18+
 - npm
+- PostgreSQL for the backend
 
-### Install
+### Frontend
 
 ```bash
+cd frontend
 npm install
-```
-
-### Run Development Server
-
-```bash
 npm run dev
 ```
 
-### Build for Production
+### Backend
 
 ```bash
-npm run build
+cd backend
+npm install
+npm start
 ```
 
-### Preview Production Build
+### Production Build
 
 ```bash
-npm run preview
+cd frontend
+npm run build
 ```
 
 ### Lint
 
 ```bash
+cd frontend
 npm run lint
 ```
 
-## Project Structure
+## Environment
 
-- `src/pages` - route-level screens and composed layouts
-- `src/components` - reusable UI and forms
-- `src/charts` - chart wrappers and graph modules
-- `src/store` - Redux store and feature slices
-- `src/Hooks` - shared hooks and analytics data shaping
-- `src/backend` - Firebase setup and auth helpers
-- `src/utils` - business helpers and utility logic
+The backend expects environment values for session and database configuration, loaded from the appropriate `.env` file for the target environment. The frontend currently relies on the API proxy and deployment configuration defined in `frontend/vercel.json`.
+
+## Project Layout
+
+- `frontend/src/pages` - routed screens and layout containers
+- `frontend/src/components` - reusable UI, navigation, forms, and state guards
+- `frontend/src/charts` - analytics chart wrappers
+- `frontend/src/store` - Redux store and API state
+- `frontend/src/utils` - auth and helper utilities
+- `backend/controllers` - request handlers for auth, categories, transactions, and health
+- `backend/routes` - API route registration
+- `backend/middleware` - CSRF and auth guards
+- `backend/db` - database connection helpers and SQL references
+
+## Deployment Notes
+
+- Frontend rewrites send `/api/*` traffic to the hosted backend and route all other paths to `index.html`
+- The backend is configured for CORS with local development origins and the production Vercel origin
+- The API is served under `/api/v1`
 
 ## License
 
