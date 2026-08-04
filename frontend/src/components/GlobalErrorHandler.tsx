@@ -38,7 +38,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       return (
         <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
           <h2>Something went wrong.</h2>
-          <p style={{ color: '#666' }}>{this.state.error?.message}</p>
+          <p style={{ color: '#666' }}>{this.state.error?.message ?? "Failed to communicate with backend"}</p>
           <button 
             onClick={this.handleReset}
             style={{ padding: '8px 16px', cursor: 'pointer', marginTop: '10px' }}

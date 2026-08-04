@@ -30,7 +30,7 @@ export default defineConfig(({mode}) => {
   server:{
     proxy: {
       '/api':{
-        target: env.VITE_BACKEND_URL,
+        target: env.VITE_BACKEND_URL || "https://spendora-backend-4ado.onrender.com",
         changeOrigin:true,
         secure:false
       }
