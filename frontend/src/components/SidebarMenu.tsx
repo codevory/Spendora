@@ -31,9 +31,10 @@ const navItems = [
 ] as const;
 
 const SidebarMenu = ({ isOpen }: { isOpen: boolean }) => {
+  const backend_Url = import.meta.env.VITE_BACKEND_URL
 
   function handleOpenDocs(){
-     window.open(`/api/v1/docs`, '_blank');
+     window.open(`${backend_Url}/api/v1/docs`, '_blank');
   };
 
   const { isDark } = useThemeContext();
