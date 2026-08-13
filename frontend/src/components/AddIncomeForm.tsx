@@ -6,13 +6,14 @@ import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
 import { useAddIncomeTxnMutation } from "../store/features/transactionApi";
 
 type IncomeFormPropsType = {
-  setModalState: (val: "closed") => void;
+  setModalState: (val: "closed" | "income" | "category") => void;
 };
 const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
   const [amount, setAmount] = useState<number | "">("");
   const [incomeSource, setIncomeSource] = useState<string>("");
   const [incomeDate, setIncomeDate] = useState<string>("");
-  const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const currencyMeta = getCurrencyMeta(currencyKey);
 
@@ -30,15 +31,18 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             setModalState: setModalState,
             success: success,
             incomeDate: incomeDate,
-            setIsSubmitting:setIsSubmitting,
+            setIsSubmitting: setIsSubmitting,
             incomeSource: incomeSource,
             amount:
               amount === "" ? 0 : convertToBaseAmount(amount, currencyKey),
             failed: failed,
             addIncomeTxn,
+            setError: setError,
+            setIsLoading: () => false,
           })
         }
-        className="flex flex-col gap-5">
+        className="flex flex-col gap-5"
+      >
         <div className="flex flex-col gap-1 relative">
           <label className="text-muted block mb-1 text-sm">
             amount ({currencyMeta.currencySymbol})
@@ -49,7 +53,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             placeholder="enter amount you received"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            required 
+            required
           />
         </div>
         <div className="flex flex-col gap-1 relative">
@@ -75,9 +79,14 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           />
         </div>
 
-        <button disabled={isSubmitting} type="submit" className="btn-primary w-full active:scale-95">
+        <button
+          disabled={isSubmitting}
+          type="submit"
+          className="btn-primary w-full active:scale-95"
+        >
           {isSubmitting ? "Adding.." : "Add"}
         </button>
+        {error && <p className="error-message">{error}</p>}
       </form>
     </div>
   );

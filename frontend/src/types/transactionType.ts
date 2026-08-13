@@ -65,6 +65,7 @@ export interface handleAddExpenseTransactionProps {
   setPayee: (val: string) => void;
   setIsSubmitting: (val: boolean) => void;
   addTxn:AddTxnTriggerFn
+  setError:(val:string | null) => void;
 }
 
 export interface expenseTransactionParamsType {
@@ -85,12 +86,4 @@ export type ResponseuserDataType = {
   created_at:string
 }
 
-export interface paramTypes {
-query ? : string
-page ? : number
-limit ? : number
-skip ? : number
-from ? : string | Date,
-to ? : string | Date,
-sort : string
-}
+export type paramTypes = Pick<expenseTransactionParamsType, "page" | "limit" | "skip" | "from" | "to" | "query" | "sort">
