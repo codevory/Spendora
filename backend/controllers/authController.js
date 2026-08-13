@@ -24,24 +24,24 @@ export async function registerUser(req, res) {
         "Username must be 1–20 characters, using letters, numbers, _ or -.",
     });
   }
-  const usernameResult = await db.query(
-    "SELECT username FROM users WHERE username = $1",
-    [username.trim()],
+  const userResult = await db.query(
+    "SELECT username,email FROM users WHERE username = $1 OR email = $2",
+    [username.trim(), email.trim()],
   );
 
-  const existingUserName = usernameResult.rows[0];
-  if (existingUserName) {
-    return res.status(400).json({ error: "username already taken!" });
-  }
+  if (userResult.rows[0]) {
+    const existingUserName = userResult.rows[0].username;
+    if (
+      existingUserName.toLowerCase().trim() === username.toLowerCase().trim()
+    ) {
+      return res.status(400).json({ error: "username already taken!" });
+    }
 
-  let emailResult = await db.query(`SELECT email FROM users WHERE email = $1`, [
-    email.trim(),
-  ]);
+    const existingEmail = userResult.rows[0].email;
 
-  const existingEmail = emailResult.rows[0];
-
-  if (existingEmail) {
-    return res.status(400).json({ error: "Email already in use!" });
+    if (existingEmail.toLowerCase().trim() === email.toLowerCase().trim()) {
+      return res.status(400).json({ error: "Email already in use!" });
+    }
   }
 
   fullName = fullName.trim();

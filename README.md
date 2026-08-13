@@ -8,10 +8,12 @@ _System Architecture: the frontend sends API requests to the backend, the backen
 
 ## Highlights
 
-Spendora is now tuned for a cleaner product story and a more realistic platform summary:
+Spendora is tuned for a clean product story and a reliable full-stack developer experience:
 
 - Session-based authentication with protected dashboard routes
 - Transaction, income, and category management in one flow
+- Client-side schema validation using **Zod** for robust form handling
+- Server-side **inputData sanitizer middleware** to purify client payloads before DB operations
 - Analytics views for trends, distributions, and monthly insights
 - Responsive layout with sidebar, mobile menu, and modal-driven forms
 - API documentation and health endpoints on the backend
@@ -28,19 +30,21 @@ Spendora is now tuned for a cleaner product story and a more realistic platform 
 
 ## Current Stack
 
-- Frontend: React 19, TypeScript, Vite, React Router, Redux Toolkit, React Redux
-- UI and charts: Tailwind CSS 4, Chart.js, react-chartjs-2, react-hot-toast
-- Backend: Node.js, Express 5, PostgreSQL, express-session, bcryptjs, CSRF protection
-- Deployment: Vercel frontend rewrites with a hosted backend API
+- **Frontend:** React 19, TypeScript, Vite, React Router, Redux Toolkit, React Redux, Zod
+- **UI & Charts:** Tailwind CSS 4, Chart.js, react-chartjs-2, react-hot-toast
+- **Backend:** Node.js, Express 5, PostgreSQL, express-session, bcryptjs, CSRF protection, Input Sanitizer Middleware
+- **Deployment:** Vercel frontend rewrites with a hosted backend API
 
 ## Updated Achievements
 
-The project now reflects a more credible implementation-focused set of wins:
+The project reflects a complete implementation-focused set of wins:
 
 - Protected dashboard architecture with route-level session gating
+- Schema-driven client-side validation using **Zod** to prevent invalid submissions early
+- Server-side input sanitization middleware (`inputData`) to cleanse incoming requests before database execution
 - Dedicated transaction, category, and analytics screens instead of a single monolithic page
-- Backend API docs exposed at `/api/v1/docs`
-- Health check endpoint at `/api/v1/status`
+- Backend API docs exposed at : `/api/v1/docs --locally but in production open in desktop mode & check at sideMenu`
+- Health check endpoint at `/api/v1/status/serverhealth`
 - Vercel rewrites configured for SPA navigation and API proxying
 - CORS, CSRF, and rate limiting wired into the backend for safer request handling
 
@@ -96,6 +100,16 @@ npm install
 npm start
 ```
 
+## Note for running locally
+
+### Database - psql
+
+For running locally or for development purposes, use a local environment (e.g., Ubuntu/WSL/macOS), then:
+
+1. Install PostgreSQL on your machine.
+2. Create DB tables (queries located in `/backend/db/dbQueries.sql`) one by one.
+3. Start the backend, then the frontend using your code editor or terminal.
+
 ### Production Build
 
 ```bash
@@ -112,7 +126,7 @@ npm run lint
 
 ## Environment
 
-The backend expects environment values for session and database configuration, loaded from the appropriate `.env` file for the target environment. The frontend currently relies on the API proxy and deployment configuration defined in `frontend/vercel.json`.
+The backend expects environment values for session and database configuration, loaded from the appropriate `.env` file for the target environment. The frontend relies on the API proxy and deployment configuration defined in `frontend/vercel.json`.
 
 ## Project Layout
 
@@ -123,7 +137,7 @@ The backend expects environment values for session and database configuration, l
 - `frontend/src/utils` - auth and helper utilities
 - `backend/controllers` - request handlers for auth, categories, transactions, and health
 - `backend/routes` - API route registration
-- `backend/middleware` - CSRF and auth guards
+- `backend/middleware` - CSRF, auth guards, and `inputData` sanitizer middleware
 - `backend/db` - database connection helpers and SQL references
 
 ## Deployment Notes
