@@ -25,7 +25,7 @@ const AddNewCategoryForm = ({
   handleCategoryState,
   handleFormSubmit,
   setIsSubmitting,
-  isSubmitting
+  isSubmitting,
 }: CategoryFormProps) => {
   const [category, setCategory] = useState<string>("");
 
@@ -36,7 +36,7 @@ const AddNewCategoryForm = ({
   const categoryValue = categoryState !== undefined ? categoryState : category;
   const [addCategoryTxn] = useAddCategoryMutation();
 
-  const buttonText = buttonContent ?? "Create"
+  const buttonText = buttonContent ?? "Create";
   return (
     <div className="flex flex-col gap-2 text-slate-100">
       <h2 className="text-lg font-semibold">
@@ -71,7 +71,7 @@ const AddNewCategoryForm = ({
           <input
             className="input"
             type="text"
-            value={categoryValue}
+            value={categoryValue.trimStart()}
             onChange={(e) =>
               handleCategoryState !== undefined
                 ? handleCategoryState(e.target.value)

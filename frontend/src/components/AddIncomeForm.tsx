@@ -12,7 +12,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
   const [amount, setAmount] = useState<number | "">("");
   const [incomeSource, setIncomeSource] = useState<string>("");
   const [incomeDate, setIncomeDate] = useState<string>("");
-  const [isSubmitting,setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const currencyMeta = getCurrencyMeta(currencyKey);
 
@@ -30,7 +30,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             setModalState: setModalState,
             success: success,
             incomeDate: incomeDate,
-            setIsSubmitting:setIsSubmitting,
+            setIsSubmitting: setIsSubmitting,
             incomeSource: incomeSource,
             amount:
               amount === "" ? 0 : convertToBaseAmount(amount, currencyKey),
@@ -38,7 +38,8 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             addIncomeTxn,
           })
         }
-        className="flex flex-col gap-5">
+        className="flex flex-col gap-5"
+      >
         <div className="flex flex-col gap-1 relative">
           <label className="text-muted block mb-1 text-sm">
             amount ({currencyMeta.currencySymbol})
@@ -49,7 +50,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             placeholder="enter amount you received"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            required 
+            required
           />
         </div>
         <div className="flex flex-col gap-1 relative">
@@ -58,7 +59,7 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
             className="bg-transparent w-full outline-none input"
             type="text"
             placeholder="eg Fiverr"
-            value={incomeSource}
+            value={incomeSource.trimStart()}
             onChange={(e) => setIncomeSource(e.target.value)}
           />
         </div>
@@ -75,7 +76,11 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           />
         </div>
 
-        <button disabled={isSubmitting} type="submit" className="btn-primary w-full active:scale-95">
+        <button
+          disabled={isSubmitting}
+          type="submit"
+          className="btn-primary w-full active:scale-95"
+        >
           {isSubmitting ? "Adding.." : "Add"}
         </button>
       </form>

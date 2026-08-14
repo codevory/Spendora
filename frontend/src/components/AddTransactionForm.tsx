@@ -1,9 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAppSelector } from "../store/store";
-import type { expenseTranscationTypes, } from "../types/transactionType";
+import type { expenseTranscationTypes } from "../types/transactionType";
 import { convertToBaseAmount, getCurrencyMeta } from "../utils/currency";
-import { useAddExpenseTxnMutation, useGetCategoriesQuery } from "../store/features/transactionApi";
+import {
+  useAddExpenseTxnMutation,
+  useGetCategoriesQuery,
+} from "../store/features/transactionApi";
 import { handleAddExpenseTransaction } from "../utils/helperFunctions/handleFormActions";
 
 interface AddTransactionFormPropsType {
@@ -26,7 +29,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const failed = (message: string) => toast.error(message);
 
   const transaction: expenseTranscationTypes = {
-    id:1,
+    id: 1,
     entity: payee,
     date: date,
     amount: amount !== "" ? convertToBaseAmount(amount, currencyKey) : 0,
@@ -36,8 +39,8 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
     createdAt: new Date(date).toString(),
     type: "expense",
   };
-  
-  const [ addTxn ] = useAddExpenseTxnMutation()
+
+  const [addTxn] = useAddExpenseTxnMutation();
 
   return (
     <>
@@ -54,7 +57,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
               amount: amount,
               transaction: transaction,
               setIsSubmitting: setIsSubmitting,
-              addTxn:addTxn
+              addTxn: addTxn,
             })
           }
           className="flex flex-col gap-5"
@@ -95,7 +98,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
             <input
               type="text"
               placeholder="Netflix, YouTube Premium"
-              value={payee}
+              value={payee.trimStart()}
               onChange={(e) => setPayee(e.target.value)}
               className="input"
               required
@@ -115,7 +118,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
               }}
               className="input"
               required
-              >
+            >
               <option key={"select-key"} value={"select"}>
                 select
               </option>
