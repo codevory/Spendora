@@ -43,8 +43,8 @@ The project reflects a complete implementation-focused set of wins:
 - Schema-driven client-side validation using **Zod** to prevent invalid submissions early
 - Server-side input sanitization middleware (`inputData`) to cleanse incoming requests before database execution
 - Dedicated transaction, category, and analytics screens instead of a single monolithic page
-- Backend API docs exposed at : `/api/v1/docs --locally but in production open in desktop mode & check at sideMenu`
-- Health check endpoint at `/api/v1/status/serverhealth`
+- Backend API docs exposed at : `/api/v1/docs`
+- Health check endpoint at `/api/v1/status`
 - Vercel rewrites configured for SPA navigation and API proxying
 - CORS, CSRF, and rate limiting wired into the backend for safer request handling
 
@@ -73,7 +73,7 @@ Backend routes:
 - `/api/v1/transactions/expenses` - expense operations
 - `/api/v1/transactions/incomes` - income operations
 - `/api/v1/categories` - category CRUD
-- `/api/v1/status/serverHealth` - server health
+- `/api/v1/status` - server health
 - `/api/v1/docs` - Swagger UI documentation
 
 ## Setup
