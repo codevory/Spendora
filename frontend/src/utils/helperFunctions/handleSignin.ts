@@ -31,6 +31,8 @@ export async function handleSigninWithPassword({
  
   setIsSubmitting(true)
   try {
+    email = email.trim().toLowerCase()
+    
     const res = await fetch(`/api/v1/auth/login`,{
       method:"POST",
       credentials:'include',

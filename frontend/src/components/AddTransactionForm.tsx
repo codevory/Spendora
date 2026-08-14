@@ -18,6 +18,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
   const [payee, setPayee] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string>("select");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const { data: categoryResponse } = useGetCategoriesQuery();
   const categories = categoryResponse?.categories ?? [];
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
@@ -58,6 +59,7 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
               transaction: transaction,
               setIsSubmitting: setIsSubmitting,
               addTxn: addTxn,
+              setError,
             })
           }
           className="flex flex-col gap-5"
@@ -141,6 +143,8 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
           >
             {isSubmitting ? "Adding..." : "Add Expense"}
           </button>
+
+          {error && <p className="error-message">{error}</p>}
         </form>
       </div>
     </>

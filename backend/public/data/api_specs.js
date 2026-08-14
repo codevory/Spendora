@@ -681,7 +681,320 @@ export const apiSpecs = {
         },
       },
     },
+    "/api/v1/auth/register": {
+      post: {
+        summary: "Register a new user account",
+        operationId: "registerUser",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: [
+                  "fullName",
+                  "username",
+                  "email",
+                  "password",
+                  "currency",
+                ],
+                properties: {
+                  fullName: {
+                    type: "string",
+                    example: "Shahijahan Pedhar",
+                  },
+                  username: {
+                    type: "string",
+                    example: "shahijahan",
+                  },
+                  email: {
+                    type: "string",
+                    format: "email",
+                    example: "user@example.com",
+                  },
+                  password: {
+                    type: "string",
+                    format: "password",
+                    example: "securePassword123",
+                  },
+                  currency: {
+                    type: "string",
+                    example: "INR",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: "User successfully registered",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "integer",
+                      example: 1,
+                    },
+                    fullName: {
+                      type: "string",
+                      example: "Shahijahan Pedhar",
+                    },
+                    email: {
+                      type: "string",
+                      example: "user@example.com",
+                    },
+                    username: {
+                      type: "string",
+                      example: "shahijahan",
+                    },
+                    currency: {
+                      type: "string",
+                      example: "INR",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          400: {
+            description: "Registration validation or conflict error",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                examples: {
+                  bothTaken: {
+                    summary: "Both Username and Email taken",
+                    value: {
+                      error: "Username and Email are both already taken!",
+                    },
+                  },
+                  emailTaken: {
+                    summary: "Email already in use",
+                    value: {
+                      error: "email already in use!",
+                    },
+                  },
+                  usernameTaken: {
+                    summary: "Username already taken",
+                    value: {
+                      error: "username already taken",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: "Internal server error",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                example: {
+                  error: "Internal server error",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/auth/login": {
+      post: {
+        summary: "Authenticate user credentials and initiate session",
+        operationId: "loginUser",
+        tags: ["Auth"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["email", "password"],
+                properties: {
+                  email: {
+                    type: "string",
+                    format: "email",
+                    example: "user@example.com",
+                  },
+                  password: {
+                    type: "string",
+                    format: "password",
+                    example: "securePassword123",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Login successful",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    message: {
+                      type: "string",
+                      example: "login successful",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          400: {
+            description: "Invalid credentials",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                example: {
+                  error: "invalid email or password",
+                },
+              },
+            },
+          },
+          500: {
+            description: "Internal server error",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                example: {
+                  error: "Internal server error message",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/auth/logout": {
+      get: {
+        summary: "Logout user and destroy active session",
+        operationId: "logoutUser",
+        tags: ["Auth"],
+        responses: {
+          200: {
+            description: "Logout successful",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    message: {
+                      type: "string",
+                      example: "logout succesfull",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            description: "Internal server error during session destruction",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                example: {
+                  error: "Failed to destroy session",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/auth/sid": {
+      get: {
+        summary: "Retrieve active session ID",
+        operationId: "getSessionId",
+        tags: ["Auth"],
+        responses: {
+          200: {
+            description: "Session ID retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    sid: {
+                      type: "string",
+                      example: "s%3A3J0f9A8d7C6b5A4e3D2c1",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            $ref: "#/components/responses/InternalServerError",
+          },
+        },
+      },
+    },
+    "/api/v1/auth/csrf": {
+      get: {
+        summary: "Retrieve CSRF token for authenticated session",
+        operationId: "getCsrfToken",
+        tags: ["Auth"],
+        responses: {
+          200: {
+            description: "CSRF token generated successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    csrf: {
+                      type: "string",
+                      example: "d9f8a7b6c5d4e3f2a1b0",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            description: "Internal server error generating CSRF token",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                example: {
+                  error: "Could not generate CSRF token",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
+
   components: {
     schemas: {
       ErrorResponse: {

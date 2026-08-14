@@ -4,7 +4,7 @@ import { handleAddCategoryDB } from "../utils/helperFunctions/handleFormActions"
 import { useAddCategoryMutation } from "../store/features/transactionApi";
 
 type CategoryFormProps = {
-  setModalState: (val: "closed") => void;
+  setModalState: (val: "closed" | "income" | "category") => void;
   buttonContent?: string;
   formHeading?: string;
   categoryState?: string;
@@ -27,7 +27,9 @@ const AddNewCategoryForm = ({
   setIsSubmitting,
   isSubmitting,
 }: CategoryFormProps) => {
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategoryName] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const success = (message: string) => toast.success(message);
   const failed = (message: string) => toast.error(message);
@@ -55,11 +57,13 @@ const AddNewCategoryForm = ({
             e: e,
             success: success,
             failed: failed,
-            setCategory: setCategory,
+            setCategory: setCategoryName,
             setModalState: setModalState,
             category: categoryValue,
             setIsSubmitting: setIsSubmitting,
-            addCategoryTxn,
+            addCategoryTxn: addCategoryTxn,
+            setError,
+            setIsLoading: setIsLoading,
           });
         }}
         className="form flex flex-col gap-2 "
@@ -75,19 +79,23 @@ const AddNewCategoryForm = ({
             onChange={(e) =>
               handleCategoryState !== undefined
                 ? handleCategoryState(e.target.value)
-                : setCategory(e.target.value)
+                : setCategoryName(e.target.value)
             }
             required
           />
         </div>
 
-        <button
-          className="btn-primary w-30 h-10 font-bold active:scale-95"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating.." : buttonText}
-        </button>
+        <div className="flex gap-5 items-center">
+          <button
+            className="btn-primary w-30 h-10 font-bold active:scale-95"
+            type="submit"
+            disabled={isSubmitting || isLoading}
+          >
+            {isSubmitting || isLoading ? "Creating.." : buttonText}
+          </button>
+
+          {error && <p className="error-message">{error}</p>}
+        </div>
       </form>
     </div>
   );

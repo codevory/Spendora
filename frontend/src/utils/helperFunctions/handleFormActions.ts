@@ -8,20 +8,25 @@ import type {
   RenameCategoryTriggerFn,
   IncomeTransactionTypes,
 } from "../../types/transactionType";
+import { incomeFormSchema,entitySchema, expenseFormSchema } from "../zodSchema";
 
-type commonTypes = Pick<handleAddExpenseTransactionProps,"e" | "failed">;
-interface handleAddIncomeTransactionProps extends commonTypes {
+interface commonPropsType {
+  success: (val: string) => string;
+  failed: (val:string) => void
+  setModalState: (val: "closed" | "category" | "income") => void;
+  setIsSubmitting:(val:boolean) => void
+  setIsLoading:(val:boolean) => void
+  setError:(val:string | null) => void
+  e:React.SubmitEvent<HTMLFormElement>
+}
+interface handleAddIncomeTransactionProps extends commonPropsType {
   incomeSource: string;
   amount: number | "";
   incomeDate: string;
-  success: (val: string) => string;
-  setModalState: (val: "closed") => void;
-  setIsSubmitting:(val:boolean) => void;
   addIncomeTxn: AddIncomeTriggerFn;
 }
 
-type categoryFormCommontypes = Pick<
-  handleAddIncomeTransactionProps, "e" | "success" | "failed" | "setModalState" | "setIsSubmitting" >;
+interface categoryFormCommontypes extends commonPropsType {}
 interface HandleCategoryFormProps extends categoryFormCommontypes {
   category: string;
   setCategory: (val: string) => void;
@@ -48,6 +53,7 @@ export async function handleAddExpenseTransaction({
   category,
   transaction,
   addTxn,
+  setError
 }: handleAddExpenseTransactionProps) {
   e.preventDefault();
   if (typeof amount !== "number" || amount <= 0) {
@@ -63,6 +69,20 @@ export async function handleAddExpenseTransaction({
     return failed("Kindly select category");
   }
 
+   const result = expenseFormSchema.safeParse({
+    amount:Number(transaction.amount),
+    entity:transaction.entity,
+    date:transaction.date,
+    category:transaction.categoryName
+   })
+
+   if(!result.success){
+    const errorMessage = result.error.format()._errors[0]  ?? "Only letters & spaces allowed!";
+    setError(errorMessage)
+    return failed("Only letters & spaces allowed!")
+   }
+
+   setError(null)
   const tId = `txn-${Date.now().toFixed(4)}-${new Date().getMilliseconds().toFixed(2)}`;
   const transactionData: expenseTranscationTypes = {
     ...transaction,
@@ -108,10 +128,23 @@ export async function handleAddIncomeTransaction({
   setModalState,
   setIsSubmitting,
   addIncomeTxn,
+  setError
 }: handleAddIncomeTransactionProps) {
   e.preventDefault();
   if (amount !== "" && amount < 0) return failed("Not valid income amount");
   if (incomeDate === "" || incomeSource === "") return failed("Fill all required details");
+
+   const result = incomeFormSchema.safeParse({
+    amount:Number(amount),
+    source:incomeSource,
+    date:incomeDate.toString()
+  })
+
+   if(!result.success){
+    const errorMessage = result.error.format()._errors[0]  ?? "Only letters & spaces allowed!";
+    setError(errorMessage)
+    return failed(errorMessage)
+   }
 
   const incomeData: IncomeTransactionTypes = {
     id:1,
@@ -156,11 +189,19 @@ export async function handleAddCategoryDB({
   setIsSubmitting,
   setModalState,
   addCategoryTxn,
+  setError
 }:HandleCategoryFormProps){
 
  e.preventDefault();
-  if (category.trim() === "") return failed("kindly type category name");
+  const result = entitySchema.safeParse(category)
+   if(!result.success){
+    const errorMessage = result.error.format()._errors[0]  ?? "Only letters & spaces allowed!";
+     setError(errorMessage)
+     return failed(errorMessage)
+   }
+
    const name = category.trim().toLowerCase();
+   setError(null)
    if(Timer !== null){
     clearTimeout(Timer)
    }
@@ -195,7 +236,7 @@ export function handleDeleteCategory({
   const confirmDelete = (val: string) => window.confirm(`Transcactions added in ${val} category will be deleted`);
  
     if(!confirmDelete(category.name)){
-    return failed("action cancelled")
+       return failed("action cancelled")
     }
 
     if(Timer !== null){
@@ -220,16 +261,10 @@ export function handleDeleteCategory({
   
  }, 900);
 }
-export interface HandleRenameCategoryProps {
-  e: React.SubmitEvent<HTMLFormElement>;
+export interface HandleRenameCategoryProps extends commonPropsType {
   category: CategoryPropsType;
   nextCategoryName: string;
-  success: (val: string) => string;
-  fail: (val: string) => string;
-  setIsLoading: (val: boolean) => void;
   renameCategoryTxn: RenameCategoryTriggerFn;
-  setModalState: (val: "income" | "category" | "closed") => void;
-  setIsSubmitting:(val:boolean) => void
 }
 
 export function handleRenameCategory({
@@ -237,17 +272,26 @@ export function handleRenameCategory({
   category,
   nextCategoryName,
   success,
-  fail,
+  failed,
   setIsLoading,
   renameCategoryTxn,
   setIsSubmitting,
   setModalState,
+  setError,
 }: HandleRenameCategoryProps) {
   const categoryToRename = {
     name:nextCategoryName,
     id:category.id
   }
+
+  const result = entitySchema.safeParse(categoryToRename.name)
+  if(!result.success){
+    const errorMessage = result.error.format()._errors[0]  ?? "Only letters & spaces allowed!";
+    setError(errorMessage)
+    return failed(errorMessage)
+  }
   e.preventDefault();
+  setError(null)
   if (Timer) {
     clearTimeout(Timer);
   }
@@ -260,7 +304,7 @@ export function handleRenameCategory({
         success("renamed successfully🎉");
       })
       .catch((err:any) => {
-        fail("Internal server error to rename");
+        failed("Internal server error to rename");
         console.error(err)
         return ;
       })

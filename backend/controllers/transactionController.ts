@@ -93,6 +93,10 @@ export async function addExpense(
     return res.status(400).json({ error: "categoryId is required" });
   }
 
+  if(!transactionData.entity || typeof transactionData.entity !== "string"){
+    return res.status(400).json({error:"transaction entity is required"})
+  }
+
   transactionData.transactionId = `TXN_${crypto.randomUUID()}`
   try {
     const query = `
@@ -143,8 +147,12 @@ export async function addIncome(
     return res.status(400).json({ error: "income data is required" });
   }
 
-  if (typeof incomeData.amount !== "number" || incomeData.amount <= 0) {
+  else if (typeof incomeData.amount !== "number" || incomeData.amount <= 0) {
     return res.status(400).json({ error: "Invalid amount" });
+  }
+
+  else if(incomeData.entity.trim() == "" || incomeData.entity == undefined || typeof incomeData.entity !== "string"){
+    return res.status(400).json({error:"Transaction entity is required"})
   }
 
   incomeData.transactionId = `TXN_${crypto.randomUUID()}`
