@@ -70,7 +70,7 @@ app.use(
 
 // 3. BODY PARSERS
 app.use(compression());
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -109,9 +109,9 @@ app.use("/api/v1/apispecs", getDataRateLimiter, (req, res) => {
 });
 app.use("/api/v1/auth/me", meRouter);
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/transactions", transactionRoute);
 app.use("/api/v1/transactions/expenses", expenseRoute);
 app.use("/api/v1/transactions/incomes", incomeRoute);
+app.use("/api/v1/transactions", transactionRoute);
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/status", serverHealthRoute);
 

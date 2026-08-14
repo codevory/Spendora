@@ -11,14 +11,14 @@ import {
 } from "../helpers/rateLimiters.ts";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { csrfProtection } from "../middleware/csrfProtection.js";
-import { sanitizeInputFields } from "../middleware/sanitizeInput.js";
+import { sanitizeInput } from "../middleware/inputSanitizer.js";
 
 export const authRouter = express.Router();
 authRouter.post("/login", loginRateLimiter, loginUser);
 authRouter.post(
   "/register",
   registerRateLimiter,
-  sanitizeInputFields(["fullName, username, currency"]),
+  sanitizeInput(["fullName", "username", "currency"]),
   registerUser,
 );
 authRouter.get("/logout", requireAuth, getDataRateLimiter, logoutUser);

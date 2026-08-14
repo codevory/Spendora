@@ -6,7 +6,7 @@ import {
   postDataRateLimiter,
 } from "../helpers/rateLimiters.ts";
 import { csrfProtection } from "../middleware/csrfProtection.js";
-import { sanitizeInputFields } from "../middleware/sanitizeInput.js";
+import { sanitizeInput } from "../middleware/inputSanitizer.js";
 
 export const incomeRoute = express.Router();
 incomeRoute.get("/", requireAuth, getDataRateLimiter, getIncome);
@@ -15,9 +15,6 @@ incomeRoute.post(
   requireAuth,
   csrfProtection,
   postDataRateLimiter,
-  sanitizeInputFields(["incomeData"]),
+  sanitizeInput(["incomeData.entity"]),
   addIncome,
 );
-
-// incomeRouter.patch("/updateExpense/:id", requireAuth, handler);
-// incomeRouter.patch("/updateIncome/:id", requireAuth, handler);

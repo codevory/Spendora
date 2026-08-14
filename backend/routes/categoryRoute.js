@@ -13,7 +13,7 @@ import {
   getDataRateLimiter,
   postDataRateLimiter,
 } from "../helpers/rateLimiters.ts";
-import { sanitizeInputFields } from "../middleware/sanitizeInput.js";
+import { sanitizeInput } from "../middleware/inputSanitizer.js";
 
 export const categoryRoute = express.Router();
 categoryRoute.get("/", requireAuth, getDataRateLimiter, getCategories);
@@ -22,7 +22,7 @@ categoryRoute.post(
   requireAuth,
   csrfProtection,
   postDataRateLimiter,
-  sanitizeInputFields(["name"]),
+  sanitizeInput(["name"]),
   addNewCategory,
 );
 categoryRoute.patch(
@@ -30,7 +30,7 @@ categoryRoute.patch(
   requireAuth,
   csrfProtection,
   postDataRateLimiter,
-  sanitizeInputFields(["name"]),
+  sanitizeInput(["name"]),
   renameCategory,
 );
 categoryRoute.delete(

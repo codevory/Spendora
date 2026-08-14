@@ -4,4 +4,4 @@ import { getServerHealth } from "../controllers/serverHealthController.js";
 
 export const serverHealthRoute = express.Router();
 
-serverHealthRoute.get("/serverHealth", getDataRateLimiter, getServerHealth);
+serverHealthRoute.get("/", getDataRateLimiter, getServerHealth);
