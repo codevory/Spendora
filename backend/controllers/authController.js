@@ -24,31 +24,42 @@ export async function registerUser(req, res) {
         "Username must be 1–20 characters, using letters, numbers, _ or -.",
     });
   }
-  const userResult = await db.query(
-    "SELECT username,email FROM users WHERE username = $1 OR email = $2",
-    [username.trim(), email.trim()],
-  );
-
-  if (userResult.rows[0]) {
-    const existingUserName = userResult.rows[0].username;
-    if (
-      existingUserName.toLowerCase().trim() === username.toLowerCase().trim()
-    ) {
-      return res.status(400).json({ error: "username already taken!" });
-    }
-
-    const existingEmail = userResult.rows[0].email;
-
-    if (existingEmail.toLowerCase().trim() === email.toLowerCase().trim()) {
-      return res.status(400).json({ error: "Email already in use!" });
-    }
-  }
 
   fullName = fullName.trim();
-  email = email.trim();
-  username = username.trim();
+  email = email.trim().toLowerCase();
+  username = username.trim().toLowerCase();
   currency = currency.trim();
   password = await bcrypt.hash(password, 10);
+
+  const userResult = await db.query(
+    "SELECT username,email FROM users WHERE LOWER(username) = $1 OR LOWER(email) = $2",
+    [username, email],
+  );
+
+  if (userResult.rows.length > 0) {
+    let isUserNameTaken = false;
+    let isEmailTaken = false;
+
+    for (const row of userResult.rows) {
+      if (row.username.toLowerCase() === username) isUserNameTaken = true;
+
+      if (row.email.toLowerCase() === email) isEmailTaken = true;
+    }
+
+    if (isEmailTaken && isUserNameTaken) {
+      return res
+        .status(400)
+        .json({ error: "Username and Email are both already taken!" });
+    }
+
+    if (isEmailTaken) {
+      return res.status(400).json({ error: "Email already in use!" });
+    }
+
+    if (isUserNameTaken) {
+      return res.status(400).json({ error: "Username already taken!" });
+    }
+  }
 
   try {
     const result = await db.query(
@@ -71,7 +82,6 @@ export async function loginUser(req, res) {
   if (!email || !password) {
     return res.status(400).json({ error: "All fields are required" });
   }
-  email = email.trim();
 
   try {
     if (!validator.isEmail(email)) {
@@ -79,10 +89,9 @@ export async function loginUser(req, res) {
     }
 
     const userResult = await db.query(
-      "SELECT id,fullname,email,username,password,currency,inserted_at FROM users WHERE email = $1",
+      "SELECT id,fullname,email,username,uid,currency,password,inserted_at FROM users WHERE email = $1",
       [email],
     );
-
     const user = userResult.rows[0];
 
     if (!user?.email) {
@@ -90,13 +99,22 @@ export async function loginUser(req, res) {
     }
 
     const isValid = await bcrypt.compare(password, user.password);
+
     if (!isValid) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
+
     req.session.userId = user.id;
-    return res.status(200).json({ user });
+    const userDetails = {
+      id: user.id,
+      uid: user.uid,
+      fullName: user.fullname,
+      username: user.username,
+      email: user.email,
+      currency: user.currency,
+    };
+    return res.status(200).json(userDetails);
   } catch (err) {
-    console.error("Error during login : ", err.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
