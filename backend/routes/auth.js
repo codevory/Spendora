@@ -11,10 +11,16 @@ import {
 } from "../helpers/rateLimiters.ts";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { csrfProtection } from "../middleware/csrfProtection.js";
+import { sanitizeInput } from "../middleware/inputSanitizer.js";
 
 export const authRouter = express.Router();
 authRouter.post("/login", loginRateLimiter, loginUser);
-authRouter.post("/register", registerRateLimiter, registerUser);
+authRouter.post(
+  "/register",
+  registerRateLimiter,
+  sanitizeInput(["fullName", "username", "currency"]),
+  registerUser,
+);
 authRouter.get("/logout", requireAuth, getDataRateLimiter, logoutUser);
 authRouter.get("/sid", requireAuth, getDataRateLimiter, (req, res) => {
   res.status(200).json({ sid: req.sessionID });

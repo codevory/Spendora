@@ -14,5 +14,3 @@ transactionRoute.get(
   getDataRateLimiter,
   getRecentTransactions,
 );
-// transactionRouter.patch("/updateExpense/:id", requireAuth, handler);
-// incomeRouter.patch("/updateIncome/:id", requireAuth, handler);
