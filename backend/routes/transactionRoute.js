@@ -1,6 +1,9 @@
 import express from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
-import { getRecentTransactions } from "../controllers/transactionController.ts";
+import {
+  getRecentTransactions,
+  getUserFinancialSummary,
+} from "../controllers/transactionController.ts";
 import {
   getDataRateLimiter,
   postDataRateLimiter,
@@ -13,4 +16,11 @@ transactionRoute.get(
   requireAuth,
   getDataRateLimiter,
   getRecentTransactions,
+);
+
+transactionRoute.get(
+  "/financial-summary",
+  requireAuth,
+  getDataRateLimiter,
+  getUserFinancialSummary,
 );

@@ -35,6 +35,7 @@ app.set("trust proxy", 1);
 const PORT = process.env.PORT || 2122;
 const PostgresStore = pgSession(session);
 const dbPool = await getDBConnection();
+
 // 2. CORS MIDDLEWARE
 const allowed_origins_prod = ["https://spendora-khaki.vercel.app"];
 const allowed_origins_dev = [
@@ -104,9 +105,6 @@ app.use(
   }),
 );
 
-app.use("/api/v1/apispecs", getDataRateLimiter, (req, res) => {
-  res.status(200).json(swaggerUi);
-});
 app.use("/api/v1/auth/me", meRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/transactions/expenses", expenseRoute);

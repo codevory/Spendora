@@ -1,15 +1,18 @@
 import type { ChartData } from "chart.js";
-import type { IncomeTransactionTypes, expenseTranscationTypes } from "../types/transactionType";
-import { getUserOriginList } from "../utils/currency";
+import type { expenseTranscationTypes } from "../types/transactionType";
+import { formatCurrency, getUserOriginList } from "../utils/currency";
 import {
   useGetIncomeTransactionsQuery,
   useGetExpenseTransactionsQuery,
   useGetFilteredExpenseTransactionsQuery,
   useGetRecentTransactionsQuery,
-  useGetCategoriesQuery
+  useGetCategoriesQuery,
+  useGetFinanceSummaryQuery
 } from "../store/features/transactionApi";
 import { useSimpleDebounce } from "./useSimpleDebounce";
-import { useEffect, useRef,useState } from "react";
+import { useEffect, useMemo, useRef,useState } from "react";
+import { useAppSelector } from "../store/store";
+import useThemeContext from "./useThemeContext";
 
 interface MonthlyDataTypes {
   expenses: expenseTranscationTypes[];
@@ -29,6 +32,28 @@ export const useUserData = () => {
 
   const { data,isError:expenseError,isLoading:expenseLoading } = useGetExpenseTransactionsQuery({sort:"DESC"})
   const { data: incomeResponse,isError:incomeError,isLoading:incomeLoading } = useGetIncomeTransactionsQuery({sort:"DESC"});
+  const { data:summaryData,isError:summaryDataError,isLoading:isSummaryDataLoading } = useGetFinanceSummaryQuery({})
+
+  const currencyKey = useAppSelector((state) => state.origin.userOrigin.key)
+  const { isDark } = useThemeContext()
+
+  const summaryDataLabels = useMemo(() => {
+   return summaryData?.monthlyFinanceReport.map((d) => d.month_name)
+  },[summaryData])
+
+  const income_summary_Data = useMemo(() => {
+     return summaryData?.monthlyFinanceReport.map((d) => {
+      return d.totalIncome
+     })
+  },[summaryData])
+
+  const balance_summary_data = useMemo(() => {
+   return summaryData?.monthlyFinanceReport.map((d) => d.netBalance)
+  },[summaryData])
+
+  const expense_summary_data = useMemo(() => {
+   return summaryData?.monthlyFinanceReport.map((d) => d.totalExpense)
+  },[summaryData?.monthlyFinanceReport])
 
   const expenses = data?.expenses ?? [];
   const incomeTrans = incomeResponse?.incomes ?? [];
@@ -42,33 +67,14 @@ export const useUserData = () => {
     expenses,
     month: normalizedCurrentDate.getMonth() - 1,
   });
-  const currMonthIncome = getMonthlyIncome({ transactions: incomeTrans });
 
   const currentLabels = Object.keys(currMonthData);
   const currentMonthAmounts = currentLabels.map(
     (label) => currMonthData[label] ?? 0,
   );
-  const currentMonthExpense = getMonthlyExpense({
-    expenses:expenses,
-    month: normalizedCurrentDate.getMonth(),
-  });
 
   const trendLabels = Array.from(
     new Set([...Object.keys(currMonthData), ...Object.keys(prevMonthData)]),
-  );
-
-  const incomeVsExpenseLabels = Array.from(
-    new Set([
-      ...Object.keys(currMonthIncome),
-      ...Object.keys(currentMonthExpense),
-    ]),
-  );
-
-  const currMonthIncomeAmounts = incomeVsExpenseLabels.map(
-    (label) => currMonthIncome[label] ?? 0,
-  );
-  const currMonthExpenseAmounts = incomeVsExpenseLabels.map(
-    (label) => currentMonthExpense[label] ?? 0,
   );
 
   const currMonthAmounts = trendLabels.map(
@@ -127,23 +133,115 @@ export const useUserData = () => {
     ],
   };
 
-  const analysisData: ChartData<"line"> = {
-    labels: incomeVsExpenseLabels,
+    const analysisData: ChartData<"line"> = {
+    labels: summaryDataLabels,
     datasets: [
       {
-        label: "This Month income Analysis",
-        data: currMonthIncomeAmounts,
+        label: "Monthly Income Analysis",
+        data: income_summary_Data || [],
         borderColor: "green",
         borderWidth: 2,
-        backgroundColor: "red",
+        backgroundColor: `${isDark ? 'lightgreen' : 'darkgreen'}`,
+        showLine:true,
+         tooltip:{
+          callbacks:{
+             label: function(context){
+               let label = 'inc '
+               if(label){
+                label += ' : '
+               }
+
+                if (context.parsed.y !== null) {
+                      label += formatCurrency(context.parsed.y,currencyKey)
+                    }
+
+               return label
+             },
+             labelColor:function(){
+              return {
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'white',
+                borderWidth: 2,
+                borderDash: [2, 2],
+                borderRadius: 2,
+              }
+             },
+             labelTextColor:function(){
+              return `${isDark ? 'lightgreen' : 'darkgreen'}`
+             }
+            }
+        }
       },
       {
-        label: "This Month expense Analysis",
-        data: currMonthExpenseAmounts,
-        borderColor: "red",
+        label: "Monthly expense Analysis",
+        data: expense_summary_data || [],
+        borderColor: `${isDark ? 'pink' : 'red'}`,
         borderWidth: 2,
         backgroundColor: "rgb(75,192,192)",
+         tooltip:{
+          callbacks:{
+             label: function(context){
+               let label = 'exp '
+               if(label){
+                label += ' : '
+               }
+
+                if (context.parsed.y !== null) {
+                      label += formatCurrency(context.parsed.y,currencyKey)
+                    }
+
+               return label
+             },
+             labelColor:function(){
+              return {
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                borderWidth: 2,
+                borderDash: [2, 2],
+                borderRadius: 2,
+              }
+             },
+             labelTextColor:function(){
+              return `${isDark ? 'pink' : 'red'}`
+             }
+            }
+        }
       },
+      {
+         label: "Monthly Balance Analysis",
+        data: balance_summary_data || [],
+        borderColor: `${isDark ? 'yellow' : 'blue'}`,
+        borderWidth: 2,
+        backgroundColor: "rgb(75,192,192)",
+         tooltip:{
+          callbacks:{
+             label: function(context){
+               let label = 'bal '
+               if(label){
+                label += ' : '
+               }
+
+                if (context.parsed.y !== null) {
+                      label += formatCurrency(context.parsed.y, currencyKey)
+                }
+                 
+               return label
+             },
+             labelColor: function (){
+              return {
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(255, 0, 0)',
+                borderWidth: 2,
+                borderDash: [2, 2],
+                borderRadius: 2,
+              }
+             },
+             labelTextColor:function (){
+               return `${isDark ? 'yellow': 'blue'}`
+             }
+            }
+        }
+      }
     ],
   };
 
@@ -160,7 +258,10 @@ export const useUserData = () => {
     expenseError,
     expenseLoading,
     incomeError,
-    incomeLoading
+    incomeLoading,
+    netBalance:summaryData?.financialSummary.netBalance,
+    summaryDataError,
+    isSummaryDataLoading
   };
 };
 
@@ -180,47 +281,6 @@ function getMonthlyData({ expenses, month }: MonthlyDataTypes) {
         acc[curr.categoryName ?? "uncategorized"] = (acc[curr.categoryName ?? "uncategorized"] ?? 0) + Number(curr.amount);
       } else {
         acc[curr.categoryName ?? "uncategorized"] += Number(curr.amount);
-      }
-      return acc;
-    }, {});
-}
-
-function getMonthlyExpense({ expenses, month }: MonthlyDataTypes) {
-
-  return expenses
-    .filter((t) => {
-      const date = new Date(t.date);
-      return date.getMonth() === month && date.getFullYear() === targetDate(month).getFullYear();
-    })
-    .reduce<Record<string, number>>((acc, curr) => {
-      const month = new Date(curr.date).toLocaleDateString("en-US", {
-        month: "short",
-      });
-      if (!acc[month]) {
-        acc[month] = (acc[month] ?? 0) + Number(curr.amount);
-      } else {
-        acc[month] += Number(curr.amount);
-      }
-      return acc;
-    }, {});
-}
-interface MonthlyIncomeType {
-  transactions: IncomeTransactionTypes[];
-}
-function getMonthlyIncome({ transactions }: MonthlyIncomeType) {
-  return transactions
-    .filter((t) => {
-      const date = new Date(t.date);
-      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-    })
-    .reduce<Record<string, number>>((acc, curr) => {
-      const month = new Date(curr.date).toLocaleDateString("en-US", {
-        month: "short",
-      });
-      if (!acc[month]) {
-        acc[month] = (acc[month] ?? 0) + Number(curr.amount);
-      } else {
-        acc[month] += Number(curr.amount);
       }
       return acc;
     }, {});

@@ -64,6 +64,25 @@ export type csrfResponseDataType = {
   csrfToken: string | undefined
 }
 
+type summaryTypes = {
+  financialSummary:{
+  totalIncome:number 
+  totalExpense:number 
+  netBalance:number
+}
+}
+
+export interface financialSummaryTypes extends summaryTypes{
+monthlyFinanceReport: { 
+  month_name:string
+  totalIncome:number 
+  totalExpense:number 
+  netBalance:number
+}[]
+}
+
+
+
 // export const Backend_Url = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL
 
 const staggeredBaseQuery = retry(
@@ -109,7 +128,7 @@ export const transactionApi = createApi({
   reducerPath: "transactionApi",
   baseQuery: baseQueryWithFailureHandling,
   refetchOnFocus : true,
-  tagTypes: ["RecentTransactions", "Expenses", "Income", "Categories"],
+  tagTypes: ["RecentTransactions", "Expenses", "Income", "Categories","summaryReport"],
   endpoints: (builder) => ({
     getRecentTransactions: builder.query<GetRecentTransactionsResponse, RecentTransactionsType>({
       query: ({ page, limit, skip }) => ({
@@ -215,7 +234,8 @@ export const transactionApi = createApi({
       invalidatesTags: [
         { type : "Expenses", id:"LIST"},
         { type : "RecentTransactions", id: "LIST"},
-        { type:"Categories", id: "LIST"}
+        { type:"Categories", id: "LIST"},
+        { type: "summaryReport", id:"LIST"}
       ],
       async onQueryStarted({ transactionData }, { queryFulfilled, dispatch }) {
         const optimisticExpense = {
@@ -276,7 +296,8 @@ export const transactionApi = createApi({
       }),
       invalidatesTags:[
         { type:"RecentTransactions", id: "LIST"},
-        { type: "Income", id: "LIST" }
+        { type: "Income", id: "LIST" },
+        { type: "summaryReport", id:"LIST"}
       ],
       async onQueryStarted({ incomeData }, { queryFulfilled, dispatch }) {
         const optimisticIncome = {
@@ -324,7 +345,10 @@ export const transactionApi = createApi({
         method: "POST",
         body: { name },
       }),
-      invalidatesTags: [{ type: "Categories", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Categories", id: "LIST" },
+        { type: "summaryReport", id: "LIST"}
+      ],
     }),
     renameCategory: builder.mutation<CategoryMutationResponse, RenameCategoryProps>({
       query: ({ name,id }) => ({
@@ -339,7 +363,8 @@ export const transactionApi = createApi({
               { type: "Categories" as const, id: "LIST" },
               { type: "Categories" as const, id: id },
               {type: "RecentTransactions" as const, id: "LIST"},
-              { type: "Expenses" as const, id: "LIST"}
+              { type: "Expenses" as const, id: "LIST"},
+              { type: "summaryReport", id: "LIST"}
             ],
     }),
     deleteCategory: builder.mutation<void, { category: CategoryPropsType }>({
@@ -350,7 +375,8 @@ export const transactionApi = createApi({
       invalidatesTags: [
         { type: "Categories", id: "LIST" },
         { type: "Expenses", id: "LIST"},
-        { type: "RecentTransactions", id: "LIST"}
+        { type: "RecentTransactions", id: "LIST"},
+        { type: "summaryReport", id: "LIST"}
       ],
     }),
 
@@ -390,6 +416,14 @@ export const transactionApi = createApi({
       ] : 
       [{type : "RecentTransactions" as const, id: "LIST"}]
     }),
+    getFinanceSummary:builder.query<financialSummaryTypes,any>({
+      query:() => ({
+        url:"/transactions/financial-summary"
+      }),
+      providesTags:[
+        { type: "summaryReport", id:"LIST"}
+      ]
+    })
   })
 });
 
@@ -405,4 +439,5 @@ export const {
   useLogoutUserMutation,
   useGetFilteredExpenseTransactionsQuery,
   useGetExpenseTransactionsQuery,
+  useGetFinanceSummaryQuery
 } = transactionApi;

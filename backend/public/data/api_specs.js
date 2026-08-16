@@ -9,6 +9,64 @@ export const apiSpecs = {
       "API documentation for managing user transactions (expenses & income) and expense categories.",
   },
   paths: {
+    "/api/v1/transactions/financial-summary": {
+      get: {
+        summary:
+          "Get financial summary overview and 12-month rolling breakdown",
+        operationId: "getFinancialSummary",
+        tags: ["Transactions"],
+        responses: {
+          200: {
+            description: "Financial summary retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    financialSummary: {
+                      $ref: "#/components/schemas/FinancialSummaryOverview",
+                    },
+                    monthlyFinanceReport: {
+                      type: "array",
+                      items: {
+                        $ref: "#/components/schemas/MonthlyFinanceItem",
+                      },
+                    },
+                  },
+                },
+                example: {
+                  financialSummary: {
+                    totalIncome: "1099917.00",
+                    totalExpense: "71225.00",
+                    netBalance: "1028692.00",
+                  },
+                  monthlyFinanceReport: [
+                    {
+                      month_name: "Aug 26",
+                      totalIncome: "144044.00",
+                      totalExpense: "35979.00",
+                      netBalance: "108065.00",
+                    },
+                    {
+                      month_name: "Jul 26",
+                      totalIncome: "955873.00",
+                      totalExpense: "35246.00",
+                      netBalance: "920627.00",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            $ref: "#/components/responses/InternalServerError",
+          },
+        },
+      },
+    },
     "/api/v1/transactions/expenses": {
       post: {
         summary: "Add a new expense transaction",
@@ -1160,6 +1218,44 @@ export const apiSpecs = {
           createdAt: {
             type: "string",
             format: "date-time",
+          },
+        },
+      },
+      FinancialSummaryOverview: {
+        type: "object",
+        properties: {
+          totalIncome: {
+            type: "string",
+            example: "1099917.00",
+          },
+          totalExpense: {
+            type: "string",
+            example: "71225.00",
+          },
+          netBalance: {
+            type: "string",
+            example: "1028692.00",
+          },
+        },
+      },
+      MonthlyFinanceItem: {
+        type: "object",
+        properties: {
+          month_name: {
+            type: "string",
+            example: "Aug 26",
+          },
+          totalIncome: {
+            type: "string",
+            example: "144044.00",
+          },
+          totalExpense: {
+            type: "string",
+            example: "35979.00",
+          },
+          netBalance: {
+            type: "string",
+            example: "108065.00",
           },
         },
       },
