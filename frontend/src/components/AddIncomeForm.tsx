@@ -44,10 +44,16 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
         className="flex flex-col gap-5"
       >
         <div className="flex flex-col gap-1 relative">
-          <label className="text-muted block mb-1 text-sm">
+          <label
+            aria-label="amount"
+            htmlFor="income-amount"
+            className="text-muted block mb-1 text-sm"
+          >
             amount ({currencyMeta.currencySymbol})
           </label>
           <input
+            name="amount"
+            id="income-amount"
             className="bg-transparent w-full outline-none input"
             type="number"
             placeholder="enter amount you received"
@@ -57,8 +63,16 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
           />
         </div>
         <div className="flex flex-col gap-1 relative">
-          <label className="text-muted block mb-1 text-sm">income source</label>
+          <label
+            htmlFor="income-source"
+            aria-label="income source"
+            className="text-muted block mb-1 text-sm"
+          >
+            income source
+          </label>
           <input
+            id="income-source"
+            name="income source"
             className="bg-transparent w-full outline-none input"
             type="text"
             placeholder="eg Fiverr"
@@ -68,10 +82,16 @@ const AddIncomeForm = ({ setModalState }: IncomeFormPropsType) => {
         </div>
 
         <div className="flex flex-col gap-1 relative">
-          <label className="text-muted block mb-1 text-sm">
+          <label
+            aria-label="date"
+            htmlFor="income-date"
+            className="text-muted block mb-1 text-sm"
+          >
             income received
           </label>
           <input
+            id="income-date"
+            name="date"
             className="bg-transparent w-full outline-none input"
             type="date"
             value={incomeDate}

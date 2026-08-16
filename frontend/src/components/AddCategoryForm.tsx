@@ -69,10 +69,16 @@ const AddNewCategoryForm = ({
         className="form flex flex-col gap-2 "
       >
         <div className=" flex flex-col">
-          <label className="text-accent label text-sm font-medium mb-1">
+          <label
+            aria-label="category name"
+            htmlFor="new-category-name"
+            className="text-accent label text-sm font-medium mb-1"
+          >
             name
           </label>
           <input
+            id="new-category-name"
+            name="category"
             className="input"
             type="text"
             value={categoryValue.trimStart()}

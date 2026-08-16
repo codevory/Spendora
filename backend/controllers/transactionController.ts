@@ -64,7 +64,6 @@ ReqQuery = unknown> = Request<Params,ReqBody,ResBody,ReqQuery> & {
   session: SessionUser
 } 
 
-
   let now = new Date()
   export const defaultDate = {
      startDateDefault : new Date(now.getFullYear(), now .getMonth() - 3, now.getDate()),
@@ -393,6 +392,88 @@ export async function getExpense(req:CustomRequestWithSession<unknown,unknown,un
     const error = err instanceof Error ? err : new Error(String(err));
     console.error("Failed to get filtered expense : ", error.message);
     return res.status(500).json({ error: ` Internal Server Error ` });
+  }
+
+}
+
+export async function getUserFinancialSummary(req:RequestWithSession<unknown,unknown,unknown,CustomQueryParamsType>,res:Response){
+  const db = await getDBConnection();
+  let startDate = `${Number(now.getMonth()) + 1}/${now.getDate()}/${now.getFullYear() - 1}`
+   const endDate = new Date().toLocaleDateString()
+
+  try {
+    let financialSummary = await db.query(`
+    SELECT
+     COALESCE(i.total_income,0) AS "totalIncome",
+     COALESCE(e.total_expense,0) AS "totalExpense",
+     (COALESCE(i.total_income,0) - COALESCE(e.total_expense,0)) AS "netBalance"
+     FROM (
+     SELECT SUM(amount) AS total_income
+     FROM userincome
+     WHERE user_id = $1
+     AND received_on >= $2::date
+     AND received_on <= $3::date
+    ) i
+    CROSS JOIN(
+    SELECT SUM(amount) AS total_expense
+    FROM userexpense
+    WHERE user_id = $1
+    AND paid_on >= $2::date
+    AND paid_on <= $3::date
+  ) e`,[req.session.userId,startDate,endDate]) 
+
+    let monthlyFinanceReport = await db.query(`
+        WITH calendar AS (
+        SELECT generate_series (
+        date_trunc('month', $1::date),
+        date_trunc('month', $2::date),
+        '1 month'::interval
+        ) AS month_date
+       ), 
+       monthly_income AS (
+        SELECT
+        date_trunc('month', received_on) AS received_on,
+        SUM(amount) AS total_income
+        FROM userincome WHERE user_id = $3
+        AND received_on >= date_trunc('month',$1::date)
+        AND received_on <= date_trunc('month',$2::date) + '1 month' ::interval
+        GROUP BY date_trunc('month', received_on)
+       ),
+       monthly_expense AS(
+       SELECT
+       date_trunc('month', paid_on) AS paid_on,
+       SUM(amount) AS total_expense
+       FROM userexpense
+       WHERE user_id = $3
+       AND paid_on >= date_trunc('month',$1::date)
+       AND paid_on <= date_trunc('month',$2::date) + '1 month' ::interval
+       GROUP BY date_trunc('month', paid_on)
+       )
+       SELECT 
+       to_char(c.month_date, 'Mon YY' ) AS month_name,
+       COALESCE(i.total_income,0) AS "totalIncome",
+       COALESCE(e.total_expense,0) AS "totalExpense",
+       (COALESCE(i.total_income,0) - COALESCE(e.total_expense,0)) AS "netBalance"
+       FROM calendar c 
+       LEFT JOIN monthly_income i ON c.month_date = i.received_on
+       LEFT JOIN monthly_expense e ON c.month_date = e.paid_on
+       ORDER BY c.month_date DESC
+      `,[startDate,endDate,req.session.userId])
+
+    if(!financialSummary){
+      return res.status(500).json({error:"error occured getting financial-Summary"})
+    }
+
+    else if(!monthlyFinanceReport){
+      return res.status(500).json({error:"error occured getting monthlyFinanceReport"})
+    }
+    monthlyFinanceReport = monthlyFinanceReport.rows
+    financialSummary = financialSummary.rows[0];
+
+    return res.status(200).json({financialSummary,monthlyFinanceReport})
+  } catch (err:any) {
+    console.error("unexpected error : ",err?.message || "internal server error occured")
+    return res.status(500).json({error:"Internal server error : ",err})
   }
 
 }

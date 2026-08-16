@@ -1,11 +1,10 @@
-import React, { useState, Suspense, useEffect } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import "./App.css";
 import { Outlet, Route, Routes } from "react-router-dom";
 import EmptyState from "./components/EmptyState";
 import SkeletalLoader from "./components/SkeletonLoader";
-import { LandingPage } from "./pages/LandingPage";
-import ProtectedRoute from "./components/protectedRoute"; 
+import ProtectedRoute from "./components/protectedRoute";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import UserAccountPage from "./pages/UserAccountPage";
@@ -14,22 +13,22 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import { getCsrf } from "./utils/authService";
 import { useAppDispatch } from "./store/store";
-const DashBoardLayout = React.lazy(() => import("./pages/DashBoardLayout"));
+import DashBoardLayout from "./pages/DashBoardLayout";
+import { LandingPage } from "./pages/LandingPage";
 
 function App() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const toggleSidebar = () => setIsOpen((p) => !p);
 
   useEffect(() => {
-    getCsrf(dispatch)
-  },[])
+    getCsrf(dispatch);
+  }, []);
 
   return (
     <>
       <Suspense fallback={<SkeletalLoader />}>
         <Routes>
-
           <Route path="/welcome" element={<LandingPage />} />
           <Route
             path="/signup"
@@ -81,10 +80,6 @@ function App() {
               }
             />
           </Route>
-          <Route 
-          path="/app/error"
-          element={<EmptyState content="we are working on this" />}
-          />
           <Route path="*" element={<EmptyState content="No page found" />} />
         </Routes>
         <Outlet />

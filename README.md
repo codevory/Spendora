@@ -41,7 +41,7 @@ The project reflects a complete implementation-focused set of wins:
 
 - Protected dashboard architecture with route-level session gating
 - Schema-driven client-side validation using **Zod** to prevent invalid submissions early
-- Server-side input sanitization middleware (`inputData`) to cleanse incoming requests before database execution
+- Server-side input sanitization middleware (`sanitizeInput`) to cleanse incoming requests before database execution
 - Dedicated transaction, category, and analytics screens instead of a single monolithic page
 - Backend API docs exposed at : `/api/v1/docs`
 - Health check endpoint at `/api/v1/status`
@@ -70,6 +70,7 @@ Backend routes:
 - `/api/v1/auth/sid` - current session id
 - `/api/v1/auth/csrf` - CSRF token retrieval
 - `/api/v1/transactions` - transaction feeds and summaries
+- `/api/v1/transactions/financial-summary` - Financial overview with monthly transactions report over last 1 year
 - `/api/v1/transactions/expenses` - expense operations
 - `/api/v1/transactions/incomes` - income operations
 - `/api/v1/categories` - category CRUD
