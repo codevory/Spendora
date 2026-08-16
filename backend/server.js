@@ -40,6 +40,7 @@ const dbPool = await getDBConnection();
 const allowed_origins_prod = ["https://spendora-khaki.vercel.app"];
 const allowed_origins_dev = [
   "http://localhost:5173",
+  "http://localhost:4173",
   "http://localhost:2122",
   "http://localhost:3000",
 ];

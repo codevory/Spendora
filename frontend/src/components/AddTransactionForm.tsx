@@ -66,12 +66,20 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
         >
           {/* Amount */}
           <div className="relative">
-            <label className="text-sm text-muted mb-1 block">Amount</label>
+            <label
+              htmlFor="expense-amount"
+              aria-label="amount"
+              className="text-sm text-muted mb-1 block"
+            >
+              Amount
+            </label>
             <div className="flex items-center input">
               <span className="mr-2 text-muted">
                 {currencyMeta.currencySymbol}
               </span>
               <input
+                id="expense-amount"
+                name="amount"
                 type="number"
                 placeholder="Enter amount"
                 value={amount}
@@ -84,8 +92,16 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
 
           {/* Date */}
           <div>
-            <label className="text-sm text-muted mb-1 block">Date</label>
+            <label
+              htmlFor="expense-date"
+              aria-label="date"
+              className="text-sm text-muted mb-1 block"
+            >
+              Date
+            </label>
             <input
+              id="expense-date"
+              name="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -96,8 +112,16 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
 
           {/* Payee */}
           <div>
-            <label className="text-sm text-muted mb-1 block">Paid to</label>
+            <label
+              htmlFor="expense-entity"
+              aria-label="paid to"
+              className="text-sm text-muted mb-1 block"
+            >
+              Paid to
+            </label>
             <input
+              id="expense-entity"
+              name="paid to"
               type="text"
               placeholder="Netflix, YouTube Premium"
               value={payee}
@@ -109,8 +133,16 @@ const AddTransactionForm = ({ setModalState }: AddTransactionFormPropsType) => {
 
           {/* Category */}
           <div>
-            <label className="text-sm text-muted mb-1 block">Category</label>
+            <label
+              htmlFor="expense-category"
+              aria-label="category name"
+              className="text-sm text-muted mb-1 block"
+            >
+              Category
+            </label>
             <select
+              id="expense-category"
+              name="category name"
               value={categoryId}
               onChange={(e) => {
                 setCategoryId(e.target.value);

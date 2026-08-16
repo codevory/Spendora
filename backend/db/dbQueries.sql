@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS userexpense(
     transaction_id VARCHAR(100) NOT NULL,
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY(category_id) REFERENCES expensecategories(id) ON DELETE CASCADE
+    FOREIGN KEY(category_id) REFERENCES expensecategories(id) ON DELETE CASCADE,
+    ADD CONSTRAINT check_amount_not_negative CHECK(amount >= 0)
 );
 
 -- create userincome table
@@ -53,5 +54,6 @@ CREATE TABLE IF NOT EXISTS userincome (
     transaction_id VARCHAR(100) NOT NULL, 
     received_on DATE NOT NULL,
     inserted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    ADD CONSTRAINT check_amount_not_negative CHECK(amount >= 0)
 );
