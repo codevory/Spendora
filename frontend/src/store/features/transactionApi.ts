@@ -81,15 +81,10 @@ monthlyFinanceReport: {
 }[]
 }
 
-
-
-// export const Backend_Url = import.meta.env.DEV ? "" : import.meta.env.VITE_BACKEND_URL
-
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
     baseUrl: `/api/v1`,
     credentials: "include",
-    timeout: 10000,
 
     prepareHeaders: (headers ) => {
       try {
@@ -423,6 +418,19 @@ export const transactionApi = createApi({
       providesTags:[
         { type: "summaryReport", id:"LIST"}
       ]
+    }),
+    deleteTransactions: builder.mutation<void, {transactionIds: string[]}>({
+      query: ({transactionIds}) => ({
+        url: `/transactions/delete/${transactionIds.join(",")}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: [
+        { type: "RecentTransactions", id: "LIST" },
+        { type: "Expenses", id: "LIST" },
+        { type: "Income", id: "LIST" },
+        { type: "Categories", id: "LIST" },
+        { type: "summaryReport", id: "LIST" }
+      ],
     })
   })
 });
@@ -439,5 +447,6 @@ export const {
   useLogoutUserMutation,
   useGetFilteredExpenseTransactionsQuery,
   useGetExpenseTransactionsQuery,
-  useGetFinanceSummaryQuery
+  useGetFinanceSummaryQuery,
+  useDeleteTransactionsMutation,
 } = transactionApi;

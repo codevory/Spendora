@@ -1,8 +1,13 @@
-import { useMemo } from "react";
-import { useAppSelector } from "../store/store";
+import { useEffect, useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { formatCurrency } from "../utils/currency";
-import type { GetRecentTransactionsResponse ,Transaction } from "../types/recentTransactions";
+import type {
+  GetRecentTransactionsResponse,
+  Transaction,
+} from "../types/recentTransactions";
 import TransactionsSkeleton from "./TransactionsSkeleton.tsx";
+import { addTransactionToDeletionQueue
+ } from "../store/features/transactionUpdate.ts";
 
 type DisplayTransaction = Transaction & {
   name: string;
@@ -16,13 +21,41 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 });
 
 type RecentTransactionProps = {
-  data:GetRecentTransactionsResponse | undefined
-  isError: boolean 
-  isFetching: boolean
-}
+  data: GetRecentTransactionsResponse | undefined;
+  isError: boolean;
+  isFetching: boolean;
+  keepChecked?: boolean;
+};
 
-const RecentTransactions = ({ data, isFetching, isError}:RecentTransactionProps) => {
+const RecentTransactions = ({
+  data,
+  isFetching,
+  isError,
+  keepChecked = false,
+}: RecentTransactionProps) => {
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
+  const [selectedTxnIds, setTxnIds] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
+
+  function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const isChecked = e.target.checked;
+    const selectedId = e.target.id;
+
+    if (isChecked) {
+      const idExists = selectedTxnIds.find((id) => id === selectedId);
+      if (!idExists) {
+        setTxnIds([...selectedTxnIds, selectedId]);
+        return;
+      }
+    } else {
+      setTxnIds(selectedTxnIds.filter((t) => t != selectedId));
+    }
+  }
+  
+  useEffect(() => {
+    console.log("selected Ids : ", selectedTxnIds);
+    dispatch(addTransactionToDeletionQueue(selectedTxnIds));
+  }, [selectedTxnIds]);
 
   const recentTxns = data?.transactions || [];
 
@@ -41,39 +74,55 @@ const RecentTransactions = ({ data, isFetching, isError}:RecentTransactionProps)
   }
 
   if (isError) {
-    return <div className="card text-center p-4">Failed to load transactions.</div>;
+    return (
+      <div className="card text-center p-4">Failed to load transactions.</div>
+    );
   }
 
   return (
     <div className="card recent-transactions mt-1 relative max-h-150 overflow-y-scroll transaction-activity">
-
-      <div className={`max-h-110 transition-opacity duration-200 ${isFetching ? "opacity-40" : "opacity-100"}`}>
+      <div
+        className={`max-h-110 transition-opacity duration-200 ${isFetching ? "opacity-40" : "opacity-100"}`}
+      >
         {sortedTransactions.map((item) => {
-
-           return (
+          return (
             <div
               key={item.id.toString() + item.transactionId + item.createdAt}
-              className="transaction-item recent-transaction-item border-b border-slate-700 last:border-none mb-1"
+              className=" flex items-center"
             >
-              <div>
-                <p className="font-medium recent-transaction-name">{item.name}</p>
-                <p className="text-sm text-muted">
-                  {dateFormatter.format(new Date(item.date))} •{" "}
-                  {getDayName(item.date.toString())}
-                </p>
-              </div>
+              {keepChecked && <span className="mr-2 md:mr-3">
+                <input
+                  type="checkbox"
+                  id={item.id.toString()}
+                  checked={selectedTxnIds.includes(item.id.toString())}
+                  onChange={handleCheckboxChange}
+                  className="size-4.5"
+                ></input>
+              </span>}
 
-              <div
-                className={`${
-                  item.type === "expense"
-                    ? "recent-transaction-amount-expense"
-                    : "recent-transaction-amount-income"
-                }`}
-              >
-                <span className="font-semibold flex items-center">
-                  {`${item.type === "expense" ? "-" : "+"}`}
-                  {formatCurrency(Number(item.amount), currencyKey)}
-                </span>
+              <div className="w-full transaction-item recent-transaction-item border-b border-slate-700 last:border-none mb-1">
+                <div>
+                  <p className="font-medium recent-transaction-name">
+                    {item.name}
+                  </p>
+                  <p className="text-sm text-muted">
+                    {dateFormatter.format(new Date(item.date))} •{" "}
+                    {getDayName(item.date.toString())}
+                  </p>
+                </div>
+
+                <div
+                  className={`${
+                    item.type === "expense"
+                      ? "recent-transaction-amount-expense"
+                      : "recent-transaction-amount-income"
+                  }`}
+                >
+                  <span className="font-semibold flex items-center">
+                    {`${item.type === "expense" ? "-" : "+"}`}
+                    {formatCurrency(Number(item.amount), currencyKey)}
+                  </span>
+                </div>
               </div>
             </div>
           );

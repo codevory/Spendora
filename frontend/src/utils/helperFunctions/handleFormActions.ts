@@ -7,6 +7,7 @@ import type {
   handleAddExpenseTransactionProps,
   RenameCategoryTriggerFn,
   IncomeTransactionTypes,
+  DeleteTransactionsTriggerFn,
 } from "../../types/transactionType";
 import { incomeFormSchema,entitySchema, expenseFormSchema } from "../zodSchema";
 
@@ -315,4 +316,36 @@ export function handleRenameCategory({
         Timer = null;
       });
   }, 300);
+}
+
+export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,success,failed,setIsLoading}:{transactionIds:string[],deleteTransactionsFn:DeleteTransactionsTriggerFn,success:(val:string) => void,failed:(val:string) => void,setIsLoading:(val:boolean) => void}){
+  if(transactionIds.length === 0) return;
+
+  const confirmDelete = window.confirm(`Are you sure you want to delete ${transactionIds.length} transaction(s)? This action cannot be undone.`);
+  if(!confirmDelete){
+    return failed("action cancelled")
+  }
+
+  if (Timer) {
+    clearTimeout(Timer);
+  } 
+
+  setIsLoading(true);
+
+  Timer = setTimeout(() => {
+    deleteTransactionsFn({transactionIds})
+    .unwrap()
+    .then(() => {
+      success(`${transactionIds.length} transaction(s) deleted successfully🎉`);
+    })
+    .catch((err:any) => {
+      failed("Internal server error to delete transactions");
+      console.error(err)
+      return ;
+    })
+    .finally(() => {
+      setIsLoading(false);
+      Timer = null;
+    })
+  }, 300)
 }

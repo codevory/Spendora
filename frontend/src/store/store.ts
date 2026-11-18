@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userAuthReducer from "./features/userAuthenication";
+import TransactionReducer from "./features/transactionUpdate";
 import {
   useDispatch,
   useSelector,
@@ -13,6 +14,7 @@ const Store = configureStore({
     userData: userAuthReducer,
     origin: userOriginReducer,
     [transactionApi.reducerPath]: transactionApi.reducer,
+    TransactionId: TransactionReducer,
   },
 
   middleware: (getDefaultMiddleware) =>
