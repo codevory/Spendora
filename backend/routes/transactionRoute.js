@@ -3,6 +3,7 @@ import { requireAuth } from "../middleware/requireAuth.js";
 import {
   getRecentTransactions,
   getUserFinancialSummary,
+  handleDeleteTransactions
 } from "../controllers/transactionController.ts";
 import {
   getDataRateLimiter,
@@ -23,4 +24,12 @@ transactionRoute.get(
   requireAuth,
   getDataRateLimiter,
   getUserFinancialSummary,
+);
+
+transactionRoute.delete(
+  "/delete/:transactions",
+  requireAuth,
+  csrfProtection,
+  postDataRateLimiter,
+  handleDeleteTransactions,
 );

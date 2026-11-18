@@ -477,3 +477,48 @@ export async function getUserFinancialSummary(req:RequestWithSession<unknown,unk
   }
 
 }
+
+export async function handleDeleteTransactions(req:RequestWithSession<{transactions:string},unknown,unknown,unknown>,res:Response){
+  const db = await getDBConnection();
+  const transactionIds = req.params.transactions
+    .split(",")
+    .map((id) => id.trim())
+    .filter((id) => id !== "");
+
+  if (transactionIds.length === 0) {
+    return res.status(400).json({ error: "No transaction ids provided" });
+  }
+
+  const client = await db.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const expenseResult = await client.query(
+      "DELETE FROM userexpense WHERE id = ANY($1::uuid[]) AND user_id = $2",
+      [transactionIds, req.session.userId],
+    );
+    const incomeResult = await client.query(
+      "DELETE FROM userincome WHERE id = ANY($1::uuid[]) AND user_id = $2",
+      [transactionIds, req.session.userId],
+    );
+
+    const deletedCount =
+      (expenseResult.rowCount ?? 0) + (incomeResult.rowCount ?? 0);
+
+    if (deletedCount === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "No transactions found to delete" });
+    }
+
+    await client.query("COMMIT");
+    return res.status(204).send();
+  } catch (err: unknown) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Failed to delete transactions: ", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  } finally {
+    client.release();
+  }
+}
