@@ -36,8 +36,8 @@ export async function addNewCategory(req, res) {
      return res.status(400).json({ error: "Failed to create category" });
     }
 
-    res.status(201).json({ category: createdCategory.rows[0] });
     await client.query("COMMIT")
+    return res.status(201).json({ category: createdCategory.rows[0] });
   } catch (err) {
     await client.query("ROLLBACK").catch(() => undefined)
     console.error("Error adding category : ", err.message);

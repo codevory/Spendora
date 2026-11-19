@@ -318,7 +318,12 @@ export function handleRenameCategory({
   }, 300);
 }
 
-export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,success,failed,setIsLoading}:{transactionIds:string[],deleteTransactionsFn:DeleteTransactionsTriggerFn,success:(val:string) => void,failed:(val:string) => void,setIsLoading:(val:boolean) => void}){
+export interface HandleDeleteTransactionsProps extends Pick<HandleRenameCategoryProps, "success" | "failed" | "setIsLoading">{
+  transactionIds: string[]
+  deleteTransactionsFn: DeleteTransactionsTriggerFn
+}
+
+export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,success,failed,setIsLoading}:HandleDeleteTransactionsProps){
   if(transactionIds.length === 0) return;
   let Timer: ReturnType<typeof setTimeout> | null = null
 

@@ -157,7 +157,7 @@ export async function addIncome(
     return res.status(400).json({ error: "Invalid amount" });
   }
 
-  else if(typeof incomeData.entity != "string" || incomeData.entity == undefined || incomeData.entity.trim() === ""){
+  else if(typeof incomeData.entity !== "string" || incomeData.entity == undefined || incomeData.entity.trim() === ""){
     return res.status(400).json({error:"Transaction entity is required"})
   }
 
