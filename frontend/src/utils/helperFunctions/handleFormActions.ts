@@ -320,10 +320,11 @@ export function handleRenameCategory({
 
 export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,success,failed,setIsLoading}:{transactionIds:string[],deleteTransactionsFn:DeleteTransactionsTriggerFn,success:(val:string) => void,failed:(val:string) => void,setIsLoading:(val:boolean) => void}){
   if(transactionIds.length === 0) return;
+  let Timer: ReturnType<typeof setTimeout> | null = null
 
   const confirmDelete = window.confirm(`Are you sure you want to delete ${transactionIds.length} transaction(s)? This action cannot be undone.`);
   if(!confirmDelete){
-    return failed("action cancelled")
+    return
   }
 
   if (Timer) {
@@ -336,10 +337,10 @@ export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,su
     deleteTransactionsFn({transactionIds})
     .unwrap()
     .then(() => {
-      success(`${transactionIds.length} transaction(s) deleted successfully🎉`);
+      success(`${transactionIds.length} transaction(s) deleted successfully`);
     })
     .catch((err:any) => {
-      failed("Internal server error to delete transactions");
+      failed(err.error || "Unable to delete the selected transactions");
       console.error(err)
       return ;
     })

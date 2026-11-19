@@ -14,7 +14,7 @@ const Store = configureStore({
     userData: userAuthReducer,
     origin: userOriginReducer,
     [transactionApi.reducerPath]: transactionApi.reducer,
-    TransactionId: TransactionReducer,
+    TransactionIds: TransactionReducer,
   },
 
   middleware: (getDefaultMiddleware) =>

@@ -25,6 +25,7 @@ type RecentTransactionProps = {
   isError: boolean;
   isFetching: boolean;
   keepChecked?: boolean;
+  clearSelectedIds:number
 };
 
 const RecentTransactions = ({
@@ -32,30 +33,40 @@ const RecentTransactions = ({
   isFetching,
   isError,
   keepChecked = false,
+  clearSelectedIds = 0
 }: RecentTransactionProps) => {
   const currencyKey = useAppSelector((state) => state.origin.userOrigin.key);
   const [selectedTxnIds, setTxnIds] = useState<string[]>([]);
   const dispatch = useAppDispatch();
-
+  
+  
   function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
     const isChecked = e.target.checked;
     const selectedId = e.target.id;
-
+    
     if (isChecked) {
-      const idExists = selectedTxnIds.find((id) => id === selectedId);
-      if (!idExists) {
-        setTxnIds([...selectedTxnIds, selectedId]);
-        return;
+      const exists = selectedTxnIds.find((id) => id == selectedId)
+      if(!exists){
+        setTxnIds((prev) => [...prev,selectedId])
       }
     } else {
-      setTxnIds(selectedTxnIds.filter((t) => t != selectedId));
+      setTxnIds((prev) => prev.filter((id) => id!== selectedId))
     }
   }
   
   useEffect(() => {
+    if(clearSelectedIds >= 1){
+      setTxnIds([])
+      clearSelectedIds = 0;
+    }
+  },[clearSelectedIds,dispatch])
+
+
+  useEffect(() => {
+
     console.log("selected Ids : ", selectedTxnIds);
     dispatch(addTransactionToDeletionQueue(selectedTxnIds));
-  }, [selectedTxnIds]);
+  }, [selectedTxnIds, dispatch]);
 
   const recentTxns = data?.transactions || [];
 
@@ -92,6 +103,7 @@ const RecentTransactions = ({
             >
               {keepChecked && <span className="mr-2 md:mr-3">
                 <input
+                  aria-label={`Select ${item.name} transaction`}
                   type="checkbox"
                   id={item.id.toString()}
                   checked={selectedTxnIds.includes(item.id.toString())}

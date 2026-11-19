@@ -12,8 +12,6 @@ import useThemeContext from "../Hooks/useThemeContext";
 import { handleDeleteTransactions } from "../utils/helperFunctions/handleFormActions";
 import { useDeleteTransactionsMutation } from "../store/features/transactionApi";
 import toast from "react-hot-toast";
-import { addTransactionToDeletionQueue } from "../store/features/transactionUpdate";
-import { useAppDispatch } from "../store/store"
 
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
@@ -53,13 +51,13 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   const [page, setPage] = useState(1);
   const [showLoader, setShowLoader] = useState(false);
   const [deleteTransactionsFn,{isError: TransactionDeletionError,isLoading:isLoadingDeletion,isSuccess:isDeletionSuccess}] = useDeleteTransactionsMutation();
-  const dispatch = useAppDispatch();
 
   const { isDark } = useThemeContext();
   const theme = getThemeStyles(isDark);
-  const TxnIds = useAppSelector((state) => state.TransactionId.ids);
+  const TxnIds = useAppSelector((state) => state.TransactionIds.ids);
   const success = (msg:string) => toast.success(msg)
   const failed = (msg:string) => toast.error(msg)
+  const [clearSelectedIds, setClearSelectedIds] = useState(0)
   const deleteTransactions = handleDeleteTransactions
 
   const {
@@ -118,17 +116,18 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
       return;
     }
 
+    if(isDeletionSuccess){
+      setClearSelectedIds((val) => val + 1)
+    }
+
     let timer: NodeJS.Timeout;
     if (expenseLoading) {
       setShowLoader(true);
       timer = setTimeout(() => setShowLoader(false), 200);
-    } 
-
-    if(isDeletionSuccess){
-      dispatch(addTransactionToDeletionQueue([]));
+    }else if(!isLoadingDeletion){
+      setShowLoader(false);
     }
     
-    setShowLoader(false);
     return () => clearTimeout(timer);
   }, [expenseLoading, expenseError,TransactionDeletionError,isLoadingDeletion,isDeletionSuccess]);
 
@@ -146,11 +145,6 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
         ? "See how your monthly expenses split up."
         : "Track monthly movement to detect spikes early.";
 
-  if(isLoadingDeletion){
-    <div className="fixed inset-0 z-500 flex items-center justify-center bg-red/30">
-    <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
-  </div>
-  }
   return (
     <div
       className={`min-h-screen transition-colors duration-200 ${theme.pageWrapper}`}
@@ -327,6 +321,7 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               isFetching={isFetching || isLoadingDeletion}
               isError={isError}
               keepChecked={true}
+              clearSelectedIds={clearSelectedIds}
             />
             <div className={`mt-3 pt-3 border-t ${theme.borderUtility}`}>
               <PageNavigation
