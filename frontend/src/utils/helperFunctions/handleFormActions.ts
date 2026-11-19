@@ -345,7 +345,7 @@ export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,su
       success(`${transactionIds.length} transaction(s) deleted successfully`);
     })
     .catch((err:any) => {
-      failed(err.error || "Unable to delete the selected transactions");
+      failed(err?.data?.error || err?.error || "Unable to delete the selected transactions");
       console.error(err)
       return ;
     })

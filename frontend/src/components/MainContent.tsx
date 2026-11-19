@@ -306,13 +306,14 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               </p>
             </div>
             <button
-              disabled={TxnIds.length === 0 || isLoadingDeletion}
+             aria-label="Delete selected transactions"
+              disabled={TxnIds.length === 0 || isLoadingDeletion || showLoader}
               style={{
                 cursor: TxnIds.length > 0 ? "pointer" : "not-allowed",
               }}
-              className={` ${TxnIds.length > 0 ? "opacity-100" : "opacity-18"} size-10 rounded-xl bg-red-500 active:bg-red-700 active:scale-95 disabled:scale-85 transition-all duration-200 text-white font-bold text-xs flex items-center justify-center`}
+              className={`w-auto ${TxnIds.length > 0 ? "opacity-100" : "opacity-18"} size-10 m-1 p-2 md:p-1 rounded-[6px] bg-red-500 active:bg-red-700 active:scale-95 disabled:scale-85 transition-all duration-200 text-white font-bold text-xs flex items-center justify-center`}
              onClick={() => deleteTransactions({transactionIds:TxnIds,deleteTransactionsFn:deleteTransactionsFn,success:success, failed : failed,setIsLoading: setShowLoader})}>
-              del
+              Delete Selected
             </button>
           </div>
           <div className="relative pb-2">
