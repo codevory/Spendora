@@ -85,6 +85,7 @@ const staggeredBaseQuery = retry(
   fetchBaseQuery({
     baseUrl: `/api/v1`,
     credentials: "include",
+    timeout:10000,
 
     prepareHeaders: (headers ) => {
       try {
