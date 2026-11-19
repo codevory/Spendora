@@ -25,7 +25,7 @@ type RecentTransactionProps = {
   isError: boolean;
   isFetching: boolean;
   keepChecked?: boolean;
-  clearSelectedIds:number
+  clearSelectedIds ?:number
 };
 
 const RecentTransactions = ({
