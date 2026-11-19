@@ -35,7 +35,8 @@ export type RecentTransactionsType = {
   sort ? :string
 }
 import { useAddExpenseTxnMutation } from "../store/features/transactionApi.ts";
-import type { useAddCategoryMutation, useDeleteCategoryMutation, useRenameCategoryMutation, useAddIncomeTxnMutation } from "../store/features/transactionApi.ts";
+import type { useAddCategoryMutation, useDeleteCategoryMutation, useRenameCategoryMutation, useAddIncomeTxnMutation,useDeleteTransactionsMutation
+ } from "../store/features/transactionApi.ts";
 
 // 1. Extract the full tuple type
 type AddExpenseMutationTuple = ReturnType<typeof useAddExpenseTxnMutation>;
@@ -48,11 +49,13 @@ type AddCategoryMutationTuple = ReturnType<typeof useAddCategoryMutation>;
 type AddIncomeMutationTuple = ReturnType<typeof useAddIncomeTxnMutation>;
 type RenameCategoryMutationTuple = ReturnType<typeof useRenameCategoryMutation>;
 type DeleteCategoryMutationTuple = ReturnType<typeof useDeleteCategoryMutation>;
+type DeleteTransactionsMutationTuple = ReturnType<typeof useDeleteTransactionsMutation>;
 
 export type AddCategoryTriggerFn = AddCategoryMutationTuple[0];
 export type AddIncomeTriggerFn = AddIncomeMutationTuple[0];
 export type RenameCategoryTriggerFn = RenameCategoryMutationTuple[0];
 export type DeleteCategoryTriggerFn = DeleteCategoryMutationTuple[0];
+export type DeleteTransactionsTriggerFn = DeleteTransactionsMutationTuple[0];
 
 export interface handleAddExpenseTransactionProps {
   amount: number | "";

@@ -7,6 +7,7 @@ import type {
   handleAddExpenseTransactionProps,
   RenameCategoryTriggerFn,
   IncomeTransactionTypes,
+  DeleteTransactionsTriggerFn,
 } from "../../types/transactionType";
 import { incomeFormSchema,entitySchema, expenseFormSchema } from "../zodSchema";
 
@@ -315,4 +316,42 @@ export function handleRenameCategory({
         Timer = null;
       });
   }, 300);
+}
+
+export interface HandleDeleteTransactionsProps extends Pick<HandleRenameCategoryProps, "success" | "failed" | "setIsLoading">{
+  transactionIds: string[]
+  deleteTransactionsFn: DeleteTransactionsTriggerFn
+}
+
+export function handleDeleteTransactions({transactionIds,deleteTransactionsFn,success,failed,setIsLoading}:HandleDeleteTransactionsProps){
+  if(transactionIds.length === 0) return;
+  let Timer: ReturnType<typeof setTimeout> | null = null
+
+  const confirmDelete = window.confirm(`Are you sure you want to delete ${transactionIds.length} transaction(s)? This action cannot be undone.`);
+  if(!confirmDelete){
+    return
+  }
+
+  if (Timer) {
+    clearTimeout(Timer);
+  } 
+
+  setIsLoading(true);
+
+  Timer = setTimeout(() => {
+    deleteTransactionsFn({transactionIds})
+    .unwrap()
+    .then(() => {
+      success(`${transactionIds.length} transaction(s) deleted successfully`);
+    })
+    .catch((err:any) => {
+      failed(err?.data?.error || err?.error || "Unable to delete the selected transactions");
+      console.error(err)
+      return ;
+    })
+    .finally(() => {
+      setIsLoading(false);
+      Timer = null;
+    })
+  }, 300)
 }

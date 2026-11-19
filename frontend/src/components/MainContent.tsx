@@ -9,6 +9,9 @@ import GraphSkeleton from "./GraphSkeleton";
 import PageNavigation, { PAGE_SIZE } from "./PageNavigation";
 import SingleSkeleton from "./SingleSkeleton";
 import useThemeContext from "../Hooks/useThemeContext";
+import { handleDeleteTransactions } from "../utils/helperFunctions/handleFormActions";
+import { useDeleteTransactionsMutation } from "../store/features/transactionApi";
+import toast from "react-hot-toast";
 
 interface MainContentPropsType {
   setModalState: (val: "income" | "category") => void;
@@ -47,9 +50,15 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   const [activeGraph, setActiveGraph] = useState<"bar" | "pie" | "line">("bar");
   const [page, setPage] = useState(1);
   const [showLoader, setShowLoader] = useState(false);
+  const [deleteTransactionsFn,{isError: TransactionDeletionError,isLoading:isLoadingDeletion,isSuccess:isDeletionSuccess}] = useDeleteTransactionsMutation();
 
   const { isDark } = useThemeContext();
   const theme = getThemeStyles(isDark);
+  const TxnIds = useAppSelector((state) => state.TransactionIds.ids);
+  const success = (msg:string) => toast.success(msg)
+  const failed = (msg:string) => toast.error(msg)
+  const [clearSelectedIds, setClearSelectedIds] = useState(0)
+  const deleteTransactions = handleDeleteTransactions
 
   const {
     expenses: transactions,
@@ -102,20 +111,25 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   }, [transactions]);
 
   useEffect(() => {
-    if (expenseError) {
+    if (expenseError || TransactionDeletionError) {
       setShowLoader(false);
       return;
+    }
+
+    if(isDeletionSuccess){
+      setClearSelectedIds((val) => val + 1)
     }
 
     let timer: NodeJS.Timeout;
     if (expenseLoading) {
       setShowLoader(true);
       timer = setTimeout(() => setShowLoader(false), 200);
-    } else {
+    }else if(!isLoadingDeletion){
       setShowLoader(false);
     }
+    
     return () => clearTimeout(timer);
-  }, [expenseLoading, expenseError]);
+  }, [expenseLoading, expenseError,TransactionDeletionError,isLoadingDeletion,isDeletionSuccess]);
 
   const activeGraphTitle =
     activeGraph === "bar"
@@ -280,26 +294,40 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
         <section
           className={`p-4 rounded-xl border shadow-sm ${theme.cardContainer}`}
         >
-          <div className="mb-4">
-            <h2
-              className={`text-lg font-bold tracking-tight ${theme.titleColor}`}
-            >
-              Recent activity
-            </h2>
-            <p className={`text-xs ${theme.labelMuted}`}>
-              Latest debits and credits in chronological order.
-            </p>
+          <div className="flex justify-between">
+            <div className="mb-4">
+              <h2
+                className={`text-lg font-bold tracking-tight ${theme.titleColor}`}
+              >
+                Recent activity
+              </h2>
+              <p className={`text-xs ${theme.labelMuted}`}>
+                Latest debits and credits in chronological order.
+              </p>
+            </div>
+            <button
+             aria-label="Delete selected transactions"
+              disabled={TxnIds.length === 0 || isLoadingDeletion || showLoader}
+              style={{
+                cursor: TxnIds.length > 0 ? "pointer" : "not-allowed",
+              }}
+              className={`w-auto ${TxnIds.length > 0 ? "opacity-100" : "opacity-18"} size-10 m-1 p-2 md:p-1 rounded-[6px] bg-red-500 active:bg-red-700 active:scale-95 disabled:scale-85 transition-all duration-200 text-white font-bold text-xs flex items-center justify-center`}
+             onClick={() => deleteTransactions({transactionIds:TxnIds,deleteTransactionsFn:deleteTransactionsFn,success:success, failed : failed,setIsLoading: setShowLoader})}>
+              Delete Selected
+            </button>
           </div>
           <div className="relative pb-2">
             <RecentTransactions
               data={data}
-              isFetching={isFetching}
+              isFetching={isFetching || isLoadingDeletion}
               isError={isError}
+              keepChecked={true}
+              clearSelectedIds={clearSelectedIds}
             />
             <div className={`mt-3 pt-3 border-t ${theme.borderUtility}`}>
               <PageNavigation
                 data={data?.transactions || []}
-                isFetching={isFetching}
+                isFetching={isFetching || isLoadingDeletion}
                 page={page}
                 setPage={setPage}
                 marginFromBottom={0}

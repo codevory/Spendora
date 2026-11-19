@@ -82,7 +82,7 @@ export const apiSpecs = {
                 properties: {
                   transactionData: {
                     type: "object",
-                    required: ["amount", "categoryId"],
+                    required: ["amount", "entity", "categoryId"],
                     properties: {
                       amount: {
                         type: "number",
@@ -286,7 +286,7 @@ export const apiSpecs = {
                 properties: {
                   incomeData: {
                     type: "object",
-                    required: ["amount"],
+                    required: ["amount", "entity"],
                     properties: {
                       amount: {
                         type: "number",
@@ -427,7 +427,7 @@ export const apiSpecs = {
         },
       },
     },
-    "/api/v1/transactions/recent": {
+    "/api/v1/transactions": {
       get: {
         summary: "Get recent transactions combining income and expenses",
         operationId: "getRecentTransactions",
@@ -519,7 +519,97 @@ export const apiSpecs = {
         },
       },
     },
+    "/api/v1/transactions/delete/{transactions}": {
+      delete: {
+        summary: "Delete one or more transactions",
+        operationId: "handleDeleteTransactions",
+        tags: ["Transactions"],
+        parameters: [
+          {
+            name: "transactions",
+            in: "path",
+            required: true,
+            description:
+              "Comma-separated UUIDs of expense or income transactions to delete",
+            schema: {
+              type: "string",
+              pattern:
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(,[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})*$",
+              example:
+                "bb75b754-5ab8-4872-8d2d-8e7359d8f722,5d44aef6-fd32-4e93-aee7-9db0e09cc5ab",
+            },
+          },
+        ],
+        responses: {
+          204: {
+            description: "Transactions deleted successfully",
+          },
+          400: {
+            $ref: "#/components/responses/BadRequestError",
+          },
+          404: {
+            description: "No matching transactions found",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+                example: {
+                  error: "No transactions found to delete",
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            $ref: "#/components/responses/InternalServerError",
+          },
+        },
+      },
+    },
     "/api/v1/categories": {
+      get: {
+        summary: "Get the authenticated user's categories",
+        operationId: "getCategories",
+        tags: ["Categories"],
+        responses: {
+          200: {
+            description: "List of categories with transaction counts",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    categories: {
+                      type: "array",
+                      items: {
+                        $ref: "#/components/schemas/CategoryWithCount",
+                      },
+                    },
+                    meta: {
+                      type: "object",
+                      properties: {
+                        size: {
+                          type: "integer",
+                          example: 5,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            $ref: "#/components/responses/InternalServerError",
+          },
+        },
+      },
       post: {
         summary: "Create a new expense category",
         operationId: "addNewCategory",
@@ -579,70 +669,8 @@ export const apiSpecs = {
         },
       },
     },
-    "/api/v1/categories/{sort}/{limit}": {
-      get: {
-        summary: "Get user categories with transaction counts",
-        operationId: "getCategories",
-        tags: ["Categories"],
-        parameters: [
-          {
-            name: "sort",
-            in: "path",
-            required: true,
-            description: "Sort order for categories by transaction count",
-            schema: {
-              type: "string",
-              enum: ["asc", "desc"],
-              default: "desc",
-            },
-          },
-          {
-            name: "limit",
-            in: "path",
-            required: true,
-            description: "Maximum number of categories to fetch",
-            schema: {
-              type: "integer",
-              default: 50,
-            },
-          },
-        ],
-        responses: {
-          200: {
-            description: "List of categories with transaction counts",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    categories: {
-                      type: "array",
-                      items: {
-                        $ref: "#/components/schemas/CategoryWithCount",
-                      },
-                    },
-                    meta: {
-                      type: "object",
-                      properties: {
-                        size: {
-                          type: "integer",
-                          example: 5,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          500: {
-            $ref: "#/components/responses/InternalServerError",
-          },
-        },
-      },
-    },
     "/api/v1/categories/{id}": {
-      put: {
+      patch: {
         summary: "Rename an existing category",
         operationId: "renameCategory",
         tags: ["Categories"],
@@ -975,6 +1003,84 @@ export const apiSpecs = {
                 },
               },
             },
+          },
+        },
+      },
+    },
+    "/api/v1/auth/me": {
+      get: {
+        summary: "Get the authenticated user's profile",
+        operationId: "getCurrentUser",
+        tags: ["Auth"],
+        responses: {
+          200: {
+            description: "Current user profile",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    fullName: {
+                      type: "string",
+                      example: "Shahijahan Pedhar",
+                    },
+                    uid: {
+                      type: "string",
+                      format: "uuid",
+                    },
+                    email: {
+                      type: "string",
+                      format: "email",
+                    },
+                    username: {
+                      type: "string",
+                    },
+                    currency: {
+                      type: "string",
+                      example: "INR",
+                    },
+                    inserted_at: {
+                      type: "string",
+                      format: "date-time",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            $ref: "#/components/responses/UnauthorizedError",
+          },
+          500: {
+            $ref: "#/components/responses/InternalServerError",
+          },
+        },
+      },
+    },
+    "/api/v1/status": {
+      get: {
+        summary: "Check API availability",
+        operationId: "getServerHealth",
+        tags: ["Status"],
+        responses: {
+          200: {
+            description: "Server is available",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    response: {
+                      type: "string",
+                      example: "server alive",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            $ref: "#/components/responses/InternalServerError",
           },
         },
       },

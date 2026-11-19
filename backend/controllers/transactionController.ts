@@ -74,9 +74,8 @@ export async function addExpense(
   req: RequestWithSession<unknown, unknown, ExpenseRequestBody>,
   res: Response,
 ) {
-  const db = await getDBConnection();
   let { transactionData } = req.body;
-
+  
   if (!transactionData || typeof transactionData !== "object") {
     return res.status(400).json({ error: "transaction data is required" });
   }
@@ -91,13 +90,17 @@ export async function addExpense(
   if (!transactionData.categoryId) {
     return res.status(400).json({ error: "categoryId is required" });
   }
-
+  
   if(!transactionData.entity || typeof transactionData.entity !== "string"){
     return res.status(400).json({error:"transaction entity is required"})
   }
-
+  
   transactionData.transactionId = `TXN_${crypto.randomUUID()}`
+  
+  const db = await getDBConnection();
+  const client = await db.connect()
   try {
+    await client.query("BEGIN")
     const query = `
     WITH inserted_expense AS (
     INSERT INTO userexpense (user_id,amount, entity,paid_on,category_id,transaction_id) VALUES($1,$2,$3,$4,$5,$6) 
@@ -114,8 +117,7 @@ export async function addExpense(
     FROM inserted_expense e
     LEFT JOIN expensecategories c ON c.id = e.category_id AND c.user_id = $1;
    `;
-
-    const expenseCreated = await db.query(query, [
+    const expenseCreated = await client.query(query, [
       req.session.userId,
       transactionData.amount,
       transactionData.entity,
@@ -125,14 +127,19 @@ export async function addExpense(
     ]);
 
     if (expenseCreated.rows.length === 0) {
+      await client.query("ROLLBACK")
       return res.status(400).json({ error: "Failed to create transaction " });
     }
-
+    
+    await client.query("COMMIT")
     return res.status(201).json({ transactionData: expenseCreated.rows[0] });
   } catch (err) {
+    await client.query("ROLLBACK").catch(() => undefined)
     const error = err instanceof Error ? err : new Error(String(err));
     console.error("Failed to add expense ", error.message);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error:"Internal server error" });
+  } finally{
+    client.release()
   }
 }
 
@@ -150,15 +157,18 @@ export async function addIncome(
     return res.status(400).json({ error: "Invalid amount" });
   }
 
-  else if(incomeData.entity.trim() == "" || incomeData.entity == undefined || typeof incomeData.entity !== "string"){
+  else if(typeof incomeData.entity !== "string" || incomeData.entity == undefined || incomeData.entity.trim() === ""){
     return res.status(400).json({error:"Transaction entity is required"})
   }
 
   incomeData.transactionId = `TXN_${crypto.randomUUID()}`
   const db = await getDBConnection();
+  const client = await db.connect();
 
   try {
-    const incomeCreated = await db.query(
+    await client.query("BEGIN")
+
+    const incomeCreated = await client.query(
       'INSERT INTO userincome (user_id,amount,entity,transaction_id,received_on) VALUES($1,$2,$3,$4,$5) RETURNING id,amount, entity, received_on as date,transaction_id as "transactionId", inserted_at as "createdAt" ',
       [
         req.session.userId,
@@ -169,15 +179,23 @@ export async function addIncome(
       ],
     );
 
-    incomeData = incomeCreated.rows[0];
+     if(incomeCreated.rows.length === 0){
+       await client.query("ROLLBACK")
+       return res.status(400).json({error:"Failed to create income transaction"})
+     }
 
+    incomeData = incomeCreated.rows[0];
+    await client.query("COMMIT")
     return res.status(201).json({ incomeData });
   } catch (err) {
+    await client.query("ROLLBACK").catch(() => undefined)
     const error = err instanceof Error ? err : new Error(String(err));
     console.error("Failed to add income : ", error.message);
     return res
       .status(500)
-      .json({ error: `Failed to add income ${error.message}` });
+      .json({ error:"Internal server error" });
+  } finally {
+    client.release();
   }
 }
 
@@ -472,8 +490,60 @@ export async function getUserFinancialSummary(req:RequestWithSession<unknown,unk
 
     return res.status(200).json({financialSummary,monthlyFinanceReport})
   } catch (err:any) {
-    console.error("unexpected error : ",err?.message || "internal server error occured")
-    return res.status(500).json({error:"Internal server error : ",err})
+    console.error("unexpected error : ",err?.message || err || "internal server error occured")
+    return res.status(500).json({error:"Internal server error"})
   }
 
+}
+
+export async function handleDeleteTransactions(req:RequestWithSession<{transactions:string},unknown,unknown,unknown>,res:Response){
+  const transactionIds = req.params.transactions
+  .split(",")
+  .map((id) => id.trim())
+    .filter((id) => id !== "");
+    
+  if (transactionIds.length === 0) {
+    return res.status(400).json({ error: "No transaction ids provided" });
+  }
+
+   const hasInvalidId = transactionIds.some(
+     (id) => !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id),
+    );
+    if (hasInvalidId) {
+      return res.status(400).json({ error: "Invalid transaction id" });
+    }
+    
+    const db = await getDBConnection();
+  const client = await db.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const expenseResult = await client.query(
+      "DELETE FROM userexpense WHERE id = ANY($1::uuid[]) AND user_id = $2",
+      [transactionIds, req.session.userId],
+    );
+    const incomeResult = await client.query(
+      "DELETE FROM userincome WHERE id = ANY($1::uuid[]) AND user_id = $2",
+      [transactionIds, req.session.userId],
+    );
+
+    const deletedCount =
+      (expenseResult.rowCount ?? 0) + (incomeResult.rowCount ?? 0);
+
+    if (deletedCount === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "No transactions found to delete" });
+    }
+
+    await client.query("COMMIT");
+    return res.status(204).send();
+  } catch (err: unknown) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error("Failed to delete transactions: ", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  } finally {
+    client.release();
+  }
 }
