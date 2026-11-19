@@ -27,7 +27,6 @@ const DisplayAvailableCategories = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // const { data: categoryResponse, isFetching, isLoading: loadingResp } = useGetCategoriesQuery();
   const { data, isError, isFetching } = useGetCategories();
   const [deleteCategoryTxn, { isLoading: isLoadingDelete }] =
     useDeleteCategoryMutation();
