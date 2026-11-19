@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import AddTransactionForm from "../components/AddTransactionForm";
 import RecentTransactions from "../components/RecentTransactions";
 import { useRecentTransactions, useUserData } from "../Hooks/useUserData";
@@ -58,7 +58,33 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
   const success = (msg:string) => toast.success(msg)
   const failed = (msg:string) => toast.error(msg)
   const [clearSelectedIds, setClearSelectedIds] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const deleteInProgressRef = useRef(false)
   const deleteTransactions = handleDeleteTransactions
+
+  const handleDeleteSelected = async () => {
+    if (
+      deleteInProgressRef.current ||
+      TxnIds.length < 1 ||
+      isDeleting ||
+      isLoadingDeletion ||
+      showLoader
+    ) return;
+
+    deleteInProgressRef.current = true;
+    try {
+      await deleteTransactions({
+        transactionIds: TxnIds,
+        deleteTransactionsFn,
+        success,
+        failed,
+        setIsLoading: setShowLoader,
+        setIsSubmitting: setIsDeleting,
+      });
+    } finally {
+      deleteInProgressRef.current = false;
+    }
+  };
 
   const {
     expenses: transactions,
@@ -306,14 +332,17 @@ const MainContent = ({ setModalState }: MainContentPropsType) => {
               </p>
             </div>
             <button
-             aria-label="Delete selected transactions"
-              disabled={TxnIds.length === 0 || isLoadingDeletion || showLoader}
+              aria-label="Delete selected transactions"
+              aria-busy={isDeleting || isLoadingDeletion}
+              disabled={TxnIds.length < 1 || isDeleting || isLoadingDeletion || showLoader}
               style={{
-                cursor: TxnIds.length > 0 ? "pointer" : "not-allowed",
+                cursor: TxnIds.length < 1 || isDeleting || isLoadingDeletion || showLoader
+                  ? "not-allowed"
+                  : "pointer",
               }}
-              className={`w-auto ${TxnIds.length > 0 ? "opacity-100" : "opacity-18"} size-10 m-1 p-2 md:p-1 rounded-[6px] bg-red-500 active:bg-red-700 active:scale-95 disabled:scale-85 transition-all duration-200 text-white font-bold text-xs flex items-center justify-center`}
-             onClick={() => deleteTransactions({transactionIds:TxnIds,deleteTransactionsFn:deleteTransactionsFn,success:success, failed : failed,setIsLoading: setShowLoader})}>
-              Delete Selected
+              className={`w-auto ${TxnIds.length > 0 && !isDeleting && !isLoadingDeletion && !showLoader ? "opacity-100" : "opacity-18"} size-10 m-1 p-2 md:p-1 rounded-[6px] bg-red-500 active:bg-red-700 active:scale-95 disabled:scale-85 transition-all duration-200 text-white font-bold text-xs flex items-center justify-center`}
+              onClick={handleDeleteSelected}>
+              {isDeleting || isLoadingDeletion ? "Deleting..." : "Delete Selected"}
             </button>
           </div>
           <div className="relative pb-2">
